@@ -47,7 +47,7 @@ The text output should be self-expanatory. The PDF output is exlained below.
 
 #### Page 1 ####
 
-This is your probability distribution function. Since poker sessions do not seem to follow any distribution I am familiar with, and every player is differenty. I decided to use a logspline estimator function. This function is charted on top of a histogram of your actual results, so you can see how closely it estimates your actual play. It should even work for tournaments, sports bets, horse racing, or really anything where you can track daily cashflow.
+This is your probability distribution function. Since poker sessions do not seem to follow any distribution I am familiar with, and every player is different, I decided to use a logspline estimator function. This function is charted on top of a histogram of your actual results, so you can see how closely it estimates your actual play. It should even work for tournaments, sports bets, horse racing, or really anything where you can track daily cashflow.
 
 #### Page 2 ####
 
