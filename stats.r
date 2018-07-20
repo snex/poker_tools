@@ -2,9 +2,7 @@
 
 suppressMessages(library(dplyr))
 suppressMessages(library(logspline))
-suppressMessages(library(mixtools))
 suppressMessages(library(plyr))
-suppressMessages(library(tidyr))
 suppressMessages(library(TTR))
 options(scipen=5)
 options(warn=-1)
@@ -13,12 +11,11 @@ options(warn=-1)
 runs <- 10000
 times_per_week <- 6
 stoploss <- -3000 # set to NULL if none
+# DON'T EDIT ANYTHING AFTER THIS
+
 csvdata <- read.csv(file='data.txt', header=FALSE, sep=",")
 mm <- as.integer(csvdata$V1)
 times <- as.character(csvdata$V2)
-# DON'T EDIT ANYTHING AFTER THIS
-
-
 times_per_year <- times_per_week * 52
 times_per_month <- as.integer(round(times_per_year / 12, 0))
 
