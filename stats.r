@@ -194,7 +194,7 @@ sample <- matrix(nrow = runs, ncol = times_per_year)
 for (i in 1:runs) {
   new_row <- as.integer(round(rlogspline(times_per_year, distFunc)))
 
-  while (is.na(new_row)) {
+  while (anyNA(new_row)) {
     new_row <- as.integer(round(rlogspline(times_per_year, distFunc)))
   }
 
@@ -367,7 +367,7 @@ lines(largest_weekly_downswing, lty=1, lwd=2, col="red4")
 lines(largest_monthly_downswing, lty=1, lwd=1, col="hotpink")
 lines(cumsum(mm), lty=1, lwd=5, col = "black")
 
-if (!is.null(times)) {
+if (length(times) > 0) {
   time_elems <- strsplit(times, ":")
   time_vect <- sapply(time_elems, function(x) as.numeric(c(rep(0, 2 - length(x)), x)))
   time_vect <- (time_vect[1,] * 60 + time_vect[2,]) / 60
@@ -377,25 +377,31 @@ if (!is.null(times)) {
   cumwr <- total_won / total_time_vect
   sma_weekly <- SMA(mm / time_vect, n=times_per_week)
   sma_monthly <- SMA(mm / time_vect, n=times_per_month)
-  ylim <- range(c(wr, cumwr, sma_weekly, sma_monthly), na.rm=TRUE)
-  par(mar=c(5.1, 4.1, 4.1, 5.1))
-  plot(cumwr, type="l", ylim=ylim, main="Win Rate", xlab="Sessions", ylab="Win Rate", yaxt="n")
-  lines(wr, col="blue")
-  lines(SMA(mm / time_vect, n=times_per_week), col="green")
-  lines(SMA(mm / time_vect, n=times_per_month), col="red")
-  tick_step <- 25 #(max(ylim) - min(ylim)) %/% 15
-  at <- seq(min(ylim), max(ylim), by=tick_step)
-  axis(2, at=at, las=1, cex.axis=0.6, labels=paste0("$", formatC(at, format="d", big.mark=","), "hr"))
-  axis(4, at=at, las=1, cex.axis=0.6, labels=paste0("$", formatC(at, format="d", big.mark=","), "hr"))
-  abline(h=at, lty=6, col="lightgray")
-  legend("bottomright",
-         legend=c("Avg WR", "Session WR", paste(times_per_week, "day SMA"), paste(times_per_month, "day SMA")),
-         col=c("black", "blue", "green", "red"),
-         lty=c(1,1,1,1),
-         bg="white",
-         cex=0.5
-         )
+} else {
+  wr <- mm
+  cumwr <- cumsum(mm) / seq(1, length(mm))
+  sma_weekly <- SMA(wr, n=times_per_week)
+  sma_monthly <- SMA(wr, n=times_per_month)
 }
+
+ylim <- range(c(wr, cumwr, sma_weekly, sma_monthly), na.rm=TRUE)
+par(mar=c(5.1, 4.1, 4.1, 5.1))
+plot(cumwr, type="l", ylim=ylim, main="Win Rate", xlab="Sessions", ylab="Win Rate", yaxt="n")
+lines(wr, col="blue")
+lines(sma_weekly, col="green")
+lines(sma_monthly, col="red")
+tick_step <- 25 #(max(ylim) - min(ylim)) %/% 15
+at <- seq(min(ylim), max(ylim), by=tick_step)
+axis(2, at=at, las=1, cex.axis=0.6, labels=paste0("$", formatC(at, format="d", big.mark=",")))
+axis(4, at=at, las=1, cex.axis=0.6, labels=paste0("$", formatC(at, format="d", big.mark=",")))
+abline(h=at, lty=6, col="lightgray")
+legend("topleft",
+       legend=c("Avg WR", "Session WR", paste(times_per_week, "day SMA"), paste(times_per_month, "day SMA")),
+       col=c("black", "blue", "green", "red"),
+       lty=c(1,1,1,1),
+       bg="white",
+       cex=0.5
+       )
 
 mp <- barplot(strks$prob, axes = FALSE, main="Streak Probabilities")
 grid(nx=NA, ny=NULL)
