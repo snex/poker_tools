@@ -13,7 +13,12 @@ times_per_week <- 6
 stoploss <- -3000 # set to NULL if none
 # DON'T EDIT ANYTHING AFTER THIS
 
-csvdata <- read.csv(file='data.txt', header=FALSE, sep=",")
+args = commandArgs(trailingOnly=TRUE)
+if (length(args) == 0) {
+  args[1] = 'data.txt'
+}
+
+csvdata <- read.csv(file=args[1], header=FALSE, sep=",")
 mm <- as.integer(csvdata$V1)
 times <- as.character(csvdata$V2)
 times_per_year <- times_per_week * 52
