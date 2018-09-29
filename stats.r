@@ -392,7 +392,7 @@ plot(cumwr, type="l", ylim=ylim, main="Win Rate", xlab="Sessions", ylab="Win Rat
 lines(wr, col="blue")
 lines(sma_weekly, col="green")
 lines(sma_monthly, col="red")
-tick_step <- 25 #(max(ylim) - min(ylim)) %/% 15
+tick_step <- (max(ylim) - min(ylim)) %/% 15
 at <- seq(min(ylim), max(ylim), by=tick_step)
 axis(2, at=at, las=1, cex.axis=0.6, labels=paste0("$", formatC(at, format="d", big.mark=",")))
 axis(4, at=at, las=1, cex.axis=0.6, labels=paste0("$", formatC(at, format="d", big.mark=",")))
