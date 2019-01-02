@@ -21,7 +21,7 @@ Inside the script there is a section headed with "EDIT THESE VALUES ONLY." You s
 
 ### Usage ###
 
-You will need a file called 'data.txt' in the same folder where the script is. The file can take one of two formats:
+You will need a file called 'data.txt' in the same folder where the script is. The file can take one of three formats:
 
 1. A list of session results, one per line. Example:
 ```CSV
@@ -36,6 +36,15 @@ You will need a file called 'data.txt' in the same folder where the script is. T
 200,6:45
 -50,2:32
 ```
+
+3. A comma-separated list of session results, and what year they belong to. This will allow you to have multiple years' worth of data and still plot it all. To use this, the second column must be blank. Example:
+```CSV
+100,,1
+200,,1
+-50,,3
+```
+
+Ideally, all 3 fields should be used.
 
 Then, just run the script from the command line, making sure it is executable if it isn't already.
 

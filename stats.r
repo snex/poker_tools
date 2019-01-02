@@ -21,6 +21,10 @@ if (length(args) == 0) {
 csvdata <- read.csv(file=args[1], header=FALSE, sep=",")
 mm <- as.integer(csvdata$V1)
 times <- as.character(csvdata$V2)
+series <- as.integer(csvdata$V3)
+if (length(series) == 0) {
+  series <- rep(1, length(mm))
+}
 times_per_year <- times_per_week * 52
 times_per_month <- as.integer(round(times_per_year / 12, 0))
 
@@ -169,10 +173,10 @@ avg_downswing <- function(data) {
 }
 
 generate_legend <- function(best_i, worst_i, largest_pls_i, largest_min_i, largest_weekly_pls_i, largest_weekly_min_i, largest_monthly_pls_i, largest_monthly_min_i) {
-  labels <- c("Best","Largest Upswing","Largest Weekly Upswing","Largest Monthly Upswing","Worst","Largest Downswing","Largest Weekly Downswing","Largest Monthly Downswing","Actual")
+  labels <- c("Best","Largest Upswing","Largest Weekly Upswing","Largest Monthly Upswing","Worst","Largest Downswing","Largest Weekly Downswing","Largest Monthly Downswing","Actual(s)")
   colors <- c("green","greenyellow","green3","green4","red","red3","red4","hotpink","black")
   ltys <- c(1,1,1,1,1,1,1,1,1)
-  lwds <- c(4,3,2,1,4,3,2,1,5)
+  lwds <- c(4,3,2,1,4,3,2,1,1)
 
 
   legend("topleft",
@@ -367,7 +371,10 @@ lines(largest_monthly_upswing, lty=1, lwd=1, col="green4")
 lines(largest_downswing, lty=1, lwd=3, col="red3")
 lines(largest_weekly_downswing, lty=1, lwd=2, col="red4")
 lines(largest_monthly_downswing, lty=1, lwd=1, col="hotpink")
-lines(cumsum(mm), lty=1, lwd=5, col = "black")
+actuals <- split(mm, series)
+for (actual in actuals) {
+  lines(cumsum(actual), lty=1, lwd=1, col = "black")
+}
 
 if (length(times) > 0) {
   time_elems <- strsplit(times, ":")
