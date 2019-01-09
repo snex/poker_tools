@@ -372,8 +372,14 @@ lines(largest_downswing, lty=1, lwd=3, col="red3")
 lines(largest_weekly_downswing, lty=1, lwd=2, col="red4")
 lines(largest_monthly_downswing, lty=1, lwd=1, col="hotpink")
 actuals <- split(mm, series)
+i <- length(actuals)
 for (actual in actuals) {
-  lines(cumsum(actual), lty=1, lwd=1, col = "black")
+  i <- i - 1
+  if (i == 0) {
+    lines(cumsum(actual), lty=1, lwd=3, col = "black")
+  } else {
+    lines(cumsum(actual), lty=1, lwd=1, col = "black")
+  }
 }
 
 if (length(times) > 0) {
