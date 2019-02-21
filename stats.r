@@ -10,7 +10,7 @@ options(warn=-1)
 # EDIT THESE VALUES ONLY
 runs <- 10000
 times_per_week <- 6
-stoploss <- -3000 # set to NULL if none
+stoploss <- -4000 # set to NULL if none
 # DON'T EDIT ANYTHING AFTER THIS
 
 args = commandArgs(trailingOnly=TRUE)
@@ -375,6 +375,7 @@ actuals <- split(mm, series)
 i <- length(actuals)
 for (actual in actuals) {
   i <- i - 1
+  actual[is.na(actual)] <- 0
   if (i == 0) {
     lines(cumsum(actual), lty=1, lwd=3, col = "black")
   } else {
@@ -386,14 +387,15 @@ if (length(times) > 0) {
   time_elems <- strsplit(times, ":")
   time_vect <- sapply(time_elems, function(x) as.numeric(c(rep(0, 2 - length(x)), x)))
   time_vect <- (time_vect[1,] * 60 + time_vect[2,]) / 60
+  time_vect <- time_vect[time_vect != 0]
   total_time_vect <- cumsum(time_vect)
-  total_won <- cumsum(mm)
-  wr <- mm / time_vect
+  total_won <- cumsum(mm[!is.na(mm)])
+  wr <- mm[!is.na(mm)] / time_vect
   cumwr <- total_won / total_time_vect
-  sma_weekly <- SMA(mm / time_vect, n=times_per_week)
-  sma_monthly <- SMA(mm / time_vect, n=times_per_month)
+  sma_weekly <- SMA(wr, n=times_per_week)
+  sma_monthly <- SMA(wr, n=times_per_month)
 } else {
-  wr <- mm
+  wr <- mm[!is.na(mm)]
   cumwr <- cumsum(mm) / seq(1, length(mm))
   sma_weekly <- SMA(wr, n=times_per_week)
   sma_monthly <- SMA(wr, n=times_per_month)
