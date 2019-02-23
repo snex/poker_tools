@@ -37,11 +37,17 @@ You will need a file called 'data.txt' in the same folder where the script is. T
 -50,2:32
 ```
 
-3. A comma-separated list of session results, and what year they belong to. This will allow you to have multiple years' worth of data and still plot it all. To use this, the second column must be blank. Example:
+3. A comma-separated list of session results, and what year they belong to. This will allow you to have multiple years' worth of data and still plot it all. To use this without time stamps, the second column must be blank. Example:
 ```CSV
 100,,1
 200,,1
 -50,,3
+```
+You can also leave a line blank to represent a day off, so that your yearly graph will align properly based on your "times_per_week" value. Example:
+```CSV
+100,,1
+,,1
+200,,1
 ```
 
 Ideally, all 3 fields should be used.
