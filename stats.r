@@ -411,6 +411,7 @@ tick_step <- (max(ylim) - min(ylim)) %/% 15
 at <- seq(min(ylim), max(ylim), by=tick_step)
 axis(2, at=at, las=1, cex.axis=0.6, labels=paste0("$", formatC(at, format="d", big.mark=",")))
 axis(4, at=at, las=1, cex.axis=0.6, labels=paste0("$", formatC(at, format="d", big.mark=",")))
+abline(h=0, lty=1, col="darkgray")
 abline(h=at, lty=6, col="lightgray")
 legend("topleft",
        legend=c("Avg WR", "Session WR", paste(times_per_week, "day SMA"), paste(times_per_month, "day SMA")),
