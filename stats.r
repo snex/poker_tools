@@ -394,19 +394,22 @@ if (length(times) > 0) {
   cumwr <- total_won / total_time_vect
   sma_weekly <- SMA(wr, n=times_per_week)
   sma_monthly <- SMA(wr, n=times_per_month)
+  sma_100 <- SMA(wr, n=100)
 } else {
   wr <- mm[!is.na(mm)]
   cumwr <- cumsum(mm) / seq(1, length(mm))
   sma_weekly <- SMA(wr, n=times_per_week)
   sma_monthly <- SMA(wr, n=times_per_month)
+  sma_100 <- SMA(wr, n=100)
 }
 
-ylim <- range(c(wr, cumwr, sma_weekly, sma_monthly), na.rm=TRUE)
+ylim <- range(c(wr, cumwr, sma_weekly, sma_monthly, sma_100), na.rm=TRUE)
 par(mar=c(5.1, 4.1, 4.1, 5.1))
 plot(cumwr, type="l", ylim=ylim, main="Win Rate", xlab="Sessions", ylab="Win Rate", yaxt="n")
 lines(wr, col="blue")
 lines(sma_weekly, col="green")
 lines(sma_monthly, col="red")
+lines(sma_100, col="orange")
 tick_step <- (max(ylim) - min(ylim)) %/% 15
 at <- seq(min(ylim), max(ylim), by=tick_step)
 axis(2, at=at, las=1, cex.axis=0.6, labels=paste0("$", formatC(at, format="d", big.mark=",")))
@@ -414,9 +417,9 @@ axis(4, at=at, las=1, cex.axis=0.6, labels=paste0("$", formatC(at, format="d", b
 abline(h=0, lty=1, col="darkgray")
 abline(h=at, lty=6, col="lightgray")
 legend("topleft",
-       legend=c("Avg WR", "Session WR", paste(times_per_week, "day SMA"), paste(times_per_month, "day SMA")),
-       col=c("black", "blue", "green", "red"),
-       lty=c(1,1,1,1),
+       legend=c("Avg WR", "Session WR", paste(times_per_week, "day SMA"), paste(times_per_month, "day SMA"), "100 day SMA"),
+       col=c("black", "blue", "green", "red", "orange"),
+       lty=c(1,1,1,1,1),
        bg="white",
        cex=0.5
        )
