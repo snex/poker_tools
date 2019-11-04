@@ -2,3 +2,4 @@ data/*
 data.txt
 .byebug_history
 *.pdf
+config.json
