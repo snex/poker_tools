@@ -1,0 +1,36 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, or any plugin's
+ * vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+ */
+
+@import 'bootstrap/dist/css/bootstrap';
+@import "@fortawesome/fontawesome-free/css/all";
+@import 'datatables.net-bs4/css/dataTables.bootstrap4';
+@import 'jquery-ui/themes/base/core';
+@import 'jquery-ui/themes/base/datepicker';
+@import 'jquery-ui/themes/base/theme';
+@import 'chosen-js/chosen';
+
+form input[type="submit"] {
+  background: none !important;
+  border: none;
+  padding: 0! important;
+  font-family: arial, sans-serif;
+  color: #069;
+  cursor: pointer;
+}
+
+.filter-button {
+  height: calc(1.5rem + 1px) !important;
+  padding: 0rem 0.5rem !important;
+  margin-right: 1rem;
+}

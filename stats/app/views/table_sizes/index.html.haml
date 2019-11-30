@@ -1,0 +1,5 @@
+%div{style: 'margin-top: 20px;'}
+.container-fluid
+  .row
+    -TableSize::TABLE_SIZE_ORDER.each do |ts_desc|
+      =render partial: 'shared/data_card', locals: { obj_name: ts_desc, search_params: { table_size: ts_desc } }

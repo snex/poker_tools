@@ -1,0 +1,17 @@
+.col{style: 'padding-left: 4px; padding-right: 4px;'}
+  -obj= @sums.find { |k,v| k == obj_name }
+  .card.text-center{class: bg_color_by_result(obj.try(:last)), style: 'width:6rem; font-size: 10px; padding: 0.25rem 0.25rem;'}
+    .card-body{style: 'padding: 0.25rem'}
+      .card-title= obj.blank? ? obj_name : button_to(obj_name, hand_histories_path, params: search_params)
+      %div{style: 'display: flex; justify-content: space-between'}
+        .card-text.text-left= "Tot"
+        .card-text.text-right= "#{obj.blank? ? '0' : @sums[obj_name]}"
+      %div{style: 'display: flex; justify-content: space-between'}
+        .card-text.text-left= "Num"
+        .card-text.text-right= "#{obj.blank? ? '0' : @counts[obj_name]}"
+      %div{style: 'display: flex; justify-content: space-between'}
+        .card-text.text-left= "% won"
+        .card-text.text-right= "#{obj.blank? ? '0' : @pct_w[obj_name].to_f}%"
+      %div{style: 'display: flex; justify-content: space-between'}
+        .card-text.text-left= "$/H"
+        .card-text.text-right= "#{obj.blank? ? '0' : @avgs[obj_name].round(2)}"

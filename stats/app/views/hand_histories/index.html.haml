@@ -1,0 +1,15 @@
+=javascript_pack_tag 'hand_histories'
+
+.hidden#default-search{'data-default-search': @params.to_json}
+
+%div{style: 'margin-top: 20px;'}
+.container-fluid
+  .row
+    =render partial: 'chart'
+.container-fluid
+  .row
+    =render partial: 'stats_table'
+.container-fluid
+  .row
+    =render partial: 'hand_histories'
+

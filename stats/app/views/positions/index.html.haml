@@ -1,0 +1,5 @@
+%div{style: 'margin-top: 20px;'}
+.container-fluid
+  .row
+    -Position::POSITION_ORDER.each do |position_name|
+      =render partial: 'shared/data_card', locals: { obj_name: position_name, search_params: { position: position_name } }

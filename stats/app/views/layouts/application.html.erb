@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Stats</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag 'application', media: 'all' %>
+    <%= javascript_pack_tag 'application' %>
+  </head>
+
+  <body>
+    <ul class="nav nav-pills">
+      <li class="nav-item">
+        <%= active_link_to 'View Data By Hand', hands_path, class: 'nav-link' %>
+      </li>
+      <li class="nav-item">
+        <%= active_link_to 'View Data By Position', positions_path, class: 'nav-link' %>
+      </li>
+      <li class="nav-item">
+        <%= active_link_to 'View Data By Bet Size', bet_sizes_path, class: 'nav-link' %>
+      </li>
+      <li class="nav-item">
+        <%= active_link_to 'View Data By Table Size', table_sizes_path, class: 'nav-link' %>
+      </li>
+      <li class="nav-item">
+        <%= active_link_to 'View Data By Date', by_date_path, class: 'nav-link' %>
+      </li>
+      <li class="nav-item">
+        <%= active_link_to 'View All Data', hand_histories_path, class: 'nav-link' %>
+      </li>
+    </ul>
+    <%= yield %>
+  </body>
+</html>

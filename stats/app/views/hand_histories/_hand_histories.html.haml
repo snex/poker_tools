@@ -1,0 +1,19 @@
+.hidden#positions{'data-positions': Position.cached}
+.hidden#bet-sizes{'data-bet-sizes': BetSize.cached}
+.hidden#table-sizes{'data-table-sizes': TableSize.cached}
+.hidden#hands{'data-hands': Hand::HAND_ORDER.flatten}
+%table.table.table-bordered#hh-datatable{style: 'font-size:12px;width:100%;', 'data-source': "#{hand_histories_path(@params)}.json"}
+  %thead
+    %th Date
+    %th Result
+    %th Hand
+    %th Position
+    %th Bet Size
+    %th Table Size
+    %th Flop
+    %th Turn
+    %th River
+    %th Showdown?
+    %th All In?
+    %th HH
+  %tbody

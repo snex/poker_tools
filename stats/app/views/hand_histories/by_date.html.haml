@@ -1,0 +1,12 @@
+%div{style: 'margin-top: 20px;'}
+.container-fluid
+  .row
+    %table.table.table-bordered
+      %thead
+        %th Month
+        %th Result
+      %tbody
+        -@results_by_month.each do |month, result|
+          %tr{class: bg_color_by_result(result)}
+            %td= month.strftime('%B %Y')
+            %td= result

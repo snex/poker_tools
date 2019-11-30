@@ -1,0 +1,5 @@
+%div{style: 'margin-top: 20px;'}
+.container-fluid
+  .row
+    -BetSize::BET_SIZE_ORDER.each do |bs_desc|
+      =render partial: 'shared/data_card', locals: { obj_name: bs_desc, search_params: { bet_size: bs_desc } }
