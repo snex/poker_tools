@@ -1,7 +1,7 @@
 json.ids (1..@raw_numbers.size).to_a
 json.datapoints @raw_numbers.cum_sum
-json.bet_size_colors @hand_histories.map { |hh| hh.bet_size.color }
-json.position_colors @hand_histories.map { |hh| hh.position.color }
+json.bet_size_colors @hand_histories.pluck('bet_sizes.color')
+json.position_colors @hand_histories.pluck('positions.color')
 json.results @hand_histories.pluck(:result)
 json.dates @hand_histories.pluck(:date)
 json.notes @hand_histories.pluck(:note)
