@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  get '/date', to: 'hand_histories#by_date', as: 'by_date'
+  match '/date', to: 'hand_histories#by_date', as: 'by_date', via: [:get, :post]
   match '/hands', to: 'hands#index', as: 'hands', via: [:get, :post]
   match '/positions', to: 'positions#index', as: 'positions', via: [:get, :post]
   match '/bet_sizes', to: 'bet_sizes#index', as: 'bet_sizes', via: [:get, :post]
