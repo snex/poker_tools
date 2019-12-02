@@ -1,4 +1,13 @@
+=javascript_pack_tag 'positions'
+
 %div{style: 'margin-top: 20px;'}
+.container-fluid
+  .row
+    =form_with(url: positions_path, local: true, html: {id: 'filter-form', class: 'form-inline'}) do |f|
+      =hand_filter @hands, params[:hand]
+      =bet_size_filter @bet_sizes, params[:bet_size]
+      =table_size_filter @table_sizes, params[:table_size]
+      =date_filter params[:from], params[:to]
 .container-fluid
   .row
     -Position::POSITION_ORDER.each do |position_name|

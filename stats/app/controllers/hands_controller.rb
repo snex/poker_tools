@@ -12,6 +12,13 @@ class HandsController < ApplicationController
     if params[:table_size].present?
       @hands = @hands.where(table_size: params[:table_size])
     end
+    if params[:from].present? && params[:to].present?
+      @hands = @hands.where(date: params[:from]..params[:to])
+    elsif params[:from].present?
+      @hands = @hands.where('date >= ?', params[:from])
+    elsif params[:to].present?
+      @hands = @hands.where('date <= ?', params[:to])
+    end
 
     @sums = @hands.sum(:result)
     @counts = @hands.count(:id)

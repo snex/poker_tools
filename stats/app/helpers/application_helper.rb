@@ -41,4 +41,11 @@ module ApplicationHelper
               ) +
               button_tag('x', {type: 'button', id: 'reset-table-size', class: 'form-control form-control-sm filter-button'})
   end
+
+  def date_filter(from, to)
+    text_field_tag(:from, params[:from], {id: 'from-filter', class:'form-control form-control-sm', placeholder: 'From'}) +
+      button_tag('x', {type: 'button', id: 'reset-from', class: 'form-control form-control-sm filter-button'}) +
+      text_field_tag(:to, params[:to], {id: 'to-filter', class: 'form-control form-control-sm', placeholder: 'To'}) +
+      button_tag('x', {type: 'button', id: 'reset-to', class: 'form-control form-control-sm filter-button'})
+  end
 end

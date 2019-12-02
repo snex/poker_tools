@@ -2,11 +2,11 @@ require('jquery-ui/ui/widgets/datepicker')
 require('chosen-js')
 
 $(document).ready(function() {
-  $('#position-select').chosen({width: '250px'}).change(function(e, opt) {
+  $('#hand-select').chosen({width: '250px'}).change(function(e, opt) {
     $('#filter-form').submit();
   });
-  $('#reset-position').click(function() {
-    $('#position-select').val('').trigger('chosen:updated');
+  $('#reset-hand').click(function() {
+    $('#hand-select').val('').trigger('chosen:updated');
     $('#filter-form').submit();
   });
 

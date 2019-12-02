@@ -1,4 +1,13 @@
+=javascript_pack_tag 'bet_sizes'
+
 %div{style: 'margin-top: 20px;'}
+.container-fluid
+  .row
+    =form_with(url: bet_sizes_path, local: true, html: {id: 'filter-form', class: 'form-inline'}) do |f|
+      =hand_filter @hands, params[:hand]
+      =position_filter @positions, params[:position]
+      =table_size_filter @table_sizes, params[:table_size]
+      =date_filter params[:from], params[:to]
 .container-fluid
   .row
     -BetSize::BET_SIZE_ORDER.each do |bs_desc|

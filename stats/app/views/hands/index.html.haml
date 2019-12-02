@@ -7,6 +7,7 @@
       =position_filter @positions, params[:position]
       =bet_size_filter @bet_sizes, params[:bet_size]
       =table_size_filter @table_sizes, params[:table_size]
+      =date_filter params[:from], params[:to]
   %div{style: 'margin-top: 20px;'}
   -Hand::HAND_ORDER.each do |ho_row|
     .row
