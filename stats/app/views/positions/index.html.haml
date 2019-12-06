@@ -8,7 +8,7 @@
       =bet_size_filter @bet_sizes, params[:bet_size]
       =table_size_filter @table_sizes, params[:table_size]
       =date_filter params[:from], params[:to]
-.container-fluid
+  %div{style: 'margin-top: 20px;'}
   .row
     -Position::POSITION_ORDER.each do |position_name|
       =render partial: 'shared/data_card', locals: { obj_name: position_name, search_params: { position: position_name } }
