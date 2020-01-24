@@ -1,9 +1,43 @@
 require_relative '../../config/environment'
-
-filename = ENV["file"]
+require 'google_drive'
 
 namespace :data do
-  task :import do
+  task :parse_notes, [:paths] do |t, args|
+    filename = args.paths.first
+    date = File.basename(filename.split('.')[0], '.*')
+    data = File.new(filename).readlines.join.split("\n\n")
+    stats_sheet = ENV['SHEET']
+
+    hands = data.size
+    saw_flop = data.select { |d| d.match?(/Flop/) }.size
+    wtsd = data.select { |d| d.match?(/Vs? (show|muck)/) }.size
+    wmsd = data.select { |d| d.match?(/Vs? (show|muck)/) && d.match?(/\+/) }.size
+    puts ""
+    puts "SD stats"
+    puts "============================"
+    puts "Hands: #{hands}"
+    puts "Saw Flop: #{saw_flop}"
+    puts "WTSD: #{wtsd}"
+    puts "W$SD: #{wmsd}"
+    puts "============================"
+    session = GoogleDrive::Session.from_config("config.json")
+    ws = session.spreadsheet_by_key(stats_sheet).worksheet_by_title('SD Stats')
+    row = 0
+    (1..ws.num_rows).each do |col|
+      row += 1
+      break if ws[row, 1].empty?
+    end
+    ws[row, 1] = date
+    ws[row, 3] = hands
+    ws[row, 4] = saw_flop
+    ws[row, 5] = wtsd
+    ws[row, 6] = wmsd
+    ws.save
+    puts "Data entered into spreadsheet"
+  end
+
+  task :import, [:paths] do |t, args|
+    filename = args.paths.first
     date = File.basename(filename.split('.')[0], '.*')
     data = File.new(filename).readlines.join.split("\n\n")
 

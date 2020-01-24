@@ -1,0 +1,7 @@
+guard :rake, task: 'data:parse_notes', run_on_start: false do
+  watch %r{^poker hands/.+\.txt$}
+end
+
+guard :rake, task: 'data:import', run_on_start: false do
+  watch %r{^poker hands/.+\.txt$}
+end
