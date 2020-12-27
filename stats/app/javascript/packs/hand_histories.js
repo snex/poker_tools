@@ -225,6 +225,7 @@ $(document).ready(function() {
       { column_number: 8, filter_type: 'select', data: [true, false] },
       { column_number: 9, filter_type: 'select', data: [true, false] },
       { column_number: 10, filter_type: 'select', data: [true, false] },
+      { column_number: 11, filter_type: 'text' },
     ]);
 
     var default_search = [];
