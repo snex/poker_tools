@@ -40,7 +40,7 @@ class HandHistoryDatatable < AjaxDatatablesRails::ActiveRecord
   end
 
   def get_raw_records
-    HandHistory.all.includes(:hand, :position, :bet_size, :table_size).joins(:hand, :position, :bet_size, :table_size).order(:id)
+    HandHistory.all.includes(:hand, :position, :bet_size, :table_size).joins(:hand, :position, :bet_size, :table_size)
   end
 
   def between_condition
