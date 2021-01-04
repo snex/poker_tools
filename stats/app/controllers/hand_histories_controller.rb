@@ -40,7 +40,7 @@ class HandHistoriesController < ApplicationController
     @params.delete(:length)
     @params.delete(:order)
     @params.delete(:start)
-    @hand_histories = HandHistoryDatatable.new(@params).records.unscope(:limit, :offset).order(:date, :id)
+    @hand_histories = HandHistoryDatatable.new(@params).records.unscope(:limit, :offset).order('hand_histories.date asc, hand_histories.id asc')
     @raw_numbers = @hand_histories.pluck(:result).extend(DescriptiveStatistics)
 
     render 'chart_data'
