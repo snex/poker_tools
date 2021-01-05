@@ -328,7 +328,7 @@ cat("==========================================================================\
 pdf('rplot.pdf')
 
 plot(distFunc, ann=FALSE, lwd=3)
-hist(mm, breaks=15, freq=FALSE, add=TRUE)
+hist(mm, breaks=15, freq=FALSE, add=TRUE, col=rgb(0.7, 0.7, 0.7, 0.5))
 title("Probability Distribution Curve")
 
 best_i <- which(rowSums(sample) == max(rowSums(sample)))
