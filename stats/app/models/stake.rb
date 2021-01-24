@@ -6,7 +6,7 @@ class Stake < ApplicationRecord
   end
 
   def self.cached
-    @@cached ||= Stake.pluck(:stake).map { |s| { value: s, label: s } }.to_json
+    @@cached ||= Stake.order(:stakes_array).pluck(:stake).map { |s| { value: s, label: s } }.to_json
   end
 
   private

@@ -34,7 +34,7 @@ class BetSizesController < ApplicationController
     @hands = Hand.all
     @positions = Position.all
     @table_sizes = TableSize.all
-    @stakes = Stake.all
+    @stakes = Stake.all.order(:stakes_array)
   end
 
 end
