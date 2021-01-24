@@ -1,6 +1,9 @@
 class Stake < ApplicationRecord
   scope :ordered, -> do
-    order(Arel.sql("CAST(SPLIT_PART(stake, '/', ARRAY_LENGTH(STRING_TO_ARRAY(stake, '/'), 1)) AS int) DESC"))
+    select("stakes.*, array_to_string(array_agg(lpad(stakes_array, 10, '0') order by cast(stakes_array as int) desc), '') padded").
+    joins(", lateral unnest(string_to_array(stake, '/')) as stakes_array").
+    group(:id, :stake).
+    order('padded')
   end
 
   def to_s
