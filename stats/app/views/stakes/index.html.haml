@@ -1,0 +1,15 @@
+=javascript_pack_tag 'stakes'
+
+%div{style: 'margin-top: 20px;'}
+.container-fluid
+  .row
+    =form_with(url: stakes_path, local: true, html: {id: 'filter-form', class: 'form-inline'}) do |f|
+      =hand_filter @hands, params[:hand]
+      =position_filter @positions, params[:position]
+      =bet_size_filter @bet_sizes, params[:bet_size]
+      =table_size_filter @table_sizes, params[:table_size]
+      =date_filter params[:from], params[:to]
+  %div{style: 'margin-top: 20px;'}
+  .row
+    -Stake.ordered.pluck(:stake).each do |stake|
+      =render partial: 'shared/data_card', locals: { obj_name: stake, search_params: { stake: stake } }

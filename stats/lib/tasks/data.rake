@@ -40,11 +40,18 @@ namespace :data do
     filename = args.paths.first
     date = File.basename(filename.split('.')[0], '.*')
     data = File.new(filename).readlines.join.split("\n\n")
+    stake = nil
 
     HandHistory.transaction do
       data.each do |d|
         d.strip!
         puts d
+
+        if d.match?(/^stakes .*/i)
+          stake = Stake.find_or_create_by(stake: d.match(/^stakes (.*)$/i)[1])
+          puts "Setting stake to #{stake}"
+          next
+        end
 
         note, _, status_line = d.rpartition("\n")
         puts "note: #{note}, status_line: #{status_line}"
@@ -82,6 +89,7 @@ namespace :data do
           position:   pos,
           bet_size:   size,
           table_size: tbl_size,
+          stake:      stake,
           flop:       flop,
           turn:       turn,
           river:      river,

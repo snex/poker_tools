@@ -42,6 +42,14 @@ module ApplicationHelper
               button_tag('x', {type: 'button', id: 'reset-table-size', class: 'form-control form-control-sm filter-button'})
   end
 
+  def stake_filter(stakes, selected)
+    select_tag(:stake,
+               options_for_select(stakes.map { |t| [t.stake, t.id] }.unshift([]), selected),
+               {id: 'stake-select', 'class': 'form-control', 'data-placeholder': 'Filter By Stake'}
+              ) +
+              button_tag('x', {type: 'button', id: 'reset-stake', class: 'form-control form-control-sm filter-button'})
+  end
+
   def date_filter(from, to)
     text_field_tag(:from, params[:from], {id: 'from-filter', class:'form-control form-control-sm', placeholder: 'From'}) +
       button_tag('x', {type: 'button', id: 'reset-from', class: 'form-control form-control-sm filter-button'}) +

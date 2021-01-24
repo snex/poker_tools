@@ -8,6 +8,7 @@ class HandHistoryDatatable < AjaxDatatablesRails::ActiveRecord
       position:   { source: 'Position.position', cond: :string_eq },
       bet_size:   { source: 'BetSize.description', cond: :string_eq },
       table_size: { source: 'TableSize.description', cond: :string_eq },
+      stake:      { source: 'Stake.stake', cond: :string_eq },
       flop:       { source: 'HandHistory.flop', cond: not_null_condition },
       turn:       { source: 'HandHistory.turn', cond: not_null_condition },
       river:      { source: 'HandHistory.river', cond: not_null_condition },
@@ -24,7 +25,7 @@ class HandHistoryDatatable < AjaxDatatablesRails::ActiveRecord
   private
 
   def data
-    records.includes(:hand, :position, :bet_size, :table_size).map do |record|
+    records.includes(:hand, :position, :bet_size, :table_size, :stake).map do |record|
       {
         date:       record.date,
         result:     record.result,
@@ -32,6 +33,7 @@ class HandHistoryDatatable < AjaxDatatablesRails::ActiveRecord
         position:   record.position,
         bet_size:   record.bet_size.description,
         table_size: record.table_size.description,
+        stake:      record.stake.stake,
         flop:       record.flop,
         turn:       record.turn,
         river:      record.river,
@@ -44,7 +46,7 @@ class HandHistoryDatatable < AjaxDatatablesRails::ActiveRecord
   end
 
   def get_raw_records
-    HandHistory.all.includes(:hand, :position, :bet_size, :table_size).joins(:hand, :position, :bet_size, :table_size)
+    HandHistory.all.includes(:hand, :position, :bet_size, :table_size, :stake).joins(:hand, :position, :bet_size, :table_size, :stake)
   end
 
   def between_condition

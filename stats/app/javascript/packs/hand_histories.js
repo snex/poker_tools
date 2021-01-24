@@ -197,6 +197,7 @@ $(document).ready(function() {
         {'data': 'position'},
         {'data': 'bet_size'},
         {'data': 'table_size'},
+        {'data': 'stake'},
         {'data': 'flop', 'orderable': false},
         {'data': 'turn', 'orderable': false},
         {'data': 'river', 'orderable': false},
@@ -205,7 +206,7 @@ $(document).ready(function() {
         {'data': 'note'}
       ],
       'columnDefs': [
-        {'width': '5%', 'targets': [0,1,2,3,4,5]}
+        {'width': '5%', 'targets': [0,1,2,3,4,5,6]}
       ]
     });
 
@@ -220,12 +221,13 @@ $(document).ready(function() {
       { column_number: 3, filter_type: 'multi_select', data: $('#positions').data('positions'), sort_as: 'none', filter_match_mode: 'exact', select_type: 'chosen' },
       { column_number: 4, filter_type: 'multi_select', data: $('#bet-sizes').data('bet-sizes'), filter_match_mode: 'exact', select_type: 'chosen' },
       { column_number: 5, filter_type: 'multi_select', data: $('#table-sizes').data('table-sizes'), sort_as: 'none', filter_match_mode: 'exact', select_type: 'chosen' },
-      { column_number: 6, filter_type: 'select', data: [true, false] },
+      { column_number: 6, filter_type: 'multi_select', data: $('#stakes').data('stakes'), sort_as: 'none', filter_match_mode: 'exact', select_type: 'chosen' },
       { column_number: 7, filter_type: 'select', data: [true, false] },
       { column_number: 8, filter_type: 'select', data: [true, false] },
       { column_number: 9, filter_type: 'select', data: [true, false] },
       { column_number: 10, filter_type: 'select', data: [true, false] },
-      { column_number: 11, filter_type: 'text' },
+      { column_number: 11, filter_type: 'select', data: [true, false] },
+      { column_number: 12, filter_type: 'text' },
     ]);
 
     var default_search = [];
@@ -242,6 +244,9 @@ $(document).ready(function() {
     }
     if ('table_size' in default_search_data) {
       default_search.push([5, default_search_data.table_size]);
+    }
+    if ('stake' in default_search_data) {
+      default_search.push([6, default_search_data.stake]);
     }
 
     yadcf.exFilterColumn(dt, default_search);

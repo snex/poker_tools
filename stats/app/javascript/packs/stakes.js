@@ -25,11 +25,11 @@ $(document).ready(function() {
     $('#bet-size-select').val('').trigger('chosen:updated');
     $('#filter-form').submit();
   });
-  $('#stake-select').chosen({width: '250px'}).change(function(e, opt) {
+  $('#table-size-select').chosen({width: '250px'}).change(function(e, opt) {
     $('#filter-form').submit();
   });
-  $('#reset-stake').click(function() {
-    $('#stake-select').val('').trigger('chosen:updated');
+  $('#reset-table-size').click(function() {
+    $('#table-size-select').val('').trigger('chosen:updated');
     $('#filter-form').submit();
   });
 

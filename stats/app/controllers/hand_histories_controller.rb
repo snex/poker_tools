@@ -14,7 +14,7 @@ class HandHistoriesController < ApplicationController
   end
 
   def by_date
-    @hh = HandHistory.includes(:hand, :position, :bet_size, :table_size)
+    @hh = HandHistory.includes(:hand, :position, :bet_size, :table_size, :stake)
 
     if params[:hand].present?
       @hh = @hh.where(hand: params[:hand])
@@ -27,6 +27,9 @@ class HandHistoriesController < ApplicationController
     end
     if params[:table_size].present?
       @hh = @hh.where(table_size: params[:table_size])
+    end
+    if params[:stake].present?
+      @hh = @hh.where(stake: params[:stake])
     end
     @results_by_month = @hh.group_by_month(:date).sum(:result)
     @hands = Hand.all

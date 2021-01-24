@@ -25,6 +25,15 @@ $(document).ready(function() {
     $('#table-size-select').val('').trigger('chosen:updated');
     $('#filter-form').submit();
   });
+
+  $('#stake-select').chosen({width: '250px'}).change(function(e, opt) {
+    $('#filter-form').submit();
+  });
+  $('#reset-stake').click(function() {
+    $('#stake-select').val('').trigger('chosen:updated');
+    $('#filter-form').submit();
+  });
+
   $('#from-filter').datepicker({
     dateFormat: 'yy-mm-dd',
     onSelect: function() {

@@ -2,15 +2,15 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# This file is the source Rails uses to define your schema when running `rails
-# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
 # be faster and is potentially less error prone than running all of your
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_30_105057) do
+ActiveRecord::Schema.define(version: 2021_01_24_092211) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,10 +36,12 @@ ActiveRecord::Schema.define(version: 2019_11_30_105057) do
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "showdown", default: false
     t.boolean "all_in", default: false
+    t.bigint "stake_id"
     t.index ["bet_size_id"], name: "index_hand_histories_on_bet_size_id"
     t.index ["date"], name: "index_hand_histories_on_date"
     t.index ["hand_id"], name: "index_hand_histories_on_hand_id"
     t.index ["position_id"], name: "index_hand_histories_on_position_id"
+    t.index ["stake_id"], name: "index_hand_histories_on_stake_id"
     t.index ["table_size_id"], name: "index_hand_histories_on_table_size_id"
   end
 
@@ -50,6 +52,10 @@ ActiveRecord::Schema.define(version: 2019_11_30_105057) do
   create_table "positions", force: :cascade do |t|
     t.string "position"
     t.string "color"
+  end
+
+  create_table "stakes", force: :cascade do |t|
+    t.string "stake"
   end
 
   create_table "table_sizes", force: :cascade do |t|

@@ -1,7 +1,9 @@
 class BetSizesController < ApplicationController
 
+  skip_before_action :verify_authenticity_token
+
   def index
-    @bet_sizes = HandHistory.includes(:hand, :position, :table_size).joins(:bet_size).group(:'bet_sizes.description')
+    @bet_sizes = HandHistory.includes(:hand, :position, :table_size, :stake).joins(:bet_size).group(:'bet_sizes.description')
 
     if params[:hand].present?
       @bet_sizes = @bet_sizes.where(hand: params[:hand])
@@ -11,6 +13,9 @@ class BetSizesController < ApplicationController
     end
     if params[:table_size].present?
       @bet_sizes = @bet_sizes.where(table_size: params[:table_size])
+    end
+    if params[:stake].present?
+      @bet_sizes = @bet_sizes.where(stake: params[:stake])
     end
     if params[:from].present? && params[:to].present?
       @bet_sizes = @bet_sizes.where(date: params[:from]..params[:to])
@@ -29,6 +34,7 @@ class BetSizesController < ApplicationController
     @hands = Hand.all
     @positions = Position.all
     @table_sizes = TableSize.all
+    @stakes = Stake.all
   end
 
 end
