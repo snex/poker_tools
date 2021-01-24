@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_24_092211) do
+ActiveRecord::Schema.define(version: 2021_01_24_220251) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -56,6 +56,7 @@ ActiveRecord::Schema.define(version: 2021_01_24_092211) do
 
   create_table "stakes", force: :cascade do |t|
     t.string "stake"
+    t.integer "stakes_array", array: true
   end
 
   create_table "table_sizes", force: :cascade do |t|
