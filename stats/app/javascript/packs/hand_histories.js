@@ -167,6 +167,12 @@ $(document).ready(function() {
                 return '';
               }
             }
+          },
+          animation: {
+            onComplete: function() {
+              $('#download').attr('href', chart.toBase64Image());
+              $('#download').attr('download', 'chart.png');
+            }
           }
         }
       });
