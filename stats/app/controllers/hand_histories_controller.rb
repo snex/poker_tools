@@ -1,4 +1,6 @@
 class HandHistoriesController < ApplicationController
+  include Filter
+
   skip_before_action :verify_authenticity_token, only: [:index, :chart]
 
   def index
@@ -15,22 +17,8 @@ class HandHistoriesController < ApplicationController
 
   def by_date
     @hh = HandHistory.includes(:hand, :position, :bet_size, :table_size, :stake)
+    @hh = apply_filters(@hh)
 
-    if params[:hand].present?
-      @hh = @hh.where(hand: params[:hand])
-    end
-    if params[:position].present?
-      @hh = @hh.where(position: params[:position])
-    end
-    if params[:bet_size].present?
-      @hh = @hh.where(bet_size: params[:bet_size])
-    end
-    if params[:table_size].present?
-      @hh = @hh.where(table_size: params[:table_size])
-    end
-    if params[:stake].present?
-      @hh = @hh.where(stake: params[:stake])
-    end
     @results_by_month = @hh.group_by_month(:date).sum(:result)
     @hands = Hand.all
     @positions = Position.all
