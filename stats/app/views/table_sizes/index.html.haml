@@ -1,4 +1,4 @@
-=javascript_pack_tag 'table_sizes'
+=javascript_pack_tag 'filters'
 
 %div{style: 'margin-top: 20px;'}
 .container-fluid
@@ -9,6 +9,8 @@
       =bet_size_filter @bet_sizes, params[:bet_size]
       =stake_filter @stakes, params[:stake]
       =date_filter params[:from], params[:to]
+      .form-check.form-check-inline
+        =advanced_filters params[:flop], params[:turn], params[:river], params[:showdown], params[:all_in]
   %div{style: 'margin-top: 20px;'}
   .row
     -TableSize::TABLE_SIZE_ORDER.each do |ts_desc|

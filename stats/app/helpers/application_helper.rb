@@ -56,4 +56,32 @@ module ApplicationHelper
       text_field_tag(:to, params[:to], {id: 'to-filter', class: 'form-control form-control-sm', placeholder: 'To'}) +
       button_tag('x', {type: 'button', id: 'reset-to', class: 'form-control form-control-sm filter-button'})
   end
+
+  def advanced_filters(flop, turn, river, showdown, all_in)
+    select_tag(:flop,
+               options_for_select([nil, true, false], flop),
+               {id: 'flop-select', 'class': 'form-control', 'data-placeholder': 'Saw Flop?'}
+              ) +
+              button_tag('x', {type: 'button', id: 'reset-flop', class: 'form-control form-control-sm filter-button'}) +
+    select_tag(:turn,
+               options_for_select([nil, true, false], turn),
+               {id: 'turn-select', 'class': 'form-control', 'data-placeholder': 'Saw Turn?'}
+              ) +
+              button_tag('x', {type: 'button', id: 'reset-turn', class: 'form-control form-control-sm filter-button'}) +
+    select_tag(:river,
+               options_for_select([nil, true, false], river),
+               {id: 'river-select', 'class': 'form-control', 'data-placeholder': 'Saw River?'}
+              ) +
+              button_tag('x', {type: 'button', id: 'reset-river', class: 'form-control form-control-sm filter-button'}) +
+    select_tag(:showdown,
+               options_for_select([nil, true, false], showdown),
+               {id: 'showdown-select', 'class': 'form-control', 'data-placeholder': 'Went To Showdown?'}
+              ) +
+              button_tag('x', {type: 'button', id: 'reset-showdown', class: 'form-control form-control-sm filter-button'}) +
+    select_tag(:all_in,
+               options_for_select([nil, true, false], all_in),
+               {id: 'all-in-select', 'class': 'form-control', 'data-placeholder': 'All In?'}
+              ) +
+              button_tag('x', {type: 'button', id: 'reset-all-in', class: 'form-control form-control-sm filter-button'})
+  end
 end

@@ -1,4 +1,4 @@
-=javascript_pack_tag 'hands'
+=javascript_pack_tag 'filters'
 
 %div{style: 'margin-top: 20px;'}
 .container-fluid
@@ -9,6 +9,7 @@
       =table_size_filter @table_sizes, params[:table_size]
       =stake_filter @stakes, params[:stake]
       =date_filter params[:from], params[:to]
+      =advanced_filters params[:flop], params[:turn], params[:river], params[:showdown], params[:all_in]
   %div{style: 'margin-top: 20px;'}
   -Hand::HAND_ORDER.each do |ho_row|
     .row

@@ -1,4 +1,4 @@
-=javascript_pack_tag 'stakes'
+=javascript_pack_tag 'filters'
 
 %div{style: 'margin-top: 20px;'}
 .container-fluid
@@ -9,6 +9,8 @@
       =bet_size_filter @bet_sizes, params[:bet_size]
       =table_size_filter @table_sizes, params[:table_size]
       =date_filter params[:from], params[:to]
+      .form-check.form-check-inline
+        =advanced_filters params[:flop], params[:turn], params[:river], params[:showdown], params[:all_in]
   %div{style: 'margin-top: 20px;'}
   .row
     -Stake.order(:stakes_array).pluck(:stake).each do |stake|

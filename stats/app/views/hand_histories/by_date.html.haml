@@ -1,4 +1,4 @@
-=javascript_pack_tag 'by_date'
+=javascript_pack_tag 'filters'
 
 %div{style: 'margin-top: 20px;'}
 .container-fluid
@@ -8,6 +8,9 @@
       =position_filter @positions, params[:position]
       =bet_size_filter @bet_sizes, params[:bet_size]
       =table_size_filter @table_sizes, params[:table_size]
+      =stake_filter @stakes, params[:stake]
+      .form-check.form-check-inline
+        =advanced_filters params[:flop], params[:turn], params[:river], params[:showdown], params[:all_in]
 .container-fluid
   .row
     %table.table.table-bordered

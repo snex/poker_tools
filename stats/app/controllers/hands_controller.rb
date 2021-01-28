@@ -1,29 +1,11 @@
 class HandsController < ApplicationController
+  include Filter
 
   skip_before_action :verify_authenticity_token
 
   def index
     @hands = HandHistory.includes(:hand, :position, :bet_size, :table_size, :stake).joins(:hand).group(:'hands.hand')
-
-    if params[:position].present?
-      @hands = @hands.where(position: params[:position])
-    end
-    if params[:bet_size].present?
-      @hands = @hands.where(bet_size: params[:bet_size])
-    end
-    if params[:table_size].present?
-      @hands = @hands.where(table_size: params[:table_size])
-    end
-    if params[:stake].present?
-      @hands = @hands.where(stake: params[:stake])
-    end
-    if params[:from].present? && params[:to].present?
-      @hands = @hands.where(date: params[:from]..params[:to])
-    elsif params[:from].present?
-      @hands = @hands.where('date >= ?', params[:from])
-    elsif params[:to].present?
-      @hands = @hands.where('date <= ?', params[:to])
-    end
+    @hands = apply_filters(@hands)
 
     @sums = @hands.sum(:result)
     @counts = @hands.count(:id)

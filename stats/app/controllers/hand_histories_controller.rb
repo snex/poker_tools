@@ -36,6 +36,7 @@ class HandHistoriesController < ApplicationController
     @positions = Position.all
     @bet_sizes = BetSize.all
     @table_sizes = TableSize.all
+    @stakes = Stake.all
   end
 
   def chart
