@@ -46,6 +46,7 @@ append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "vendor/bund
 # set :ssh_options, verify_host_key: :secure
 
 set :assets_manifests, ['app/assets/config/manifest.js']
+set :assets_prefix, 'packs'
 
 namespace :deploy do
   after :finishing, 'apache:reload'
