@@ -14,7 +14,7 @@ class HandHistory < ApplicationRecord
     if stats_sheet.blank?
       puts "No spreadsheet ID given, skipping sheet entry"
     else
-      hands = data.size
+      hands = data.size - data.select { |d| d.match?(/^stakes .*/i) }.size
       saw_flop = data.select { |d| d.match?(/Flop/) }.size
       wtsd = data.select { |d| d.match?(/Vs? (show|muck)/) }.size
       wmsd = data.select { |d| d.match?(/Vs? (show|muck)/) && d.match?(/\+/) }.size
