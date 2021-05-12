@@ -13,7 +13,7 @@ module ApplicationHelper
   def hand_filter(hands, selected)
     select_tag(:hand,
                options_for_select(hands.map { |h| [h.hand, h.id] }.unshift([]), selected),
-               {id: 'hand-select', 'class': 'form-control', 'data-placeholder': 'Filter By Hand'}
+               {id: 'hand-select', 'class': 'form-control', 'data-placeholder': 'Filter By Hand', multiple: true}
               ) +
               button_tag('x', {type: 'button', id: 'reset-hand', class: 'form-control form-control-sm filter-button'})
   end
@@ -21,7 +21,7 @@ module ApplicationHelper
   def position_filter(positions, selected)
     select_tag(:position,
                options_for_select(positions.map { |p| [p.position, p.id] }.unshift([]), selected),
-               {id: 'position-select', 'class': 'form-control', 'data-placeholder': 'Filter By Position'}
+               {id: 'position-select', 'class': 'form-control', 'data-placeholder': 'Filter By Position', multiple: true}
               ) +
               button_tag('x', {type: 'button', id: 'reset-position', class: 'form-control form-control-sm filter-button'})
   end
@@ -29,7 +29,7 @@ module ApplicationHelper
   def bet_size_filter(bet_sizes, selected)
     select_tag(:bet_size,
                options_for_select(bet_sizes.map { |b| [b.description, b.id] }.unshift([]), selected),
-               {id: 'bet-size-select', 'class': 'form-control', 'data-placeholder': 'Filter By Bet Size'}
+               {id: 'bet-size-select', 'class': 'form-control', 'data-placeholder': 'Filter By Bet Size', multiple: true}
               ) +
               button_tag('x', {type: 'button', id: 'reset-bet-size', class: 'form-control form-control-sm filter-button'})
   end
@@ -37,7 +37,7 @@ module ApplicationHelper
   def table_size_filter(table_sizes, selected)
     select_tag(:table_size,
                options_for_select(table_sizes.map { |t| [t.description, t.id] }.unshift([]), selected),
-               {id: 'table-size-select', 'class': 'form-control', 'data-placeholder': 'Filter By Table Size'}
+               {id: 'table-size-select', 'class': 'form-control', 'data-placeholder': 'Filter By Table Size', multiple: true}
               ) +
               button_tag('x', {type: 'button', id: 'reset-table-size', class: 'form-control form-control-sm filter-button'})
   end
@@ -45,7 +45,7 @@ module ApplicationHelper
   def stake_filter(stakes, selected)
     select_tag(:stake,
                options_for_select(stakes.map { |t| [t.stake, t.id] }.unshift([]), selected),
-               {id: 'stake-select', 'class': 'form-control', 'data-placeholder': 'Filter By Stake'}
+               {id: 'stake-select', 'class': 'form-control', 'data-placeholder': 'Filter By Stake', multiple: true}
               ) +
               button_tag('x', {type: 'button', id: 'reset-stake', class: 'form-control form-control-sm filter-button'})
   end
