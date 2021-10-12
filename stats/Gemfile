@@ -25,16 +25,16 @@ gem 'jbuilder', '~> 2.7'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
-gem 'haml'
-gem 'active_link_to'
-gem 'passenger'
-gem 'descriptive_statistics', require: 'descriptive_statistics/safe'
+gem 'haml', '~> 5.0'
+gem 'active_link_to', '~> 1.0'
+gem 'passenger', '~> 6.0'
+gem 'descriptive_statistics', '~> 2.0', require: 'descriptive_statistics/safe'
 gem 'ajax-datatables-rails', git: 'git@github.com:jbox-web/ajax-datatables-rails.git'
-gem 'groupdate'
-gem 'arel_extensions'
-gem 'google_drive'
-gem 'guard'
-gem 'guard-rake'
+gem 'groupdate', '~> 5.0'
+gem 'arel_extensions', '~> 2.0'
+gem 'google_drive', '~> 3.0'
+gem 'guard', '~> 2.0'
+gem 'guard-rake', '~> 1.0'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
