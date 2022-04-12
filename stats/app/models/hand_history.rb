@@ -6,6 +6,7 @@ class HandHistory < ApplicationRecord
   belongs_to :bet_size
   belongs_to :table_size
   belongs_to :stake
+  has_many :villain_hands
 
   def self.import(filename, stats_sheet)
     date = File.basename(filename.split('.')[0], '.*')
@@ -81,10 +82,16 @@ class HandHistory < ApplicationRecord
         pos = Position.find_by!(position: pos)
         size = BetSize.find_by!(bet_size: size)
         tbl_size = TableSize.find_by!(table_size: tbl_size)
+        v_hands = []
+
+        if showdown
+          v_hands = d.scan(/Vs? show (.+)/).map { |str| Hand.from_str(str.first.split(' ').first) }
+        end
 
         puts "res: #{res}, pos: #{pos}, hand: #{hand}, size: #{size}, tbl_size: #{tbl_size}, allin: #{all_in}, showdown: #{showdown}, flop: #{flop}, turn: #{turn}, river: #{river}"
+        puts "v_hands: #{v_hands.map(&:hand)}"
 
-        HandHistory.create!(
+        hh = HandHistory.create!(
           date:       date,
           result:     res.to_i,
           hand:       hand,
@@ -99,7 +106,12 @@ class HandHistory < ApplicationRecord
           all_in:     all_in,
           showdown:   showdown
         )
-
+        v_hands.each do |v_hand|
+          VillainHand.create!(
+            hand:         v_hand,
+            hand_history: hh
+          )
+        end
       end
     end
   end

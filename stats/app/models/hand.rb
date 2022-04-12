@@ -18,4 +18,29 @@ class Hand < ApplicationRecord
   def to_s
     hand
   end
+
+  def self.from_str(hand_str)
+    if hand = find_by_hand(hand_str)
+      return hand
+    end
+
+    ranks_str = hand_str.tr('cdhs', '')
+
+    # check for pairs with suits
+    if ranks_str.squeeze.size == 1 && hand = find_by_hand(ranks_str)
+      return hand
+    end
+
+    suits_str = hand_str.tr('^cdhs', '')
+
+    if suits_str.squeeze.size == 1 && hand = find_by_hand("#{ranks_str}s")
+      # check for suited hand
+      return hand
+    elsif hand = find_by_hand("#{ranks_str}o")
+      # check for offsuit hand
+      return hand
+    else
+      raise "Hand not found: #{hand_str}"
+    end
+  end
 end

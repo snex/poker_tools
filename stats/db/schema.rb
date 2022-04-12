@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_24_233146) do
+ActiveRecord::Schema.define(version: 2022_04_12_205657) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -64,5 +64,18 @@ ActiveRecord::Schema.define(version: 2021_01_24_233146) do
     t.string "description"
   end
 
+  create_table "villain_hands", force: :cascade do |t|
+    t.bigint "hand_history_id"
+    t.bigint "hand_id"
+    t.index ["hand_history_id"], name: "index_villain_hands_on_hand_history_id"
+    t.index ["hand_id"], name: "index_villain_hands_on_hand_id"
+  end
+
+  add_foreign_key "hand_histories", "bet_sizes"
   add_foreign_key "hand_histories", "hands"
+  add_foreign_key "hand_histories", "positions"
+  add_foreign_key "hand_histories", "stakes"
+  add_foreign_key "hand_histories", "table_sizes"
+  add_foreign_key "villain_hands", "hand_histories"
+  add_foreign_key "villain_hands", "hands"
 end
