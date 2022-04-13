@@ -4,6 +4,7 @@
 .container-fluid
   .row
     =form_with(url: villain_hands_path, local: true, html: {id: 'filter-form', class: 'form-inline'}) do |f|
+      =hand_filter @hands, params[:hand]
       =position_filter @positions, params[:position]
       =bet_size_filter @bet_sizes, params[:bet_size]
       =table_size_filter @table_sizes, params[:table_size]
