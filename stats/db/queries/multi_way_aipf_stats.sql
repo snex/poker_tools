@@ -15,6 +15,7 @@ from (
     inner join stakes on hand_histories.stake_id = stakes.id
   where
     all_in = true
+    and showdown = true
     and flop is null
     and (
       note ilike '%side pot%'
@@ -41,6 +42,7 @@ from (
   where
     all_in = true
     and flop is null
+    and showdown = true
     and (
       note ilike '%side pot%'
       or note ilike '%vs muck%'
@@ -67,6 +69,7 @@ from (
   where
     all_in = true
     and flop is null
+    and showdown = true
     and (
       note ilike '%side pot%'
       or note ilike '%vs muck%'
