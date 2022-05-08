@@ -35,7 +35,7 @@ To record flop, turn, and river, just start one of your note lines with: "Flop x
 
 If your note contains the phrase "all in" and your result is a positive number or there is a villain cards line, then this hand will be considered an all in hand.
 
-The villain cards line must contain the phrase "V show (something)" or "V muck." You can place anything else before or after these phrases, for example: "UTG V show AA and win" and it will still be picked up.
+The villain cards line must contain the phrase "V show (something)" or "V muck." You can place anything else before or after these phrases, for example: "UTG V show AA and win" and it will still be picked up. You can also have multiple villain cards lines.
 
 Example hand file:
 
