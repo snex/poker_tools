@@ -1,5 +1,11 @@
 -- monthly and yearly stats for aipf pots
 
+\! echo ""
+\! echo "========================================================================"
+\! echo "All-in Preflop Stats"
+\! echo "========================================================================"
+\! echo ""
+
 select
   num_hands
   ,round(pos::numeric / num_hands::numeric, 3) as win_rate
@@ -65,3 +71,9 @@ from (
   group by 1
 ) as foo
 order by 1 desc;
+
+\! echo ""
+\! echo "========================================================================"
+\! echo "End All-in Preflop Stats"
+\! echo "========================================================================"
+\! echo ""

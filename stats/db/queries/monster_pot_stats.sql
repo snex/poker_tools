@@ -1,8 +1,8 @@
--- monthly and yearly stats for multi-way aipf pots
+-- monthly and yearly stats for pots where we won or lost >= 200bbs
 
 \! echo ""
 \! echo "========================================================================"
-\! echo "Multi-way All In Preflop Stats"
+\! echo "Pots Won/Lost 200+bbs Stats"
 \! echo "========================================================================"
 \! echo ""
 
@@ -13,20 +13,14 @@ select
 from (
   select
     count(hand_histories.id) as num_hands
-    ,sum(case when (result / stakes.stakes_array[1] > 0) then 1 else 0 end) as pos
-    ,sum(case when (result / stakes.stakes_array[1] < 0) then 1 else 0 end) as neg
+    ,sum(case when (result / stakes.stakes_array[1] >= 200) then 1 else 0 end) as pos
+    ,sum(case when (result / stakes.stakes_array[1] <= -200) then 1 else 0 end) as neg
     ,avg(result) as won_per_hand
   from
     hand_histories
     inner join stakes on hand_histories.stake_id = stakes.id
   where
-    all_in = true
-    and showdown = true
-    and flop is null
-    and (
-      note ilike '%side pot%'
-      or note ilike '%vs muck%'
-    )
+    (abs(result) / stakes.stakes_array[1]) >= 200
   ) as foo
 order by 1 desc;
 
@@ -39,20 +33,14 @@ from (
   select
     extract(year from date) as date
     ,count(hand_histories.id) as num_hands
-    ,sum(case when (result / stakes.stakes_array[1] > 0) then 1 else 0 end) as pos
-    ,sum(case when (result / stakes.stakes_array[1] < 0) then 1 else 0 end) as neg
+    ,sum(case when (result / stakes.stakes_array[1] >= 200) then 1 else 0 end) as pos
+    ,sum(case when (result / stakes.stakes_array[1] <= -200) then 1 else 0 end) as neg
     ,avg(result) as won_per_hand
   from
     hand_histories
     inner join stakes on hand_histories.stake_id = stakes.id
   where
-    all_in = true
-    and flop is null
-    and showdown = true
-    and (
-      note ilike '%side pot%'
-      or note ilike '%vs muck%'
-    )
+    (abs(result) / stakes.stakes_array[1]) >= 200
   group by 1
   ) as foo
 order by 1 desc;
@@ -66,26 +54,20 @@ from (
   select
     extract(year from date) || '-' || lpad(extract(month from date)::varchar, 2, '0') as date
     ,count(hand_histories.id) as num_hands
-    ,sum(case when (result / stakes.stakes_array[1] > 0) then 1 else 0 end) as pos
-    ,sum(case when (result / stakes.stakes_array[1] < 0) then 1 else 0 end) as neg
+    ,sum(case when (result / stakes.stakes_array[1] >= 200) then 1 else 0 end) as pos
+    ,sum(case when (result / stakes.stakes_array[1] <= -200) then 1 else 0 end) as neg
     ,avg(result) as won_per_hand
   from
     hand_histories
     inner join stakes on hand_histories.stake_id = stakes.id
   where
-    all_in = true
-    and flop is null
-    and showdown = true
-    and (
-      note ilike '%side pot%'
-      or note ilike '%vs muck%'
-    )
+    (abs(result) / stakes.stakes_array[1]) >= 200
   group by 1
 ) as foo
 order by 1 desc;
 
 \! echo ""
 \! echo "========================================================================"
-\! echo "End Multi-way All In Preflop Stats"
+\! echo "End Pots Won/Lost 200+bbs Stats"
 \! echo "========================================================================"
 \! echo ""

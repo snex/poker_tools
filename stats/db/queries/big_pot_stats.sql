@@ -1,5 +1,11 @@
 -- monthly and yearly stats for pots where we won or lost >= 80bbs
 
+\! echo ""
+\! echo "========================================================================"
+\! echo "Pots Won/Lost 80+bbs Stats"
+\! echo "========================================================================"
+\! echo ""
+
 select
   num_hands
   ,round(pos::numeric / num_hands::numeric, 3) as win_rate
@@ -59,3 +65,9 @@ from (
   group by 1
 ) as foo
 order by 1 desc;
+
+\! echo ""
+\! echo "========================================================================"
+\! echo "End Pots Won/Lost 80+bbs Stats"
+\! echo "========================================================================"
+\! echo ""
