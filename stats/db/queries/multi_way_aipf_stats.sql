@@ -13,7 +13,7 @@ select
 from (
   select
     count(hand_histories.id) as num_hands
-    ,sum(case when (result / stakes.stakes_array[1] > 0) then 1 else 0 end) as pos
+    ,sum(case when (result / stakes.stakes_array[1] >= 0) then 1 else 0 end) as pos
     ,sum(case when (result / stakes.stakes_array[1] < 0) then 1 else 0 end) as neg
     ,avg(result) as won_per_hand
   from
@@ -39,7 +39,7 @@ from (
   select
     extract(year from date) as date
     ,count(hand_histories.id) as num_hands
-    ,sum(case when (result / stakes.stakes_array[1] > 0) then 1 else 0 end) as pos
+    ,sum(case when (result / stakes.stakes_array[1] >= 0) then 1 else 0 end) as pos
     ,sum(case when (result / stakes.stakes_array[1] < 0) then 1 else 0 end) as neg
     ,avg(result) as won_per_hand
   from
@@ -66,7 +66,7 @@ from (
   select
     extract(year from date) || '-' || lpad(extract(month from date)::varchar, 2, '0') as date
     ,count(hand_histories.id) as num_hands
-    ,sum(case when (result / stakes.stakes_array[1] > 0) then 1 else 0 end) as pos
+    ,sum(case when (result / stakes.stakes_array[1] >= 0) then 1 else 0 end) as pos
     ,sum(case when (result / stakes.stakes_array[1] < 0) then 1 else 0 end) as neg
     ,avg(result) as won_per_hand
   from
