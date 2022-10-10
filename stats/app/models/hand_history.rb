@@ -6,7 +6,7 @@ class HandHistory < ApplicationRecord
   belongs_to :bet_size
   belongs_to :table_size
   belongs_to :stake
-  has_many :villain_hands
+  has_many :villain_hands, dependent: :delete_all
 
   def self.import(filename, stats_sheet)
     date = File.basename(filename.split('.')[0], '.*')
