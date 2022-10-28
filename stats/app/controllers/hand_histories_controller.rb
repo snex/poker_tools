@@ -16,10 +16,10 @@ class HandHistoriesController < ApplicationController
   end
 
   def by_date
-    @hh = HandHistory.joins(:hand, :position, :bet_size, :table_size, :stake)
+    @hh = HandHistory.joins(:hand, :position, :bet_size, :table_size, poker_session: :stake)
     @hh = apply_filters(@hh)
 
-    @results_by_month = @hh.group_by_month(:date).sum(:result)
+    @results_by_month = @hh.group_by_month('poker_sessions.start_time').sum(:result)
     @hands = Hand.all
     @positions = Position.all
     @bet_sizes = BetSize.all

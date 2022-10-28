@@ -20,7 +20,7 @@ class HandHistoryDatatable < AjaxDatatablesRails::ActiveRecord
   end
 
   def get_records_for_chart
-    records.unscope(:limit, :offset).order('hand_histories.date asc, hand_histories.id asc')
+    records.unscope(:limit, :offset).order('poker_sessions.start_time asc, hand_histories.id asc')
   end
 
   private

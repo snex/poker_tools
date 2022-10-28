@@ -3,7 +3,7 @@ json.datapoints @raw_numbers.cum_sum
 json.bet_size_colors @hand_histories.pluck('bet_sizes.color')
 json.position_colors @hand_histories.pluck('positions.color')
 json.results @hand_histories.pluck(:result)
-json.dates @hand_histories.pluck(:date)
+json.dates @hand_histories.pluck(Arel.sql('poker_sessions.start_time'))
 json.notes @hand_histories.pluck(:note)
 json.hand_count @hand_histories.count
 json.hand_sum @raw_numbers.sum.to_i
