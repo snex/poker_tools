@@ -1,8 +1,9 @@
 class HandHistoryDatatable < AjaxDatatablesRails::ActiveRecord
+  include Conditionals
 
   def view_columns
     @view_columns ||= {
-      date:       { source: 'HandHistory.date', cond: :date_range, delimiter: '-yadcf_delim-' },
+      date:       { source: 'PokerSession.start_time', cond: :date_range, delimiter: '-yadcf_delim-' },
       result:     { source: 'HandHistory.result', cond: between_condition },
       hand:       { source: 'Hand.hand', cond: :string_eq },
       position:   { source: 'Position.position', cond: :string_eq },
@@ -25,15 +26,15 @@ class HandHistoryDatatable < AjaxDatatablesRails::ActiveRecord
   private
 
   def data
-    records.includes(:hand, :position, :bet_size, :table_size, :stake).map do |record|
+    records.includes(:hand, :position, :bet_size, :table_size, poker_session: :stake).map do |record|
       {
-        date:       record.date,
+        date:       record.poker_session.start_time.to_date,
         result:     record.result,
         hand:       record.hand,
         position:   record.position,
         bet_size:   record.bet_size.description,
         table_size: record.table_size.description,
-        stake:      record.stake.stake,
+        stake:      record.poker_session.stake.stake,
         flop:       record.flop,
         turn:       record.turn,
         river:      record.river,
@@ -46,51 +47,6 @@ class HandHistoryDatatable < AjaxDatatablesRails::ActiveRecord
   end
 
   def get_raw_records
-    HandHistory.all.includes(:hand, :position, :bet_size, :table_size, :stake).joins(:hand, :position, :bet_size, :table_size, :stake)
+    HandHistory.all.includes(:hand, :position, :bet_size, :table_size, poker_session: :stake).joins(:hand, :position, :bet_size, :table_size, poker_session: :stake)
   end
-
-  def between_condition
-    ->(column, _) do 
-      min, max = column.search.value.split('-yadcf_delim-')
-      use_abs = (min.try(:[], 0) == '!')
-
-      if use_abs
-        min = min[1..-1]
-      end
-
-      if min.blank?
-        min = -Float::INFINITY
-      else
-        min = min.to_i
-      end
-      if max.blank?
-        max = Float::INFINITY
-      else
-        max = max.to_i
-      end
-
-      if use_abs
-        column.table[column.field].abs.between(min..max)
-      else
-        column.table[column.field].between(min..max)
-      end
-    end
-  end
-
-  def boolean_condition
-    ->(column, _) do
-      column.table[column.field].eq(column.search.value)
-    end
-  end
-
-  def not_null_condition
-    ->(column, _) do
-      if column.search.value == 'true'
-        column.table[column.field].not_eq(nil)
-      else
-        column.table[column.field].eq(nil)
-      end
-    end
-  end
-
 end

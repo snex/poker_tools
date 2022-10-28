@@ -1,0 +1,14 @@
+%thead
+  %tr
+    %th.text-center{colspan: 8}
+      Global Stats
+  =render partial: 'stats_table_headers'
+%tbody.text-center
+  %td= @ps_records.pct_won
+  %td= @ps_records.best
+  %td= @ps_records.worst
+  %td= @ps_records.avg_wins
+  %td= @ps_records.avg_losses
+  %td= @ps_records.avg
+  %td= @ps_records.longest_win_streak
+  %td= @ps_records.longest_loss_streak

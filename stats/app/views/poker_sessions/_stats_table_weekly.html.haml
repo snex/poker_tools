@@ -1,0 +1,15 @@
+%thead
+  %tr
+    %th.text-center{colspan: 8}
+      Weekly Stats
+  =render partial: 'stats_table_headers'
+%tbody.text-center
+  %tr
+    %td= @ps_records.weekly_pct_won
+    %td= @ps_records.weekly_best
+    %td= @ps_records.weekly_worst
+    %td= @ps_records.weekly_avg_wins
+    %td= @ps_records.weekly_avg_losses
+    %td= @ps_records.weekly_avg
+    %td= @ps_records.weekly_longest_win_streak
+    %td= @ps_records.weekly_longest_loss_streak

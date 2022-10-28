@@ -1,0 +1,2 @@
+class BetStructure < ApplicationRecord
+end

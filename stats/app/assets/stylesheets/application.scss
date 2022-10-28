@@ -12,16 +12,14 @@
  *
  */
 
-@import 'bootstrap/dist/css/bootstrap';
-$fa-font-path: '@fortawesome/fontawesome-free/webfonts';
-@import "@fortawesome/fontawesome-free/css/all";
-@import "@fortawesome/fontawesome-free/scss/fontawesome";
-@import "@fortawesome/fontawesome-free/scss/solid";
-@import 'datatables.net-bs4/css/dataTables.bootstrap4';
-@import 'jquery-ui/themes/base/core';
-@import 'jquery-ui/themes/base/datepicker';
-@import 'jquery-ui/themes/base/theme';
-@import 'chosen-js/chosen';
+@import 'datatables.net-bs4/css/dataTables.bootstrap4.css';
+@import 'jquery-ui/themes/base/core.css';
+@import 'jquery-ui/themes/base/datepicker.css';
+@import 'jquery-ui/themes/base/theme.css';
+@import 'chosen-js/chosen.css';
+@import 'bootstrap';
+@import 'font-awesome';
+@import 'simple_calendar';
 
 form input[type="submit"] {
   background: none !important;
@@ -36,30 +34,4 @@ form input[type="submit"] {
   height: calc(1.5rem + 1px) !important;
   padding: 0rem 0.5rem !important;
   margin-right: 1rem;
-}
-
-@font-face {
-  font-family: 'Font Awesome 5 Brands';
-  font-style: normal;
-  font-weight: 400;
-  font-display: $fa-font-display;
-  src: font-url('#{$fa-font-path}/fa-brands-400.eot');
-  src: font-url('#{$fa-font-path}/fa-brands-400.eot?#iefix') format('embedded-opentype'),
-  font-url('#{$fa-font-path}/fa-brands-400.woff2') format('woff2'),
-  font-url('#{$fa-font-path}/fa-brands-400.woff') format('woff'),
-  font-url('#{$fa-font-path}/fa-brands-400.ttf') format('truetype'),
-  font-url('#{$fa-font-path}/fa-brands-400.svg#fontawesome') format('svg');
-}
-
-@font-face {
-  font-family: 'Font Awesome 5 Brands';
-  font-style: solid;
-  font-weight: 900;
-  font-display: $fa-font-display;
-  src: font-url('#{$fa-font-path}/fa-solid-400.eot');
-  src: font-url('#{$fa-font-path}/fa-solid-400.eot?#iefix') format('embedded-opentype'),
-  font-url('#{$fa-font-path}/fa-solid-400.woff2') format('woff2'),
-  font-url('#{$fa-font-path}/fa-solid-400.woff') format('woff'),
-  font-url('#{$fa-font-path}/fa-solid-400.ttf') format('truetype'),
-  font-url('#{$fa-font-path}/fa-solid-400.svg#fontawesome') format('svg');
 }

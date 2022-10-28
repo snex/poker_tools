@@ -1,58 +1,87 @@
-require 'google_drive'
-
 class HandHistory < ApplicationRecord
   belongs_to :hand
   belongs_to :position
   belongs_to :bet_size
   belongs_to :table_size
-  belongs_to :stake
-  has_many :villain_hands, dependent: :delete_all
+  belongs_to :stake,         optional: true
+  belongs_to :poker_session, optional: true
+  has_many   :villain_hands, dependent: :delete_all
 
-  def self.import(filename, stats_sheet)
+  def self.import(filename)
     date = File.basename(filename.split('.')[0], '.*')
     data = File.new(filename).readlines.join.split("\n\n")
 
-    if stats_sheet.blank?
-      puts "No spreadsheet ID given, skipping sheet entry"
-    else
-      hands = data.size - data.select { |d| d.match?(/^stakes .*/i) }.size
-      saw_flop = data.select { |d| d.match?(/Flop/) }.size
-      wtsd = data.select { |d| d.match?(/Vs? (show|muck)/) }.size
-      wmsd = data.select { |d| d.match?(/Vs? (show|muck)/) && d.match?(/\+/) }.size
-      puts ""
-      puts "SD stats"
-      puts "============================"
-      puts "Hands: #{hands}"
-      puts "Saw Flop: #{saw_flop}"
-      puts "WTSD: #{wtsd}"
-      puts "W$SD: #{wmsd}"
-      puts "============================"
-      session = GoogleDrive::Session.from_config(Rails.root.join('config.json').to_s)
-      ws = session.spreadsheet_by_key(stats_sheet).worksheet_by_title('SD Stats')
-      row = 0
-      (1..ws.num_rows).each do |col|
-        row += 1
-        break if ws[row, 1].empty?
-      end
-      ws[row, 1] = date
-      ws[row, 3] = hands
-      ws[row, 4] = saw_flop
-      ws[row, 5] = wtsd
-      ws[row, 6] = wmsd
-      ws.save
-      puts "Data entered into spreadsheet"
-    end
-
     transaction do
-      stake = nil
+      new_ps = nil
 
       data.each do |d|
         d.strip!
         puts d
 
-        if d.match?(/^stakes .*/i)
-          stake = Stake.find_or_create_by(stake: d.match(/^stakes (.*)$/i)[1])
-          puts "Setting stake to #{stake}"
+        if d.match?(/^session .*/i)
+          session_lines = d.split("\n")
+          stake = bs = pv = start_time = end_time = buyin = cashout = hands_dealt = nil
+
+          session_lines.each do |sl|
+            sl.strip!
+
+            if sl.match?(/^session .*/i)
+              game_type = d.match(/^session (.*)$/i)[1]
+              stake_name, game_name = game_type.split(' ')
+              stake = Stake.find_or_create_by(stake: stake_name)
+
+              case game_name.downcase
+              when 'nl'
+                bs = BetStructure.find_by(name: 'No Limit')
+                pv = PokerVariant.find_by(name: 'Texas Holdem')
+              when 'bigo'
+                bs = BetStructure.find_by(name: 'Pot Limit')
+                pv = PokerVariant.find_by(name: 'BigO')
+              when 'plo'
+                bs = BetStructure.find_by(name: 'Pot Limit')
+                pv = PokerVariant.find_by(name: 'Omaha')
+              else
+                raise "Unknown game type: #{game_name}"
+              end
+
+              if bs.blank? || pv.blank?
+                raise 'BetStructure or PokerVariant not found!'
+              end
+
+              puts "stake: #{stake.stake}, bs: #{bs.name}, pv: #{pv.name}"
+            elsif sl.match?(/^start: .*/i)
+              start_time = ActiveSupport::TimeZone[Time.zone.name].parse("#{date} #{sl.match(/^start: (.*)$/i)[1]}")
+              puts "start_time: #{start_time}"
+            elsif sl.match?(/^end: .*/i)
+              end_time = ActiveSupport::TimeZone[Time.zone.name].parse("#{date} #{sl.match(/^end: (.*)$/i)[1]}")
+              puts "end_time: #{end_time}"
+            elsif sl.match?(/^in: .*/i)
+              buyin = sl.match(/^in: (.*)$/i)[1].to_i
+              puts "buyin: #{buyin}"
+            elsif sl.match?(/^out: .*/i)
+              cashout = sl.match(/^out: (.*)$/i)[1].to_i
+              puts "cashout: #{cashout}"
+            elsif sl.match?(/^hands: .*/i)
+              hands_dealt = sl.match(/^hands: (.*)$/i)[1].to_i
+              puts "hands_dealt: #{hands_dealt}"
+            end
+          end
+
+          # this can happen if the session goes beyond midnight
+          if end_time < start_time
+            end_time += 1.day
+          end
+
+          new_ps = PokerSession.create!(
+            start_time:    start_time,
+            end_time:      end_time,
+            buyin:         buyin,
+            cashout:       cashout,
+            hands_dealt:   hands_dealt,
+            stake:         stake,
+            bet_structure: bs,
+            poker_variant: pv
+          )
           next
         end
 
@@ -92,19 +121,18 @@ class HandHistory < ApplicationRecord
         puts "v_hands: #{v_hands.map(&:hand)}"
 
         hh = HandHistory.create!(
-          date:       date,
-          result:     res.to_i,
-          hand:       hand,
-          position:   pos,
-          bet_size:   size,
-          table_size: tbl_size,
-          stake:      stake,
-          flop:       flop,
-          turn:       turn,
-          river:      river,
-          note:       note,
-          all_in:     all_in,
-          showdown:   showdown
+          result:        res.to_i,
+          hand:          hand,
+          position:      pos,
+          bet_size:      size,
+          table_size:    tbl_size,
+          flop:          flop,
+          turn:          turn,
+          river:         river,
+          note:          note,
+          all_in:        all_in,
+          showdown:      showdown,
+          poker_session: new_ps
         )
         v_hands.each do |v_hand|
           VillainHand.create!(
@@ -112,6 +140,27 @@ class HandHistory < ApplicationRecord
             hand_history: hh
           )
         end
+      end
+    end
+  end
+
+  def self.update_old_records
+    transaction do
+      bs = BetStructure.find_by(name: 'No Limit')
+      pv = PokerVariant.find_by(name: 'Texas Holdem')
+
+      HandHistory.where(poker_session: nil).pluck('distinct date, stake_id').each do |date, s_id|
+        ps = PokerSession.
+          where(bet_structure: bs, poker_variant: pv, stake_id: s_id).
+          where('start_time between ? and ?', date.at_midnight, (date + 1.day).at_midnight - 1.second).
+          first
+
+        if ps.blank?
+          puts "No PokerSession found for date: #{date} and stake: #{s_id}"
+        end
+
+        hh = HandHistory.where(poker_session: nil, date: date, stake_id: s_id)
+        hh.update_all(poker_session_id: ps.id)
       end
     end
   end

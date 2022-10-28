@@ -5,7 +5,7 @@ class HandHistoriesController < ApplicationController
 
   def index
     @params = hand_histories_params
-    @hand_histories = HandHistoryDatatable.new(hand_histories_params)
+    @hand_histories = HandHistoryDatatable.new(@params)
 
     respond_to do |format|
       format.html
