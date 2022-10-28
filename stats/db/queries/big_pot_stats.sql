@@ -1,4 +1,3 @@
--- monthly and yearly stats for pots where we won or lost >= 80bbs
 
 \! echo ""
 \! echo "========================================================================"
@@ -18,7 +17,8 @@ from (
     ,avg(result) as won_per_hand
   from
     hand_histories
-    inner join stakes on hand_histories.stake_id = stakes.id
+    inner join poker_sessions on hand_histories.poker_session_id = poker_sessions.id
+    inner join stakes on poker_sessions.stake_id = stakes.id
   where
     (abs(result) / stakes.stakes_array[1]) >= 80
   ) as foo
@@ -31,14 +31,15 @@ select
   ,round(won_per_hand, 2) as won_per_hand
 from (
   select
-    extract(year from date) as date
+    extract(year from poker_sessions.start_time) as date
     ,count(hand_histories.id) as num_hands
     ,sum(case when (result / stakes.stakes_array[1] >= 80) then 1 else 0 end) as pos
     ,sum(case when (result / stakes.stakes_array[1] <= -80) then 1 else 0 end) as neg
     ,avg(result) as won_per_hand
   from
     hand_histories
-    inner join stakes on hand_histories.stake_id = stakes.id
+    inner join poker_sessions on hand_histories.poker_session_id = poker_sessions.id
+    inner join stakes on poker_sessions.stake_id = stakes.id
   where
     (abs(result) / stakes.stakes_array[1]) >= 80
   group by 1
@@ -52,14 +53,15 @@ select
   ,round(won_per_hand, 2) as won_per_hand
 from (
   select
-    extract(year from date) || '-' || lpad(extract(month from date)::varchar, 2, '0') as date
+    extract(year from poker_sessions.start_time) || '-' || lpad(extract(month from poker_sessions.start_time)::varchar, 2, '0') as date
     ,count(hand_histories.id) as num_hands
     ,sum(case when (result / stakes.stakes_array[1] >= 80) then 1 else 0 end) as pos
     ,sum(case when (result / stakes.stakes_array[1] <= -80) then 1 else 0 end) as neg
     ,avg(result) as won_per_hand
   from
     hand_histories
-    inner join stakes on hand_histories.stake_id = stakes.id
+    inner join poker_sessions on hand_histories.poker_session_id = poker_sessions.id
+    inner join stakes on poker_sessions.stake_id = stakes.id
   where
     (abs(result) / stakes.stakes_array[1]) >= 80
   group by 1

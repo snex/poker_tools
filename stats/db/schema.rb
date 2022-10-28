@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_10_23_180435) do
+ActiveRecord::Schema[7.0].define(version: 2022_10_28_055528) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -36,7 +36,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_23_180435) do
   end
 
   create_table "hand_histories", force: :cascade do |t|
-    t.date "date"
     t.integer "result", null: false
     t.bigint "hand_id", null: false
     t.bigint "position_id", null: false
@@ -50,14 +49,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_23_180435) do
     t.datetime "updated_at", null: false
     t.boolean "showdown", default: false
     t.boolean "all_in", default: false
-    t.integer "stake_id"
-    t.bigint "poker_session_id"
+    t.bigint "poker_session_id", null: false
     t.index ["bet_size_id"], name: "index_hand_histories_on_bet_size_id"
-    t.index ["date"], name: "index_hand_histories_on_date"
     t.index ["hand_id"], name: "index_hand_histories_on_hand_id"
     t.index ["poker_session_id"], name: "index_hand_histories_on_poker_session_id"
     t.index ["position_id"], name: "index_hand_histories_on_position_id"
-    t.index ["stake_id"], name: "index_hand_histories_on_stake_id"
     t.index ["table_size_id"], name: "index_hand_histories_on_table_size_id"
   end
 
@@ -114,7 +110,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_23_180435) do
   add_foreign_key "hand_histories", "hands"
   add_foreign_key "hand_histories", "poker_sessions"
   add_foreign_key "hand_histories", "positions"
-  add_foreign_key "hand_histories", "stakes"
   add_foreign_key "hand_histories", "table_sizes"
   add_foreign_key "poker_sessions", "bet_structures"
   add_foreign_key "poker_sessions", "poker_variants"
