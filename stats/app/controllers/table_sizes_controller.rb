@@ -4,7 +4,7 @@ class TableSizesController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def index
-    @table_sizes = HandHistory.includes(:hand, :position, :bet_size, :stake).joins(:table_size).group(:'table_sizes.description')
+    @table_sizes = HandHistory.includes(:hand, :position, :bet_size, poker_session: :stake).joins(:table_size, poker_session: :stake).group(:'table_sizes.description')
     @table_sizes = apply_filters(@table_sizes)
 
     @sums = @table_sizes.sum(:result)

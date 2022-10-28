@@ -6,7 +6,7 @@ module ApplicationHelper
     when result.to_i > 0
       'alert alert-success'
     else
-      ''
+      'alert'
     end
   end
 

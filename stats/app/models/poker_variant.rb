@@ -1,0 +1,2 @@
+class PokerVariant < ApplicationRecord
+end

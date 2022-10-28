@@ -15,14 +15,14 @@ module Filter
       relation = relation.where(table_size: params[:table_size])
     end
     if params[:stake].present?
-      relation = relation.where(stake: params[:stake])
+      relation = relation.where(poker_sessions: { stake: params[:stake] })
     end
     if params[:from].present? && params[:to].present?
-      relation = relation.where(date: params[:from]..params[:to])
+      relation = relation.where(poker_sessions: { start_time: params[:from]..params[:to] })
     elsif params[:from].present?
-      relation = relation.where('date >= ?', params[:from])
+      relation = relation.where('poker_sessions.start_time >= ?', params[:from])
     elsif params[:to].present?
-      relation = relation.where('date <= ?', params[:to])
+      relation = relation.where('poker_sessions.start_time <= ?', params[:to])
     end
     if params[:flop].present?
       if ActiveModel::Type::Boolean.new.cast(params[:flop])

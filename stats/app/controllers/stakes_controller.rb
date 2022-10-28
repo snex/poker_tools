@@ -4,7 +4,7 @@ class StakesController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def index
-    @stakes = HandHistory.includes(:hand, :position, :bet_size, :table_size).joins(:stake).group(:'stakes.stake')
+    @stakes = HandHistory.includes(:hand, :position, :bet_size, :table_size).joins(poker_session: :stake).group(:'stakes.stake')
     @stakes = apply_filters(@stakes)
 
     @sums = @stakes.sum(:result)

@@ -1,0 +1,15 @@
+%thead
+  %tr
+    %th.text-center{colspan: 8}
+      Daily Stats
+  =render partial: 'stats_table_headers'
+%tbody.text-center
+  %tr
+    %td= @ps_records.daily_pct_won
+    %td= @ps_records.daily_best
+    %td= @ps_records.daily_worst
+    %td= @ps_records.daily_avg_wins
+    %td= @ps_records.daily_avg_losses
+    %td= @ps_records.daily_avg
+    %td= @ps_records.daily_longest_win_streak
+    %td= @ps_records.daily_longest_loss_streak

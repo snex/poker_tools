@@ -211,6 +211,7 @@ $(document).ready(function() {
         {'data': 'all_in'},
         {'data': 'note'}
       ],
+      'order': [[0, 'desc']],
       'columnDefs': [
         {'width': '5%', 'targets': [0,1,2,3,4,5,6]}
       ]
