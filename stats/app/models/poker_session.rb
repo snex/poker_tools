@@ -238,6 +238,30 @@ class PokerSession < ApplicationRecord
     yearly_results.longest_streak(0, :<)
   end
 
+  def self.hands_dealt(poker_sessions = all)
+    poker_sessions.sum(:hands_dealt)
+  end
+
+  def self.hands_played(poker_sessions = all)
+    poker_sessions.joins(:hand_histories).count('hand_histories.id')
+  end
+
+  def self.saw_flop(poker_sessions = all)
+    poker_sessions.joins(:hand_histories).where.not(hand_histories: { flop: nil }).count('hand_histories.id')
+  end
+
+  def self.wtsd(poker_sessions = all)
+    poker_sessions.joins(:hand_histories).where(hand_histories: { showdown: true }).count('hand_histories.id')
+  end
+
+  def self.wmsd(poker_sessions = all)
+    poker_sessions.joins(:hand_histories).where(hand_histories: { showdown: true }).where('hand_histories.result >= 0').count('hand_histories.id')
+  end
+
+  def self.vpip(poker_sessions = all)
+    (hands_played(poker_sessions).to_f / hands_dealt(poker_sessions).to_f).round(2)
+  end
+
   def self.import_csv(filename)
     transaction do
       CSV.foreach(filename, headers: true) do |csv|

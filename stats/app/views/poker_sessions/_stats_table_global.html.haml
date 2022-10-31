@@ -1,7 +1,23 @@
-%thead
+%thead.text-center
   %tr
-    %th.text-center{colspan: 8}
+    %th{colspan: 8}
       Global Stats
+  %tr
+    %th Hands Dealt
+    %th Hands Played
+    %th Saw Flop
+    %th WTSD
+    %th W$SD
+    %th VPIP
+%tbody.text-center
+  %tr
+    %td= PokerSession.hands_dealt
+    %td= PokerSession.hands_played
+    %td= PokerSession.saw_flop
+    %td= PokerSession.wtsd
+    %td= PokerSession.wmsd
+    %td= PokerSession.vpip
+%thead.text-center
   =render partial: 'stats_table_headers'
 %tbody.text-center
   %td= @ps_records.pct_won
