@@ -48,6 +48,12 @@ task :setup do
   # command %{gem install bundler}
 end
 
+task :wtf do
+  command %{echo $PATH}
+  command %{which webpack}
+  command %{webpack}
+end
+
 desc "Deploys the current version to the server."
 task :deploy do
   # uncomment this line to make sure you pushed your local branch to the remote origin
