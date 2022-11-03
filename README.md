@@ -13,10 +13,10 @@ The filename must be named the date of the session in YYYY-MM-DD, for example: 2
 Hands must be organized under a "Session" section that must be in the following format:
 ```
 Session 1/2 NL
-Start: [[start_time]]
-End: [[end_time]]
-In: [[buyin]]
-Out: [[cashout]]
+Start: [start_time]
+End: [end_time]
+In: [buyin]
+Out: [cashout]
 Hands: [[hands_dealt]]
 ```
 
