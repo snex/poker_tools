@@ -259,7 +259,7 @@ class PokerSession < ApplicationRecord
   end
 
   def self.vpip(poker_sessions = all)
-    (hands_played(poker_sessions).to_f / hands_dealt(poker_sessions).to_f).round(2)
+    (hands_played(poker_sessions.where.not(hands_dealt: nil)).to_f / hands_dealt(poker_sessions).to_f).round(2)
   end
 
   def self.import_csv(filename)
