@@ -1,80 +1,58 @@
-# Poker Tools #
+# stats
 
-Just some tools I find useful for analyzing poker
+Shows statistics for recorded poker hands. In order to import hand data, you must run the "data:import" rake task
 
-## stats.r ##
-
-This is a script that will take your real poker results, build a probability distribution function based on them, then use that function to create a random year's worth of poker sessions. The purpose is to see potential swings, how big they are, how long they are likely to last, etc. It also provides winrate statistics, including weekly and monthly simple moving averages.
-
-### Installation ###
-
-This script requires the [R Programming Language](https://www.r-project.org/), as well as the following packages for it:
-* dplyr
-* logspline
-* plyr
-* TTR
-
-Inside the script there is a section headed with "EDIT THESE VALUES ONLY." You should edit these values to tailor them to your specific needs.
-* "runs" is the number of random samples to generate based on your data. Each run contains a year's worth of projected data. I find that 10,000 runs gives a pretty good spread of possibilities.
-* "times_per_week" is the number of sessions you put in per week.
-* "stoploss" if you play with a stoploss, set this to that value. Or set it to NULL if you don't make use of a stoploss.
-
-### Usage ###
-
-You will need a file called 'data.txt' in the same folder where the script is. The file can take one of three formats:
-
-1. A list of session results, one per line. Example:
-```CSV
-100
-200
--50
+```
+RAILS_ENV=production rake data:import file=filename
 ```
 
-2. A comma-separated list of session results and time stamps, one per line. Example:
-```CSV
-100,5:05
-200,6:45
--50,2:32
+"filename" must be named the date of the session in YYYY-MM-DD, for example: 2019-01-08.txt
+
+The file must contain hands in the following format:
+
+```
+human readable notes,
+can be as many lines as you like
+[[villain cards line]]
+[result] [position] [hand] [bet_size] [[table_size]]
+
+this is the second hand
+[[villain cards line]]
+[result] [position] [hand] [bet_size] [[table_size]]
 ```
 
-3. A comma-separated list of session results, and what year they belong to. This will allow you to have multiple years' worth of data and still plot it all. To use this without time stamps, the second column must be blank. Example:
-```CSV
-100,,1
-200,,1
--50,,3
+Result must be an integer preceded by a '+' or a '-' sign.
+
+Position must be one of the following: SB, BB, UTG, UTG1, UTG2, MP, LJ, HJ, CO, BU, STRADDLE
+
+Hand must be a Holdem hand in standard notation, e.g.: AA, AKs, QTo
+
+Bet Size is the number of bets YOU put in preflop, or "limp" if you limped. For example, if you raise and another player 3bets and you fold, this will be 2b, since YOU only put in the single raise.
+
+Table Size is optional. If not present, the task will assume 10/9/8 handed. For other table sizes, just put the number in.
+
+To record flop, turn, and river, just start one of your note lines with: "Flop xxx," "Turn x," or "River x,". These do not need to be in any specific format. Everything after the space and before the comma will be listed as the flop/turn/river.
+
+If your note contains the phrase "all in" and your result is a positive number or there is a villain cards line, then this hand will be considered an all in hand.
+
+The villain cards line must contain the phrase "V show (something)" or "V muck." You can place anything else before or after these phrases, for example: "UTG V show AA and win" and it will still be picked up. You can also have multiple villain cards lines.
+
+Example hand file:
+
 ```
-You can also leave a line blank to represent a day off, so that your yearly graph will align properly based on your "times_per_week" value. Example:
-```CSV
-100,,1
-,,1
-200,,1
+2019-01-07.txt
+-----------------------------------
+open utg 20 AA, BB call
+Flop A33, check around
+Turn A, check, bet 10, call
+River 3, check, bet 20, raise all in 500, call
+BB V show 43o and lose
++530 utg AA 2b
+
+7 handed, straddle on, BU BB limp, check straddle 72o
+Flop AKQr, BB bet 20, fold
+-10 straddle 72o limp 7
+
+open BU 20 54s, sb 3b 80, bb 4b 225, fold
+-20 bu 54s 2b
 ```
-
-Ideally, all 3 fields should be used.
-
-Then, just run the script from the command line, making sure it is executable if it isn't already.
-
-There will be several blocks of text of output with some generic stats, as well as a PDF file with more detailed stats in graph form.
-
-### Output ###
-
-The text output should be self-expanatory. The PDF output is exlained below.
-
-#### Page 1 ####
-
-This is your probability distribution function. Since poker sessions do not seem to follow any distribution I am familiar with, and every player is different, I decided to use a logspline estimator function. This function is charted on top of a histogram of your actual results, so you can see how closely it estimates your actual play. It should even work for tournaments, sports bets, horse racing, or really anything where you can track daily cashflow.
-
-#### Page 2 ####
-
-This will display the more interesting runs in the randomly generated set. It will contain the best and worst, and the largest swings in both directions by session, week, and month. It will also display your actual results.
-
-#### Page 3 ####
-
-This will display your win rate data. If you used time stamps, it will calculate your win rate hourly, otherwise it will be by session. It includes the session win rate, the average win rate, and the weekly and monthly simple moving averages, to see if your recent results are performing better or worse than normal.
-
-#### Pages 4-7 ####
-
-These pages show the probability of streaks of a specific length occurring. Page 4 is by session, Page 5 by week, Page 6 by month, and Page 7 by year.
-
-## stats Rails App ##
-[View The Project's README](stats/README.md)
