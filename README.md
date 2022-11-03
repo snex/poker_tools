@@ -1,14 +1,28 @@
 # stats
 
-Shows statistics for recorded poker hands. In order to import hand data, you must run the "data:import" rake task
+Shows statistics for recorded poker hands. In order to import hand data, you can either run the "data:import" rake task as such:
 
 ```
 RAILS_ENV=production rake data:import file=filename
 ```
 
-"filename" must be named the date of the session in YYYY-MM-DD, for example: 2019-01-08.txt
+Or you can upload a text file from the Sessions page.
 
-The file must contain hands in the following format:
+The filename must be named the date of the session in YYYY-MM-DD, for example: 2019-01-08.txt
+
+Hands must be organized under a "Session" section that must be in the following format:
+```
+Session 1/2 NL
+Start: [[start_time]]
+End: [[end_time]]
+In: [[buyin]]
+Out: [[cashout]]
+Hands: [[hands_dealt]]
+```
+
+The "Hands" line can be omitted if you don't record the number of hands dealt, but this will make some stats such as VPIP unavailable.
+
+Below each Session section, the file must contain hands in the following format:
 
 ```
 human readable notes,
@@ -37,11 +51,21 @@ If your note contains the phrase "all in" and your result is a positive number o
 
 The villain cards line must contain the phrase "V show (something)" or "V muck." You can place anything else before or after these phrases, for example: "UTG V show AA and win" and it will still be picked up. You can also have multiple villain cards lines.
 
+You can have multiple sessions per file.
+
 Example hand file:
 
 ```
 2019-01-07.txt
 -----------------------------------
+
+Session 2/5 NL
+Start: 12:00 pm
+End: 1:00 pm
+In: 500
+Out: 1000
+Hands: 25
+
 open utg 20 AA, BB call
 Flop A33, check around
 Turn A, check, bet 10, call
