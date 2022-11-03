@@ -1,4 +1,4 @@
-class StakesController < ApplicationController
+class StakesController < AuthorizedPagesController
   include Filter
 
   skip_before_action :verify_authenticity_token
