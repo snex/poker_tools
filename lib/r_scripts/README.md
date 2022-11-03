@@ -77,4 +77,4 @@ This will display your win rate data. If you used time stamps, it will calculate
 These pages show the probability of streaks of a specific length occurring. Page 4 is by session, Page 5 by week, Page 6 by month, and Page 7 by year.
 
 ## stats Rails App ##
-[View The Project's README](stats/README.md)
+[View The Project's README](/README.md)
