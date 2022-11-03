@@ -37,6 +37,7 @@ gem 'arel_extensions', '~> 2.0'
 gem 'guard'
 gem 'guard-rake'
 gem 'simple_calendar', '~> 2.4'
+gem 'clearance'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

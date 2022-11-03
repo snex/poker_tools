@@ -1,4 +1,4 @@
-class BankrollTransactionsController < ApplicationController
+class BankrollTransactionsController < AuthorizedPagesController
   def index
     @poker_sessions = PokerSession.all
     @amount_won = @poker_sessions.sum('cashout - buyin')

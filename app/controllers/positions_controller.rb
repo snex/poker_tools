@@ -1,4 +1,4 @@
-class PositionsController < ApplicationController
+class PositionsController < AuthorizedPagesController
   include Filter
 
   skip_before_action :verify_authenticity_token

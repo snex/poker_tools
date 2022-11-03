@@ -1,4 +1,4 @@
-class TableSizesController < ApplicationController
+class TableSizesController < AuthorizedPagesController
   include Filter
 
   skip_before_action :verify_authenticity_token

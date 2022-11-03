@@ -1,4 +1,4 @@
-class BetSizesController < ApplicationController
+class BetSizesController < AuthorizedPagesController
   include Filter
 
   skip_before_action :verify_authenticity_token

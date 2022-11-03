@@ -1,4 +1,4 @@
-class HandsController < ApplicationController
+class HandsController < AuthorizedPagesController
   include Filter
 
   skip_before_action :verify_authenticity_token

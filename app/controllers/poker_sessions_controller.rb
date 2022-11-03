@@ -1,4 +1,4 @@
-class PokerSessionsController < ApplicationController
+class PokerSessionsController < AuthorizedPagesController
   include Filter
 
   skip_before_action :verify_authenticity_token, only: [:index, :upload]
