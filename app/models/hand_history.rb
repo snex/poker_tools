@@ -7,8 +7,7 @@ class HandHistory < ApplicationRecord
   belongs_to :poker_session, optional: true
   has_many   :villain_hands, dependent: :delete_all
 
-  def self.import(filename)
-    date = File.basename(filename.split('.')[0], '.*')
+  def self.import(date, filename)
     data = File.new(filename).readlines.join.split("\n\n")
 
     transaction do
@@ -29,6 +28,10 @@ class HandHistory < ApplicationRecord
               game_type = d.match(/^session (.*)$/i)[1]
               stake_name, game_name = game_type.split(' ')
               stake = Stake.find_or_create_by(stake: stake_name)
+
+              if game_name.blank?
+                raise 'No Game Name supplied'
+              end
 
               case game_name.downcase
               when 'nl'

@@ -6,6 +6,30 @@ require('jquery-ui/ui/widgets/datepicker')
 require('chart.js')
 
 $(document).ready(function() {
+  $('#upload-session').click(function () {
+    var fileDialog = document.createElement('input');
+    fileDialog.type = 'file';
+    fileDialog.accept = '.txt,text/plain';
+    fileDialog.addEventListener('change', function(e) {
+      var formData = new FormData();
+      formData.append('file', e.path[0].files[0]);
+      console.log(e.path[0].files[0]);
+      $.post({
+        url:         'poker_sessions/upload',
+        data:        formData,
+        processData: false,
+        contentType: false,
+        success: function(e) {
+          location.reload();
+        },
+        error: function(e) {
+          alert('there was an error uploading the file: ' + e.responseText);
+        }
+      });
+    });
+    fileDialog.dispatchEvent(new MouseEvent('click'));
+  });
+
   if ($('#ps-datatable').length > 0) {
     var dt = $('#ps-datatable').DataTable({
       'processing': true,

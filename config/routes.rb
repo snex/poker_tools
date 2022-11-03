@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
   resources :bankroll_transactions, except: [:new, :show, :edit]
-  resources :poker_sessions, only: [:show]
+  resources :poker_sessions, only: [:show] do
+    collection do
+      post 'upload'
+    end
+  end
 
   match '/date', to: 'hand_histories#by_date', as: 'by_date', via: [:get, :post]
   match '/hands', to: 'hands#index', as: 'hands', via: [:get, :post]

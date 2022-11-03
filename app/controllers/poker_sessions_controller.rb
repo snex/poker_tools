@@ -1,7 +1,7 @@
 class PokerSessionsController < ApplicationController
   include Filter
 
-  skip_before_action :verify_authenticity_token, only: [:index]
+  skip_before_action :verify_authenticity_token, only: [:index, :upload]
 
   def index
     @params = poker_sessions_params
@@ -18,6 +18,17 @@ class PokerSessionsController < ApplicationController
   end
 
   def show
+  end
+
+  def upload
+    begin
+      date = File.basename(params['file'].original_filename.split('.')[0], '.*')
+      HandHistory.import(date, params['file'].path)
+      render plain: '' and return
+    rescue => e
+      render plain: e.message, status: :unprocessable_entity
+      raise e
+    end
   end
 
   private
