@@ -48,12 +48,6 @@ task :setup do
   # command %{gem install bundler}
 end
 
-task :wtf do
-  command %{echo $PATH}
-  command %{which webpack}
-  command %{webpack}
-end
-
 desc "Deploys the current version to the server."
 task :deploy do
   # uncomment this line to make sure you pushed your local branch to the remote origin
@@ -65,6 +59,7 @@ task :deploy do
     invoke :'deploy:link_shared_paths'
     invoke :'bundle:install'
     invoke :'rails:db_migrate'
+    command 'yarn install'
     invoke :'rails:assets_precompile'
     invoke :'deploy:cleanup'
 
