@@ -23,9 +23,6 @@ gem 'jbuilder', '~> 2.7'
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
 
-# why the fuck wont this install as a dependency without me specifying it???
-gem 'timeout'
-
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
 gem 'haml', '~> 5.0'

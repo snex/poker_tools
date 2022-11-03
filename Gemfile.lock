@@ -285,7 +285,6 @@ DEPENDENCIES
   rails (~> 7.0)
   sass-rails (>= 6)
   simple_calendar (~> 2.4)
-  timeout
   tzinfo-data
   web-console (>= 3.3.0)
   webpacker
