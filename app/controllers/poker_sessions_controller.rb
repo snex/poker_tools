@@ -1,7 +1,7 @@
 class PokerSessionsController < AuthorizedPagesController
   include Filter
 
-  skip_before_action :verify_authenticity_token, only: [:index, :upload]
+  skip_before_action :verify_authenticity_token, only: [:index, :upload, :chart]
 
   def index
     @params = poker_sessions_params
@@ -29,6 +29,18 @@ class PokerSessionsController < AuthorizedPagesController
       render plain: e.message, status: :unprocessable_entity
       raise e
     end
+  end
+
+  def chart
+    if params[:month]
+      @poker_sessions = PokerSession.where("date_part('year', start_time) = ?", params[:year]).where("date_part('month', start_time) = ?", params[:month])
+    elsif params[:year]
+      @poker_sessions = PokerSession.where("date_part('year', start_time) = ?", params[:year])
+    else
+      @poker_sessions = PokerSession.all
+    end
+
+    render 'chart_data'
   end
 
   private

@@ -5,7 +5,122 @@ require('chosen-js')
 require('jquery-ui/ui/widgets/datepicker')
 require('chart.js')
 
+window.globalThis.updateCharts = (isoDate) => {
+  var newDate = new Date(Date.parse(isoDate));
+  var curYear = new Date().getYear() + 1900;
+  var year = newDate.getYear() + 1900;
+  var month = newDate.getMonth() + 1;
+
+  if (curYear != year) {
+    $.ajax({
+      url:      $('#yearchart').data('url'),
+      data:     {
+        year: year
+      },
+      async:    true,
+      dataType: 'json',
+      type:     'GET'
+    }).done(function(data) {
+      var yearChartContext = $('#yearchart').get(0).getContext('2d');
+      var yearChart = new Chart(yearChartContext, {
+        type: 'line',
+        data: {
+          labels: data.dates,
+          datasets: [
+            {
+              data: data.datapoints,
+              lineTension: 0,
+              fill: false,
+              pointRadius: 0,
+              borderColor: 'rgb(0, 192, 192)'
+            }
+          ]
+        }
+      });
+    });
+  }
+
+  $.ajax({
+    url:      $('#monthchart').data('url'),
+    data:     {
+      year:  year,
+      month: month
+    },
+    async:    true,
+    dataType: 'json',
+    type:     'GET'
+  }).done(function(data) {
+    var monthChartContext = $('#monthchart').get(0).getContext('2d');
+    var monthChart = new Chart(monthChartContext, {
+      type: 'line',
+      data: {
+        labels: data.dates,
+        datasets: [
+          {
+            data: data.datapoints,
+            lineTension: 0,
+            fill: false,
+            pointRadius: 0,
+            borderColor: 'rgb(0, 192, 192)'
+          }
+        ]
+      }
+    });
+  });
+}
+
 $(document).ready(function() {
+  var today = new Date().toISOString();
+  today = today.substring(0, today.indexOf('T'));
+  window.globalThis.updateCharts(today);
+
+  $.ajax({
+    url:      $('#allchart').data('url'),
+    async:    true,
+    dataType: 'json',
+    type:     'GET'
+  }).done(function(data) {
+    var allChartContext = $('#allchart').get(0).getContext('2d');
+    var allChart = new Chart(allChartContext, {
+      type: 'line',
+      data: {
+        labels: data.dates,
+        datasets: [
+          {
+            data: data.datapoints,
+            lineTension: 0,
+            fill: false,
+            pointRadius: 0,
+            borderColor: 'rgb(0, 192, 192)'
+          }
+        ]
+      }
+    });
+  });
+  $.ajax({
+    url:      $('#yearchart').data('url'),
+    async:    true,
+    dataType: 'json',
+    type:     'GET'
+  }).done(function(data) {
+    var yearChartContext = $('#yearchart').get(0).getContext('2d');
+    var yearChart = new Chart(yearChartContext, {
+      type: 'line',
+      data: {
+        labels: data.dates,
+        datasets: [
+          {
+            data: data.datapoints,
+            lineTension: 0,
+            fill: false,
+            pointRadius: 0,
+            borderColor: 'rgb(0, 192, 192)'
+          }
+        ]
+      }
+    });
+  });
+
   $('#upload-session').click(function () {
     var fileDialog = document.createElement('input');
     fileDialog.type = 'file';

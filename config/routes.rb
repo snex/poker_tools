@@ -15,7 +15,8 @@ Rails.application.routes.draw do
   match '/hand_histories', to: 'hand_histories#index', as: 'hand_histories', via: [:get, :post]
   match '/poker_sessions', to: 'poker_sessions#index', as: 'poker_sessions', via: [:get, :post]
   match '/villain_hands', to: 'villain_hands#index', as: 'villain_hands', via: [:get, :post]
-  post '/chart', to: 'hand_histories#chart', as: 'chart_hand_histories'
+  post '/hh_chart', to: 'hand_histories#chart', as: 'chart_hand_histories'
+  get '/ps_chart', to: 'poker_sessions#chart', as: 'chart_poker_sessions'
 
   root 'index#index'
 end

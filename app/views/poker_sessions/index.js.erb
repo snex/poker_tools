@@ -1,1 +1,2 @@
 $('#calendar').html("<%= escape_javascript render(partial: 'calendar', locals: { events: @ps_records }) %>");
+window.globalThis.updateCharts("<%= @params[:start_date] %>");
