@@ -1,9 +1,9 @@
-import('imports-loader?define=>false,this=>window!datatables.net')(window, $)
-import('imports-loader?define=>false,this=>window!datatables.net-bs4')(window, $)
-import('yadcf')
-import('chosen-js')
-import('jquery-ui/ui/widgets/datepicker')
-import('chart.js')
+require('imports-loader?define=>false,this=>window!datatables.net')(window, $)
+require('imports-loader?define=>false,this=>window!datatables.net-bs4')(window, $)
+require('yadcf')
+require('chosen-js')
+require('jquery-ui/ui/widgets/datepicker')
+require('chart.js')
 
 var chart;
 var betSizeLabels = [
