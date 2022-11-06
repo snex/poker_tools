@@ -1,16 +1,5 @@
 =javascript_pack_tag 'filters'
 
-%div{style: 'margin-top: 20px;'}
-.container-fluid
-  .row
-    =form_with(url: by_date_path, local: true, html: {id: 'filter-form', class: 'form-inline'}) do |f|
-      =hand_filter @hands, params[:hand]
-      =position_filter @positions, params[:position]
-      =bet_size_filter @bet_sizes, params[:bet_size]
-      =table_size_filter @table_sizes, params[:table_size]
-      =stake_filter @stakes, params[:stake]
-      .form-check.form-check-inline
-        =advanced_filters params[:flop], params[:turn], params[:river], params[:showdown], params[:all_in]
 .container-fluid
   .row
     %table.table.table-bordered
@@ -19,13 +8,13 @@
         %th Session Result (Actual $)
         %th VPIP Result
       %tbody
-        -@results_by_year.sort { |a,b| b <=> a }.each do |year, result_h|
+        -@results_by_date.yearly_results.each do |year, result_h|
           %tr
             %td= year.strftime('%Y')
-            %td{class: bg_color_by_result(result_h[:session_result])}
-              =result_h[:session_result]
-            %td{class: bg_color_by_result(result_h[:vpip_result])}
-              =result_h[:vpip_result]
+            %td{class: bg_color_by_result(result_h[:session])}
+              =result_h[:session]
+            %td{class: bg_color_by_result(result_h[:vpip])}
+              =result_h[:vpip]
 .container-fluid
   .row
     %table.table.table-bordered
@@ -34,10 +23,10 @@
         %th Session Result (Actual $)
         %th VPIP Result
       %tbody
-        -@results_by_month.sort { |a,b| b <=> a }.each do |month, result_h|
+        -@results_by_date.monthly_results.each do |month, result_h|
           %tr
             %td= month.strftime('%B %Y')
-            %td{class: bg_color_by_result(result_h[:session_result])}
-              =result_h[:session_result]
-            %td{class: bg_color_by_result(result_h[:vpip_result])}
-              =result_h[:vpip_result]
+            %td{class: bg_color_by_result(result_h[:session])}
+              =result_h[:session]
+            %td{class: bg_color_by_result(result_h[:vpip])}
+              =result_h[:vpip]
