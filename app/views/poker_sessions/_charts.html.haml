@@ -1,4 +1,11 @@
 %a#download.fa.fa-download
 %canvas.plot#allchart{style: 'height:300px; backgroundColor: "#ddd !important;"', 'data-url': chart_poker_sessions_path}
-%canvas.plot#yearchart{style: 'height:300px; backgroundColor: "#ddd !important;"', 'data-url': chart_poker_sessions_path(year: DateTime.now.year)}
-%canvas.plot#monthchart{style: 'height:300px; backgroundColor: "#ddd !important;"', 'data-url': chart_poker_sessions_path(year: DateTime.now.year, month: DateTime.now.month)}
+%canvas.plot#yearchart{
+  style:       'height:300px; backgroundColor: "#ddd !important;"',
+  'data-url':  chart_poker_sessions_path(year: DateTime.now.year),
+  'data-year': DateTime.now.year
+}
+%canvas.plot#monthchart{
+  style:      'height:300px; backgroundColor: "#ddd !important;"',
+  'data-url':  chart_poker_sessions_path(year: DateTime.now.year, month: DateTime.now.month)
+}

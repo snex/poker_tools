@@ -5,13 +5,21 @@ require('chosen-js')
 require('jquery-ui/ui/widgets/datepicker')
 require('chart.js')
 
+const monthNames = ["January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
 window.globalThis.updateCharts = (isoDate) => {
   var newDate = new Date(Date.parse(isoDate));
-  var curYear = new Date().getYear() + 1900;
+  var curYear = parseInt($('#yearchart').data().year);
   var year = newDate.getYear() + 1900;
   var month = newDate.getMonth() + 1;
 
+  console.log('curYear: ' + curYear);
+  console.log('year: ' + year);
+
   if (curYear != year) {
+    $('#yearchart').data('year', year);
     $.ajax({
       url:      $('#yearchart').data('url'),
       data:     {
@@ -28,9 +36,10 @@ window.globalThis.updateCharts = (isoDate) => {
           labels: data.dates,
           datasets: [
             {
-              data: data.datapoints,
+              label:       year,
+              data:        data.datapoints,
               lineTension: 0,
-              fill: false,
+              fill:        false,
               pointRadius: 0,
               borderColor: 'rgb(0, 192, 192)'
             }
@@ -57,9 +66,10 @@ window.globalThis.updateCharts = (isoDate) => {
         labels: data.dates,
         datasets: [
           {
-            data: data.datapoints,
+            label:       monthNames[month - 1] + ' ' + year,
+            data:        data.datapoints,
             lineTension: 0,
-            fill: false,
+            fill:        false,
             pointRadius: 0,
             borderColor: 'rgb(0, 192, 192)'
           }
@@ -70,6 +80,7 @@ window.globalThis.updateCharts = (isoDate) => {
 }
 
 $(document).ready(function() {
+  var curYear = new Date().getYear() + 1900;
   var today = new Date().toISOString();
   today = today.substring(0, today.indexOf('T'));
   window.globalThis.updateCharts(today);
@@ -87,9 +98,10 @@ $(document).ready(function() {
         labels: data.dates,
         datasets: [
           {
-            data: data.datapoints,
+            label:       'All Time',
+            data:        data.datapoints,
             lineTension: 0,
-            fill: false,
+            fill:        false,
             pointRadius: 0,
             borderColor: 'rgb(0, 192, 192)'
           }
@@ -110,9 +122,10 @@ $(document).ready(function() {
         labels: data.dates,
         datasets: [
           {
-            data: data.datapoints,
+            label:       curYear,
+            data:        data.datapoints,
             lineTension: 0,
-            fill: false,
+            fill:        false,
             pointRadius: 0,
             borderColor: 'rgb(0, 192, 192)'
           }
