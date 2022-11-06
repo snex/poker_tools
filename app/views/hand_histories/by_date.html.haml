@@ -15,10 +15,29 @@
   .row
     %table.table.table-bordered
       %thead
-        %th Month
-        %th Result
+        %th Year
+        %th Session Result (Actual $)
+        %th VPIP Result
       %tbody
-        -@results_by_month.each do |month, result|
-          %tr{class: bg_color_by_result(result)}
+        -@results_by_year.sort { |a,b| b <=> a }.each do |year, result_h|
+          %tr
+            %td= year.strftime('%Y')
+            %td{class: bg_color_by_result(result_h[:session_result])}
+              =result_h[:session_result]
+            %td{class: bg_color_by_result(result_h[:vpip_result])}
+              =result_h[:vpip_result]
+.container-fluid
+  .row
+    %table.table.table-bordered
+      %thead
+        %th Month
+        %th Session Result (Actual $)
+        %th VPIP Result
+      %tbody
+        -@results_by_month.sort { |a,b| b <=> a }.each do |month, result_h|
+          %tr
             %td= month.strftime('%B %Y')
-            %td= result
+            %td{class: bg_color_by_result(result_h[:session_result])}
+              =result_h[:session_result]
+            %td{class: bg_color_by_result(result_h[:vpip_result])}
+              =result_h[:vpip_result]

@@ -96,6 +96,8 @@ GEM
       sassc-rails (>= 2.0.0)
     builder (3.2.4)
     byebug (11.1.3)
+    calculate-all (0.2.1)
+      activerecord
     clearance (2.6.1)
       actionmailer (>= 5.0)
       activemodel (>= 5.0)
@@ -283,6 +285,7 @@ DEPENDENCIES
   bootsnap
   bootstrap (~> 4.6)
   byebug
+  calculate-all
   clearance
   descriptive_statistics (~> 2.0)
   factory_bot_rails

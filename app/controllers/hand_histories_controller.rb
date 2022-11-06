@@ -19,7 +19,8 @@ class HandHistoriesController < AuthorizedPagesController
     @hh = HandHistory.joins(:hand, :position, :bet_size, :table_size, poker_session: :stake)
     @hh = apply_filters(@hh)
 
-    @results_by_month = @hh.group_by_month('poker_sessions.start_time').sum(:result)
+    @results_by_year = @hh.group_by_year('poker_sessions.start_time').calculate_all(vpip_result: 'sum(result)', session_result: 'sum(cashout - buyin)')
+    @results_by_month = @hh.group_by_month('poker_sessions.start_time').calculate_all(vpip_result: 'sum(result)', session_result: 'sum(cashout - buyin)')
     @hands = Hand.all
     @positions = Position.all
     @bet_sizes = BetSize.all
