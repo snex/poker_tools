@@ -43,6 +43,9 @@ class HandHistory < ApplicationRecord
               when 'plo'
                 bs = BetStructure.find_by(name: 'Pot Limit')
                 pv = PokerVariant.find_by(name: 'Omaha')
+              when 'pldbomb'
+                bs = BetStructure.find_by(name: 'Pot Limit')
+                pv = PokerVariant.find_by(name: 'Double Board Bomb Pots')
               else
                 raise "Unknown game type: #{game_name}"
               end
