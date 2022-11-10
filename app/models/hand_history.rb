@@ -8,12 +8,16 @@ class HandHistory < ApplicationRecord
   has_many   :villain_hands, dependent: :delete_all
 
   def self.import(date, filename)
+    file_linenum = 0
+    file_line = ''
     data = File.new(filename).readlines.join.split("\n\n")
 
     transaction do
       new_ps = nil
 
-      data.each do |d|
+      data.each_with_index do |d, i|
+        file_linenum = i
+        file_line = d
         d.strip!
         puts d
 
@@ -148,6 +152,8 @@ class HandHistory < ApplicationRecord
         end
       end
     end
+  rescue => e
+    raise "Error processing line##{file_linenum}: #{e.message}\n#{file_line}"
   end
 
   def self.update_old_records
