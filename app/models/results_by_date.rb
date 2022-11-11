@@ -31,7 +31,7 @@ class ResultsByDate
   end
 
   def yearly_results
-    @results[:yearly].sort { |a,b| b <=> a}
+    @results[:yearly].sort { |a,b| b <=> a }
   end
 
   def monthly_results

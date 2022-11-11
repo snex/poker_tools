@@ -20,7 +20,7 @@ RSpec.describe Hand do
   end
 
   describe '#to_s' do
-    let(:hand) { build :hand}
+    let(:hand) { build :hand }
 
     it 'returns the hand field' do
       expect(hand.to_s).to eq(hand.hand)
