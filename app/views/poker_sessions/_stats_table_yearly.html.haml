@@ -8,8 +8,14 @@
     %td= @ps_records.yearly_pct_won
     %td= @ps_records.yearly_best
     %td= @ps_records.yearly_worst
-    %td= @ps_records.yearly_avg_wins
-    %td= @ps_records.yearly_avg_losses
-    %td= @ps_records.yearly_avg
+    %td
+      %div= "#{@ps_records.yearly_avg_wins} (mean)"
+      %div= "#{@ps_records.yearly_avg_wins_median} (median)"
+    %td
+      %div= "#{@ps_records.yearly_avg_losses} (mean)"
+      %div= "#{@ps_records.yearly_avg_losses_median} (median)"
+    %td
+      %div= "#{@ps_records.yearly_avg} (mean)"
+      %div= "#{@ps_records.yearly_avg_median} (median)"
     %td= @ps_records.yearly_longest_win_streak
     %td= @ps_records.yearly_longest_loss_streak

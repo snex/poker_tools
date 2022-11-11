@@ -33,11 +33,11 @@ class PokerSessionsController < AuthorizedPagesController
 
   def chart
     if params[:month]
-      @poker_sessions = PokerSession.where("date_part('year', start_time) = ?", params[:year]).where("date_part('month', start_time) = ?", params[:month])
+      @poker_sessions = PokerSession.where("date_part('year', start_time) = ?", params[:year]).where("date_part('month', start_time) = ?", params[:month]).order(:start_time)
     elsif params[:year]
-      @poker_sessions = PokerSession.where("date_part('year', start_time) = ?", params[:year])
+      @poker_sessions = PokerSession.where("date_part('year', start_time) = ?", params[:year]).order(:start_time)
     else
-      @poker_sessions = PokerSession.all
+      @poker_sessions = PokerSession.all.order(:start_time)
     end
 
     render 'chart_data'

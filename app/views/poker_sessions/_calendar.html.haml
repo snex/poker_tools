@@ -1,5 +1,5 @@
 =month_calendar(events: @ps_records) do |date, poker_sessions|
-  - valid_sessions = @ps_records.where("date_trunc('day', start_time) = ?", date)
+  - valid_sessions = @ps_records.where("start_time between ? and ?", date.in_time_zone(ActiveSupport::TimeZone[Time.zone.name]), (date+1.day).in_time_zone(ActiveSupport::TimeZone[Time.zone.name]))
   - result = PokerSession.result(valid_sessions)
   - e_time = PokerSession.duration(valid_sessions)
   - hourly = PokerSession.hourly(valid_sessions)
