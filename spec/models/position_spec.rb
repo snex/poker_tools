@@ -1,4 +1,6 @@
 RSpec.describe Position do
+  subject { build :position }
+
   describe 'POSITION_ORDER' do
     it 'matches hte proper order for positions' do
       expect(Position::POSITION_ORDER).to eq(['SB', 'BB', 'UTG', 'UTG1', 'MP', 'LJ', 'HJ', 'CO', 'BU', 'STRADDLE', 'UTG2'])
@@ -6,21 +8,19 @@ RSpec.describe Position do
   end
 
   describe '#to_s' do
-    let(:position) { build :position }
-
     it 'returns the position field' do
-      expect(position.to_s).to eq(position.position)
+      expect(subject.to_s).to eq(subject.position)
     end
   end
 
   describe '.cached' do
-    let!(:position) { create :position }
+    subject! { create :position }
 
     it 'returns a JSON string of the Position names' do
       expect(Position.cached).to eq([
         {
-          value: position.position,
-          label: position.position
+          value: subject.position,
+          label: subject.position
         }
       ].to_json)
     end

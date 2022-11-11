@@ -1,4 +1,6 @@
 RSpec.describe Hand do
+  subject { build :hand }
+
   describe 'HAND_ORDER' do
     it 'matches the proper order for poker hands' do
       expect(Hand::HAND_ORDER).to eq([
@@ -20,48 +22,46 @@ RSpec.describe Hand do
   end
 
   describe '#to_s' do
-    let(:hand) { build :hand }
-
     it 'returns the hand field' do
-      expect(hand.to_s).to eq(hand.hand)
+      expect(subject.to_s).to eq(subject.hand)
     end
   end
 
   describe '.from_str' do
     context 'exact match' do
-      let(:hand) { create :hand }
+      subject { create :hand }
 
       it 'finds the hand' do
-        expect(Hand.from_str(hand.hand)).to eq(hand)
+        expect(Hand.from_str(subject.hand)).to eq(subject)
       end
     end
 
     context 'paired hand with suits specified' do
-      let!(:hand) { create :hand, hand: 'AA' }
+      subject! { create :hand, hand: 'AA' }
 
       it 'finds the hand' do
-        expect(Hand.from_str('AcAh')).to eq(hand)
+        expect(Hand.from_str('AcAh')).to eq(subject)
       end
     end
 
     context 'unpaired hand, suited' do
-      let!(:hand) { create :hand, hand: 'AKs' }
+      subject! { create :hand, hand: 'AKs' }
 
       it 'finds the hand' do
-        expect(Hand.from_str('AKss')).to eq(hand)
+        expect(Hand.from_str('AKss')).to eq(subject)
       end
     end
 
     context 'unpaired hand, offsuit' do
-      let!(:hand) { create :hand, hand: 'AKo' }
+      subject! { create :hand, hand: 'AKo' }
 
       it 'finds the hand' do
-        expect(Hand.from_str('AsKc')).to eq(hand)
+        expect(Hand.from_str('AsKc')).to eq(subject)
       end
     end
 
     context 'illegal hand string' do
-      let!(:hand) { create :hand, hand: 'AA' }
+      subject!(:hand) { create :hand, hand: 'AA' }
 
       it 'raises an exception' do
         expect { Hand.from_str('zz') }.to raise_error('Hand not found: zz')
