@@ -24,38 +24,41 @@ gem 'jbuilder', '~> 2.7'
 # gem 'image_processing', '~> 1.2'
 
 # Reduces boot times through caching; required in config/boot.rb
-gem 'bootsnap', require: false
-gem 'haml'
-gem 'bootstrap', '~> 4.6'
-gem 'font-awesome-rails', '~> 4.7'
 gem 'active_link_to', '~> 1.0'
-gem 'passenger', '~> 6.0'
-gem 'descriptive_statistics', '~> 2.0', require: 'descriptive_statistics/safe'
 gem 'ajax-datatables-rails', git: 'https://github.com/jbox-web/ajax-datatables-rails.git'
-gem 'groupdate', '~> 5.0'
 gem 'arel_extensions', '~> 2.0'
+gem 'bootsnap', require: false
+gem 'bootstrap', '~> 4.6'
+gem 'clearance'
+gem 'descriptive_statistics', '~> 2.0', require: 'descriptive_statistics/safe'
+gem 'font-awesome-rails', '~> 4.7'
+gem 'groupdate', '~> 5.0'
 gem 'guard'
 gem 'guard-rake'
+gem 'haml'
+gem 'passenger', '~> 6.0'
 gem 'simple_calendar', '~> 2.4'
-gem 'clearance'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  gem 'byebug', platforms: %i[mri mingw x64_mingw]
+  gem 'capybara'
+  gem 'factory_bot_rails'
+  gem 'faker'
+  gem 'mina'
   gem 'rspec-rails'
   gem 'shoulda-matchers'
   gem 'simplecov'
-  gem 'factory_bot_rails'
-  gem 'capybara'
-  gem 'faker'
-  gem 'mina'
 end
 
 group :development do
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
-  gem 'web-console', '>= 3.3.0'
   gem 'listen', '>= 3.0.5', '< 3.2'
+  gem 'rubocop', require: false
+  gem 'rubocop-rails', require: false
+  gem 'rubocop-rspec', require: false
+  gem 'web-console', '>= 3.3.0'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data' #, platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+gem 'tzinfo-data' # , platforms: [:mingw, :mswin, :x64_mingw, :jruby]
