@@ -13,7 +13,7 @@ class PokerSession < ApplicationRecord
   end
 
   def duration
-    @secs ||= (self.end_time - self.start_time).to_i
+    @secs ||= (self.end_time - self.start_time)
   end
 
   def hourly
@@ -40,7 +40,7 @@ class PokerSession < ApplicationRecord
     @vpip ||= (hands_played.to_f / hands_dealt.to_f).round(2)
   end
 
-  def self.result(poker_sessions = all)
+  def self.results(poker_sessions = all)
     poker_sessions.sum('cashout - buyin')
   end
 
@@ -69,7 +69,7 @@ class PokerSession < ApplicationRecord
   end
 
   def self.hourly(poker_sessions = all)
-    (result(poker_sessions).to_f / ((duration(poker_sessions).to_f / 3600))).round(2)
+    (results(poker_sessions).to_f / ((duration(poker_sessions).to_f / 3600))).round(2)
   end
 
   def self.pct_won(poker_sessions = all)

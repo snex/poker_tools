@@ -1,17 +1,17 @@
 =month_calendar(events: @ps_records) do |date, poker_sessions|
   - valid_sessions = @ps_records.where("start_time between ? and ?", date.in_time_zone(ActiveSupport::TimeZone[Time.zone.name]), (date+1.day).in_time_zone(ActiveSupport::TimeZone[Time.zone.name]))
-  - result = PokerSession.result(valid_sessions)
+  - results = PokerSession.results(valid_sessions)
   - e_time = PokerSession.duration(valid_sessions)
   - hourly = PokerSession.hourly(valid_sessions)
 
-  %div{class: bg_color_by_result(result)}
+  %div{class: bg_color_by_result(results)}
     %h2.text-right.font-weight-bold
       = date.day
     - if valid_sessions.blank?
       %div No Data
     -else
       %div
-        ="$#{result}"
+        ="$#{results}"
       %div
         =e_time.to_elapsed_time
       %div

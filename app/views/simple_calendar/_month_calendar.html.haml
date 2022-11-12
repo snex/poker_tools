@@ -1,12 +1,12 @@
 .simple-calendar#calendar
   - month_records = @ps_records.where("date_part('year', start_time) = ? and date_part('month', start_time) = ?", start_date.year, start_date.month)
-  .calendar-heading{class: bg_color_by_result(month_records.result)}
+  .calendar-heading{class: bg_color_by_result(month_records.results)}
     %div.text-center
       %h2.calendar-title
         = t('date.month_names')[start_date.month]
         = start_date.year
       %div
-        %div= "$#{month_records.result}"
+        %div= "$#{month_records.results}"
         %div= month_records.duration.to_elapsed_time
         %div= "$#{month_records.hourly}/hr"
   = link_to t('simple_calendar.previous', default: '<<'), calendar.url_for_previous_view, remote: true
