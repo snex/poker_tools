@@ -35,3 +35,6 @@ yarn-debug.log*
 /lib/r_scripts/data
 /lib/r_scripts/data.txt
 /**/*.pdf
+
+# vim swap files
+/**/*.swp
