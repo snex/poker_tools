@@ -261,19 +261,19 @@ class PokerSession < ApplicationRecord
   end
 
   def self.daily_longest_win_streak(poker_sessions = all)
-    daily_results.longest_streak(0, :>)
+    daily_results(poker_sessions).longest_streak(0, :>)
   end
 
   def self.weekly_longest_win_streak(poker_sessions = all)
-    weekly_results.longest_streak(0, :>)
+    weekly_results(poker_sessions).longest_streak(0, :>)
   end
 
   def self.monthly_longest_win_streak(poker_sessions = all)
-    monthly_results.longest_streak(0, :>)
+    monthly_results(poker_sessions).longest_streak(0, :>)
   end
 
   def self.yearly_longest_win_streak(poker_sessions = all)
-    yearly_results.longest_streak(0, :>)
+    yearly_results(poker_sessions).longest_streak(0, :>)
   end
 
   def self.longest_loss_streak(poker_sessions = all)
@@ -281,19 +281,19 @@ class PokerSession < ApplicationRecord
   end
 
   def self.daily_longest_loss_streak(poker_sessions = all)
-    daily_results.longest_streak(0, :<)
+    daily_results(poker_sessions).longest_streak(0, :<)
   end
 
   def self.weekly_longest_loss_streak(poker_sessions = all)
-    weekly_results.longest_streak(0, :<)
+    weekly_results(poker_sessions).longest_streak(0, :<)
   end
 
   def self.monthly_longest_loss_streak(poker_sessions = all)
-    monthly_results.longest_streak(0, :<)
+    monthly_results(poker_sessions).longest_streak(0, :<)
   end
 
   def self.yearly_longest_loss_streak(poker_sessions = all)
-    yearly_results.longest_streak(0, :<)
+    yearly_results(poker_sessions).longest_streak(0, :<)
   end
 
   def self.hands_dealt(poker_sessions = all)
