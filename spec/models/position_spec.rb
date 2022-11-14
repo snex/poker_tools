@@ -1,9 +1,11 @@
 RSpec.describe Position do
   subject { build :position }
 
+  it { should validate_uniqueness_of(:position) }
+
   describe 'POSITION_ORDER' do
     it 'matches hte proper order for positions' do
-      expect(Position::POSITION_ORDER).to eq(['SB', 'BB', 'UTG', 'UTG1', 'MP', 'LJ', 'HJ', 'CO', 'BU', 'STRADDLE', 'UTG2'])
+      expect(described_class::POSITION_ORDER).to eq(['SB', 'BB', 'UTG', 'UTG1', 'MP', 'LJ', 'HJ', 'CO', 'BU', 'STRADDLE', 'UTG2'])
     end
   end
 
@@ -14,15 +16,10 @@ RSpec.describe Position do
   end
 
   describe '.cached' do
-    subject! { create :position }
-
-    it 'returns a JSON string of the Position names' do
-      expect(Position.cached).to eq([
-        {
-          value: subject.position,
-          label: subject.position
-        }
-      ].to_json)
+    it 'returns a class-memoized JSON string of the described_class names' do
+      expect(described_class).to receive(:pluck).with(:position).once.and_call_original
+      expect(described_class.cached).to eq(described_class.all.map { |p| { value: p.position, label: p.position } }.to_json)
+      2.times { described_class.cached }
     end
   end
 end

@@ -1,9 +1,13 @@
 RSpec.describe BetSize do
   subject { build :bet_size }
 
+  it { should validate_uniqueness_of(:bet_size) }
+  it { should validate_uniqueness_of(:description) }
+  it { should validate_uniqueness_of(:color) }
+
   describe 'BET_SIZE_ORDER' do
     it 'matches the proper order for bet sizings' do
-      expect(BetSize::BET_SIZE_ORDER).to eq ['limp', '2b', '3b', '4b', '5b', '6b']
+      expect(described_class::BET_SIZE_ORDER).to eq ['limp', '2b', '3b', '4b', '5b', '6b']
     end
   end
 
@@ -14,15 +18,10 @@ RSpec.describe BetSize do
   end
 
   describe '.cached' do
-    subject! { create :bet_size }
-
-    it 'returns a JSON string of the BetSize descriptions' do
-      expect(BetSize.cached).to eq([
-        {
-          value: subject.description,
-          label: subject.description
-        }
-      ].to_json)
+    it 'returns a class-memoized JSON string of the described_class descriptions' do
+      expect(described_class).to receive(:pluck).with(:description).once.and_call_original
+      expect(described_class.cached).to eq(described_class.all.map { |b| { value: b.description, label: b.description } }.to_json)
+      2.times { described_class.cached }
     end
   end
 end

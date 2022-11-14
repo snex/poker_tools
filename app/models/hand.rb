@@ -15,6 +15,8 @@ class Hand < ApplicationRecord
     ['A2o', 'K2o', 'Q2o', 'J2o', 'T2o', '92o', '82o', '72o', '62o', '52o', '42o', '32o', '22' ]
   ].freeze
 
+  validates_uniqueness_of :hand
+
   def to_s
     hand
   end

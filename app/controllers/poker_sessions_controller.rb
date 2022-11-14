@@ -23,7 +23,7 @@ class PokerSessionsController < AuthorizedPagesController
   def upload
     begin
       date = File.basename(params['file'].original_filename.split('.')[0], '.*')
-      HandHistory.import(date, params['file'].path)
+      FileImporter.import(date, params['file'].path)
       render plain: '' and return
     rescue => e
       render plain: e.message, status: :unprocessable_entity

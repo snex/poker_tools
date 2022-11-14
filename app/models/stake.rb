@@ -12,6 +12,6 @@ class Stake < ApplicationRecord
   private
 
   def set_stakes_array
-    self.stakes_array = self.stake.split('/').reverse.map(&:to_i)
+    self.stakes_array = self.stake.split('/').reverse.map { |s| Integer(s) }
   end
 end

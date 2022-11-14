@@ -6,6 +6,21 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
+bet_sizes = BetSize.create([
+  { bet_size: 1, description: 'limp', color: 'red' },
+  { bet_size: 2, description: '2b',   color: 'orange' },
+  { bet_size: 3, description: '3b',   color: 'yellow' },
+  { bet_size: 4, description: '4b',   color: 'green' },
+  { bet_size: 5, description: '5b',   color: 'blue' },
+  { bet_size: 6, description: '6b',   color: 'purple' }
+])
+
+bet_structures = BetStructure.create([
+  { name: 'No Limit',    abbreviation: 'NL' },
+  { name: 'Pot Limit',   abbreviation: 'PL' },
+  { name: 'Fixed Limit', abbreviation: 'FL' }
+])
+
 hands = Hand.create([
   { hand: 'AA' },
   { hand: 'KK' },
@@ -178,26 +193,26 @@ hands = Hand.create([
   { hand: '32o' }
 ])
 
-bet_sizes = BetSize.create([
-  { bet_size: 1, description: 'limp', color: 'red' },
-  { bet_size: 2, description: '2b',   color: 'orange' },
-  { bet_size: 3, description: '3b',   color: 'yellow' },
-  { bet_size: 4, description: '4b',   color: 'green' },
-  { bet_size: 5, description: '5b',   color: 'blue' },
-  { bet_size: 6, description: '6b',   color: 'purple' }
+poker_variants = PokerVariant.create([
+  { name: 'Texas Holdem',           abbreviation: 'HE' },
+  { name: 'Omaha',                  abbreviation: 'O' },
+  { name: 'BigO',                   abbreviation: 'BigO' },
+  { name: 'Mix',                    abbreviation: 'Mix' },
+  { name: 'Omaha Hi-Lo',            abbreviation: 'O8' },
+  { name: 'Double Board Bomb Pots', abbreviation: 'DBomb' }
 ])
 
 positions = Position.create([
-  { position: 'SB',   color: '#c10001' },
-  { position: 'BB',   color: '#ff8f00' },
-  { position: 'UTG',  color: '#edff5b' },
-  { position: 'UTG1', color: '#52e000' },
-  { position: 'UTG2', color: 'black' },
-  { position: 'MP',   color: '#1a9391' },
-  { position: 'LJ',   color: '#00c4da' },
-  { position: 'HJ',   color: '#610c8c' },
-  { position: 'CO',   color: '#d223fe' },
-  { position: 'BU',   color: '#b30347' },
+  { position: 'SB',       color: '#c10001' },
+  { position: 'BB',       color: '#ff8f00' },
+  { position: 'UTG',      color: '#edff5b' },
+  { position: 'UTG1',     color: '#52e000' },
+  { position: 'UTG2',     color: 'black' },
+  { position: 'MP',       color: '#1a9391' },
+  { position: 'LJ',       color: '#00c4da' },
+  { position: 'HJ',       color: '#610c8c' },
+  { position: 'CO',       color: '#d223fe' },
+  { position: 'BU',       color: '#b30347' },
   { position: 'STRADDLE', color: 'black' },
 ])
 

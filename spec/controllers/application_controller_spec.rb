@@ -1,5 +1,5 @@
 RSpec.describe ApplicationController do
   it 'includes CLearance::Controller' do
-    expect(ApplicationController.ancestors).to include(Clearance::Controller)
+    expect(described_class.ancestors).to include(Clearance::Controller)
   end
 end

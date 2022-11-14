@@ -1,9 +1,11 @@
 RSpec.describe Hand do
   subject { build :hand }
 
+  it { should validate_uniqueness_of(:hand) }
+
   describe 'HAND_ORDER' do
     it 'matches the proper order for poker hands' do
-      expect(Hand::HAND_ORDER).to eq([
+      expect(described_class::HAND_ORDER).to eq([
         ['AA',  'AKs', 'AQs', 'AJs', 'ATs', 'A9s', 'A8s', 'A7s', 'A6s', 'A5s', 'A4s', 'A3s', 'A2s'],
         ['AKo', 'KK',  'KQs', 'KJs', 'KTs', 'K9s', 'K8s', 'K7s', 'K6s', 'K5s', 'K4s', 'K3s', 'K2s'],
         ['AQo', 'KQo', 'QQ',  'QJs', 'QTs', 'Q9s', 'Q8s', 'Q7s', 'Q6s', 'Q5s', 'Q4s', 'Q3s', 'Q2s'],
@@ -29,42 +31,32 @@ RSpec.describe Hand do
 
   describe '.from_str' do
     context 'exact match' do
-      subject { create :hand }
-
       it 'finds the hand' do
-        expect(Hand.from_str(subject.hand)).to eq(subject)
+        expect(described_class.from_str('AKo')).to eq(described_class.find_by_hand('AKo'))
       end
     end
 
     context 'paired hand with suits specified' do
-      subject! { create :hand, hand: 'AA' }
-
       it 'finds the hand' do
-        expect(Hand.from_str('AcAh')).to eq(subject)
+        expect(described_class.from_str('AcAh')).to eq(described_class.find_by_hand('AA'))
       end
     end
 
     context 'unpaired hand, suited' do
-      subject! { create :hand, hand: 'AKs' }
-
       it 'finds the hand' do
-        expect(Hand.from_str('AKss')).to eq(subject)
+        expect(described_class.from_str('AKcc')).to eq(described_class.find_by_hand('AKs'))
       end
     end
 
     context 'unpaired hand, offsuit' do
-      subject! { create :hand, hand: 'AKo' }
-
       it 'finds the hand' do
-        expect(Hand.from_str('AsKc')).to eq(subject)
+        expect(described_class.from_str('AsKc')).to eq(described_class.find_by_hand('AKo'))
       end
     end
 
     context 'illegal hand string' do
-      subject!(:hand) { create :hand, hand: 'AA' }
-
       it 'raises an exception' do
-        expect { Hand.from_str('zz') }.to raise_error('Hand not found: zz')
+        expect { described_class.from_str('zz') }.to raise_error('Hand not found: zz')
       end
     end
   end

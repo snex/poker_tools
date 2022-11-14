@@ -1,0 +1,12 @@
+Session 1/2 NL
+Start: 12:35 pm
+End: 1:20 pm
+In: 200
+Out: 333
+Hands: 20
+
+6 handed, open BU 10 AA, BB call
+Flop AA7r, x x
+Turn 7, all in 150, c
+V show 77 and lose
++160 BU AA 2b 6

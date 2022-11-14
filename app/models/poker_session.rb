@@ -40,6 +40,51 @@ class PokerSession < ApplicationRecord
     @vpip ||= (hands_played.to_f / hands_dealt.to_f).round(2)
   end
 
+  def self.import(date, data)
+    transaction do
+      session_lines = data.split("\n")
+      stake = bs = pv = start_time = end_time = buyin = cashout = hands_dealt = nil
+
+      session_lines.each do |sl|
+        sl.strip!
+
+        if sl.match?(/^session .*/i)
+          game_type = sl.match(/^session (.*)$/i)[1]
+          gt = GameType.new(game_type)
+          stake = gt.stake
+          bs = gt.bet_structure
+          pv = gt.poker_variant
+        elsif sl.match?(/^start: .*/i)
+          start_time = ActiveSupport::TimeZone[Time.zone.name].parse("#{date} #{sl.match(/^start: (.*)$/i)[1]}")
+        elsif sl.match?(/^end: .*/i)
+          end_time = ActiveSupport::TimeZone[Time.zone.name].parse("#{date} #{sl.match(/^end: (.*)$/i)[1]}")
+        elsif sl.match?(/^in: .*/i)
+          buyin = sl.match(/^in: (.*)$/i)[1].to_i
+        elsif sl.match?(/^out: .*/i)
+          cashout = sl.match(/^out: (.*)$/i)[1].to_i
+        elsif sl.match?(/^hands: .*/i)
+          hands_dealt = sl.match(/^hands: (.*)$/i)[1].to_i
+        end
+      end
+
+      # this can happen if the session goes beyond midnight
+      if end_time < start_time
+        end_time += 1.day
+      end
+
+      self.create!(
+        start_time:    start_time,
+        end_time:      end_time,
+        buyin:         buyin,
+        cashout:       cashout,
+        hands_dealt:   hands_dealt,
+        stake:         stake,
+        bet_structure: bs,
+        poker_variant: pv
+      )
+    end
+  end
+
   def self.results(poker_sessions = all)
     poker_sessions.sum('cashout - buyin')
   end
