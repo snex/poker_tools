@@ -6,8 +6,8 @@ FactoryBot.define do
     end_time { Faker::Time.between(from: start_time + 1.minute, to: DateTime.now) }
     hands_dealt { Faker::Number.number(digits: 3) }
     stake
-    bet_structure
-    poker_variant
+    bet_structure { BetStructure.all.sample(1).first }
+    poker_variant { PokerVariant.all.sample(1).first }
 
     trait :with_hand_histories do
       hand_histories { build_list :hand_history, 5 }
