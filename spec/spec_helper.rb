@@ -20,7 +20,6 @@ SimpleCov.start 'rails' do
   groups.delete 'Channels'
   groups.delete 'Mailers'
   groups.delete 'Jobs'
-  add_group 'Data Tables', 'app/datatables'
 end
 
 require 'capybara/rspec'
