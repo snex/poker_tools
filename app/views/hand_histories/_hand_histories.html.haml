@@ -1,8 +1,8 @@
-.hidden#positions{'data-positions': Position.cached}
-.hidden#bet-sizes{'data-bet-sizes': BetSize.cached}
-.hidden#table-sizes{'data-table-sizes': TableSize.cached}
-.hidden#stakes{'data-stakes': Stake.cached}
-.hidden#hands{'data-hands': Hand::HAND_ORDER.flatten}
+.hidden#bet-sizes{'data-bet-sizes':     BetSize.cached.map { |id, desc| { value: id, label: desc } }.to_json }
+.hidden#hands{'data-hands':             Hand.cached.map { |id, hand| { value: id, label: hand } }.to_json }
+.hidden#positions{'data-positions':     Position.cached.map { |id, position| { value: id, label: position } }.to_json }
+.hidden#stakes{'data-stakes':           Stake.cached.map { |id, stake| { value: id, label: stake } }.to_json }
+.hidden#table-sizes{'data-table-sizes': TableSize.cached.map { |id, desc| { value: id, label: desc } }.to_json }
 %table.table.table-bordered#hh-datatable{style: 'font-size:12px;width:100%;', 'data-source': "#{hand_histories_path(@params)}.json"}
   %thead
     %th Date

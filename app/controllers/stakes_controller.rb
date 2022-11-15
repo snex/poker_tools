@@ -13,10 +13,5 @@ class StakesController < AuthorizedPagesController
       h[hand] = (100 * count.to_f / @counts[hand].to_f).round(2)
     end
     @avgs = @stakes.average(:result)
-    @hands = Hand.all
-    @positions = Position.all
-    @bet_sizes = BetSize.all
-    @table_sizes = TableSize.all
   end
-
 end

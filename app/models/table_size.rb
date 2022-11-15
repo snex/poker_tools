@@ -8,6 +8,6 @@ class TableSize < ApplicationRecord
   end
 
   def self.cached
-    @@cached ||= TableSize.pluck(:description).map { |d| { value: d, label: d } }.to_json
+    @@cached ||= TableSize.order(TABLE_SIZE_ORDER.to_custom_sql_order(:description)).pluck(:id, :description)
   end
 end

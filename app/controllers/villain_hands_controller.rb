@@ -13,11 +13,5 @@ class VillainHandsController < AuthorizedPagesController
       h[hand] = (100 * count.to_f / @counts[hand].to_f).round(2)
     end
     @avgs = @villain_hands.average(:result)
-    @hands = Hand.all
-    @positions = Position.all
-    @bet_sizes = BetSize.all
-    @table_sizes = TableSize.all
-    @stakes = Stake.all.order(:stakes_array)
   end
-
 end

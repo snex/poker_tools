@@ -16,9 +16,15 @@ RSpec.describe Position do
   end
 
   describe '.cached' do
-    it 'returns a class-memoized JSON string of the described_class names' do
-      expect(described_class).to receive(:pluck).with(:position).once.and_call_original
-      expect(described_class.cached).to eq(described_class.all.map { |p| { value: p.position, label: p.position } }.to_json)
+    let(:ordered) { described_class.order(described_class::POSITION_ORDER.to_custom_sql_order(:position)) }
+    let!(:expected) { described_class.order(described_class::POSITION_ORDER.to_custom_sql_order(:position)).pluck(:id, :position) }
+
+    it 'returns a hash of the Position ids and position' do
+      expect(described_class.cached).to eq(expected)
+    end
+
+    it 'memoizes the result' do
+      expect(described_class).to receive(:order).exactly(0).times
       2.times { described_class.cached }
     end
   end

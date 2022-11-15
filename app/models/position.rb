@@ -8,6 +8,6 @@ class Position < ApplicationRecord
   end
 
   def self.cached
-    @@cached ||= Position.pluck(:position).map { |p| { value: p, label: p } }.to_json
+    @@cached ||= Position.order(POSITION_ORDER.to_custom_sql_order(:position)).pluck(:id, :position)
   end
 end

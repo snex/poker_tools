@@ -1,4 +1,4 @@
-class Array
+module CustomArrayMods
   def average
     self.sum.to_f / self.count.to_f
   end
@@ -22,4 +22,18 @@ class Array
     end
     res
   end
+
+  def to_custom_sql_order(col)
+    ret = 'CASE'
+    self.each_with_index do |item, i|
+      ret << " WHEN #{col} = '#{item}' THEN #{i}"
+    end
+    ret << ' END'
+
+    Arel.sql(ret)
+  end
+end
+
+class Array
+  include CustomArrayMods
 end

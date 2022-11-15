@@ -15,7 +15,13 @@
 # See https://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
 require 'simplecov'
-SimpleCov.start 'rails'
+SimpleCov.minimum_coverage 1
+SimpleCov.start 'rails' do
+  groups.delete 'Channels'
+  groups.delete 'Mailers'
+  groups.delete 'Jobs'
+  add_group 'Data Tables', 'app/datatables'
+end
 
 require 'capybara/rspec'
 

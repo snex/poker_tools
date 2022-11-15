@@ -18,9 +18,15 @@ RSpec.describe BetSize do
   end
 
   describe '.cached' do
-    it 'returns a class-memoized JSON string of the described_class descriptions' do
-      expect(described_class).to receive(:pluck).with(:description).once.and_call_original
-      expect(described_class.cached).to eq(described_class.all.map { |b| { value: b.description, label: b.description } }.to_json)
+    let(:ordered) { described_class.order(described_class::BET_SIZE_ORDER.to_custom_sql_order(:description)) }
+    let!(:expected) { described_class.order(described_class::BET_SIZE_ORDER.to_custom_sql_order(:description)).pluck(:id, :description) }
+
+    it 'returns a hash of the BetSize ids and descriptions' do
+      expect(described_class.cached).to eq(expected)
+    end
+
+    it 'memoizes the result' do
+      expect(described_class).to receive(:order).exactly(0).times
       2.times { described_class.cached }
     end
   end

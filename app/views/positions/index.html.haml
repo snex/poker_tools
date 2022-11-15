@@ -4,14 +4,19 @@
 .container-fluid
   .row
     =form_with(url: positions_path, local: true, html: {id: 'filter-form', class: 'form-inline'}) do |f|
-      =hand_filter @hands, params[:hand]
-      =bet_size_filter @bet_sizes, params[:bet_size]
-      =table_size_filter @table_sizes, params[:table_size]
-      =stake_filter @stakes, params[:stake]
-      =date_filter params[:from], params[:to]
+      =hand_filter       params[:hand]
+      =bet_size_filter   params[:bet_size]
+      =table_size_filter params[:table_size]
+      =stake_filter      params[:stake]
+      =date_filter       params[:from], params[:to]
       .form-check.form-check-inline
-        =advanced_filters params[:flop], params[:turn], params[:river], params[:showdown], params[:all_in]
+        =advanced_filters  params[:flop], params[:turn], params[:river], params[:showdown], params[:all_in]
   %div{style: 'margin-top: 20px;'}
   .row
-    -Position::POSITION_ORDER.each do |position_name|
-      =render partial: 'shared/data_card', locals: { obj_name: position_name, search_params: { position: position_name } }
+    -Position.cached.each do |id, position|
+      =render partial: 'shared/data_card', locals: { obj_name: position,
+        search_params: { position: id,
+        bet_size:   params[:bet_size],
+        hand:       params[:hand],
+        stake:      params[:stake],
+        table_size: params[:table] } }

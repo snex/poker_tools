@@ -6,7 +6,9 @@ class Stake < ApplicationRecord
   end
 
   def self.cached
-    @@cached ||= Stake.order(:stakes_array).pluck(:stake).map { |s| { value: s, label: s } }.to_json
+    # stakes cannot be memoized because they can dynamically be created,
+    # but we will maintain the naming scheme for simplicity sake
+    Stake.order(:stakes_array).pluck(:id, :stake)
   end
 
   private

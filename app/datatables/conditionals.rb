@@ -1,6 +1,20 @@
 module Conditionals
   private
 
+  def int_eq_condition
+    # a bug in the datatables gem and/or yadcf prevents numeric conditionals on bigint, so here we will force it
+    ->(column, _) do
+      column.table[column.field].eq_any(column.search.value.split('|').map(&:to_i))
+    end
+  end
+
+  def str_like_condition
+    # a bug in datatables tries to coerce something into a VARCHAR which throws an error, so here we will force it
+    ->(column, _) do
+      column.table[column.field].matches("%#{column.search.value}%")
+    end
+  end
+
   def between_condition
     ->(column, _) do 
       min, max = column.search.value.split('-yadcf_delim-')

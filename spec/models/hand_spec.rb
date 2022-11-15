@@ -60,4 +60,18 @@ RSpec.describe Hand do
       end
     end
   end
+
+  describe '.cached' do
+    let(:ordered) { described_class.order(described_class::HAND_ORDER.flatten.to_custom_sql_order(:hand)) }
+    let!(:expected) { described_class.order(described_class::HAND_ORDER.flatten.to_custom_sql_order(:hand)).pluck(:id, :hand) }
+
+    it 'returns a class-memoized hash of the Hand ids and hands' do
+      expect(described_class.cached).to eq(expected)
+    end
+
+    it 'memoizes the result' do
+      expect(described_class).to receive(:order).exactly(0).times
+      2.times { described_class.cached }
+    end
+  end
 end

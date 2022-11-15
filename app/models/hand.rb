@@ -45,4 +45,8 @@ class Hand < ApplicationRecord
       raise "Hand not found: #{hand_str}"
     end
   end
+
+  def self.cached
+    @@cached ||= Hand.order(HAND_ORDER.flatten.to_custom_sql_order(:hand)).pluck(:id, :hand)
+  end
 end
