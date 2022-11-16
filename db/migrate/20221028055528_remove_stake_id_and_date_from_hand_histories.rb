@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RemoveStakeIdAndDateFromHandHistories < ActiveRecord::Migration[7.0]
   def change
     remove_column :hand_histories, :stake_id

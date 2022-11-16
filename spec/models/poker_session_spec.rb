@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe PokerSession do
   it { should belong_to :stake }
   it { should belong_to :bet_structure }

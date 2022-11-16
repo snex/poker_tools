@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe HandHistoriesController do
   before { sign_in }
 

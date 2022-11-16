@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class BankrollTransactionsController < AuthorizedPagesController
   def index
     @poker_sessions = PokerSession.all

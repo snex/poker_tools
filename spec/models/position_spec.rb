@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Position do
   subject { build :position }
 
@@ -22,15 +24,23 @@ RSpec.describe Position do
   end
 
   describe '.cached' do
-    let(:ordered) { described_class.custom_order }
-    let!(:expected) { described_class.custom_order.pluck(:id, :position) }
+    before(:all) do
+      described_class.cached
+    end
 
-    it 'returns a hash of the Position ids and position' do
+    let(:expected) do
+      described_class::POSITION_ORDER.map do |p|
+        [described_class.find_by_position(p).id, p]
+      end
+    end
+
+    it 'returns a hash of the Position ids and positions' do
       expect(described_class.cached).to eq(expected)
     end
 
     it 'memoizes the result' do
-      expect(described_class).to receive(:custom_order).exactly(0).times
+      allow(described_class).to receive(:custom_order).and_call_original
+      expect(described_class).to have_received(:custom_order).exactly(0).times
       2.times { described_class.cached }
     end
   end

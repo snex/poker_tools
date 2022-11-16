@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'mina/rails'
 require 'mina/git'
 # require 'mina/rbenv'  # for rbenv support. (https://rbenv.org)

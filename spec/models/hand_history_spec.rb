@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe HandHistory do
   it { should belong_to(:hand) }
   it { should belong_to(:position) }

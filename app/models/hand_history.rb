@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class HandHistory < ApplicationRecord
   belongs_to :hand
   belongs_to :position

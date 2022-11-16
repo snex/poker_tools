@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe VillainHandsController do
   describe 'GET #index' do
     let(:aa) { Hand.find_by_hand('AA') }

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe PokerSessionsController do
   before { sign_in }
 

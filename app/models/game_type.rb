@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class GameType
   class UnknownGameTypeException < StandardError ; end
 

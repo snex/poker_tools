@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PositionsController < AuthorizedPagesController
   include DataAggregator
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :hand_history do
     result { Faker::Number.between(from: -1000, to: 1000) }

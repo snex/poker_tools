@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe BetSize do
   subject { build :bet_size }
 
@@ -24,15 +26,23 @@ RSpec.describe BetSize do
   end
 
   describe '.cached' do
-    let(:ordered) { described_class.custom_order }
-    let!(:expected) { described_class.custom_order.pluck(:id, :description) }
+    before(:all) do
+      described_class.cached
+    end
+
+    let(:expected) do
+      described_class::BET_SIZE_ORDER.map do |bs|
+        [described_class.find_by_description(bs).id, bs]
+      end
+    end
 
     it 'returns a hash of the BetSize ids and descriptions' do
       expect(described_class.cached).to eq(expected)
     end
 
     it 'memoizes the result' do
-      expect(described_class).to receive(:custom_order).exactly(0).times
+      allow(described_class).to receive(:custom_order).and_call_original
+      expect(described_class).to have_received(:custom_order).exactly(0).times
       2.times { described_class.cached }
     end
   end

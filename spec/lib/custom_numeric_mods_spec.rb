@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe CustomNumericMods do
   describe '#to_elapsed_time' do
     it 'turns an integer in seconds into an elapsed time in h:mm format' do

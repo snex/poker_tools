@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FileImporter
   def self.import(date, filename)
     file_linenum = 0

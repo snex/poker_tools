@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe CustomArrayMods do
   describe '#average' do
     it 'calculates the average of an array and returns it as a float' do

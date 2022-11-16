@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe FileImporter do
   describe '.import' do
     context 'basic import' do

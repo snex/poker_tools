@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'application_helper'
 
 RSpec.describe ApplicationHelper do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Clearance.configure do |config|
   config.allow_sign_up = false
   config.cookie_expiration = lambda { |cookies| 1.year.from_now.utc }

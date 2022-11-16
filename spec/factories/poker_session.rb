@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :poker_session do
     buyin { Faker::Number.number(digits: 4) }

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Hand do
   subject { build :hand }
 
@@ -68,15 +70,23 @@ RSpec.describe Hand do
   end
 
   describe '.cached' do
-    let(:ordered) { described_class.custom_order }
-    let!(:expected) { described_class.custom_order.pluck(:id, :hand) }
+    before(:all) do
+      described_class.cached
+    end
 
-    it 'returns a class-memoized hash of the Hand ids and hands' do
+    let(:expected) do
+      described_class::HAND_ORDER.map do |h|
+        [described_class.find_by_hand(h).id, h]
+      end
+    end
+
+    it 'returns a hash of the Hand ids and hands' do
       expect(described_class.cached).to eq(expected)
     end
 
     it 'memoizes the result' do
-      expect(described_class).to receive(:custom_order).exactly(0).times
+      allow(described_class).to receive(:custom_order).and_call_original
+      expect(described_class).to have_received(:custom_order).exactly(0).times
       2.times { described_class.cached }
     end
   end

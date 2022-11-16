@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Hand < ApplicationRecord
   HAND_ORDER = [
     'AA',  'AKs', 'AQs', 'AJs', 'ATs', 'A9s', 'A8s', 'A7s', 'A6s', 'A5s', 'A4s', 'A3s', 'A2s',

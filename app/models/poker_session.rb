@@ -1,19 +1,21 @@
+# frozen_string_literal: true
+
 class PokerSession < ApplicationRecord
   belongs_to :stake
   belongs_to :bet_structure
   belongs_to :poker_variant
-  has_many :hand_histories
+  has_many :hand_histories, dependent: :restrict_with_exception
 
   def game_type
     "#{stake.stake} #{bet_structure.abbreviation}#{poker_variant.abbreviation}"
   end
 
   def result
-    @res ||= self.cashout - self.buyin
+    @result ||= cashout - buyin
   end
 
   def duration
-    @secs ||= (self.end_time - self.start_time)
+    @duration ||= (end_time - start_time)
   end
 
   def hourly
@@ -37,7 +39,7 @@ class PokerSession < ApplicationRecord
   end
 
   def vpip
-    @vpip ||= (hands_played.to_f / hands_dealt.to_f).round(2)
+    @vpip ||= (hands_played / hands_dealt.to_f).round(2)
   end
 
   def self.import(date, data)
@@ -48,31 +50,30 @@ class PokerSession < ApplicationRecord
       session_lines.each do |sl|
         sl.strip!
 
-        if sl.match?(/^session .*/i)
+        case sl
+        when /^session .*/i
           game_type = sl.match(/^session (.*)$/i)[1]
           gt = GameType.new(game_type)
           stake = gt.stake
           bs = gt.bet_structure
           pv = gt.poker_variant
-        elsif sl.match?(/^start: .*/i)
+        when /^start: .*/i
           start_time = ActiveSupport::TimeZone[Time.zone.name].parse("#{date} #{sl.match(/^start: (.*)$/i)[1]}")
-        elsif sl.match?(/^end: .*/i)
+        when /^end: .*/i
           end_time = ActiveSupport::TimeZone[Time.zone.name].parse("#{date} #{sl.match(/^end: (.*)$/i)[1]}")
-        elsif sl.match?(/^in: .*/i)
+        when /^in: .*/i
           buyin = sl.match(/^in: (.*)$/i)[1].to_i
-        elsif sl.match?(/^out: .*/i)
+        when /^out: .*/i
           cashout = sl.match(/^out: (.*)$/i)[1].to_i
-        elsif sl.match?(/^hands: .*/i)
+        when /^hands: .*/i
           hands_dealt = sl.match(/^hands: (.*)$/i)[1].to_i
         end
       end
 
       # this can happen if the session goes beyond midnight
-      if end_time < start_time
-        end_time += 1.day
-      end
+      end_time += 1.day if end_time < start_time
 
-      self.create!(
+      create!(
         start_time:    start_time,
         end_time:      end_time,
         buyin:         buyin,
@@ -123,22 +124,22 @@ class PokerSession < ApplicationRecord
 
   def self.daily_pct_won(poker_sessions = all)
     res_arr = daily_results(poker_sessions)
-    (res_arr.select { |r| r > 0 }.count.to_f / res_arr.count.to_f).round(2)
+    (res_arr.select(&:positive?).count / res_arr.count.to_f).round(2)
   end
 
   def self.weekly_pct_won(poker_sessions = all)
     res_arr = weekly_results(poker_sessions)
-    (res_arr.select { |r| r > 0 }.count.to_f / res_arr.count.to_f).round(2)
+    (res_arr.select(&:positive?).count / res_arr.count.to_f).round(2)
   end
 
   def self.monthly_pct_won(poker_sessions = all)
     res_arr = monthly_results(poker_sessions)
-    (res_arr.select { |r| r > 0 }.count.to_f / res_arr.count.to_f).round(2)
+    (res_arr.select(&:positive?).count / res_arr.count.to_f).round(2)
   end
 
   def self.yearly_pct_won(poker_sessions = all)
     res_arr = yearly_results(poker_sessions)
-    (res_arr.select { |r| r > 0 }.count.to_f / res_arr.count.to_f).round(2)
+    (res_arr.select(&:positive?).count / res_arr.count.to_f).round(2)
   end
 
   def self.best(poker_sessions = all)
@@ -186,39 +187,42 @@ class PokerSession < ApplicationRecord
   end
 
   def self.avg_wins_median(poker_sessions = all)
-    DescriptiveStatistics.median(poker_sessions.where('(cashout - buyin) > 0').pluck(Arel.sql('(cashout - buyin)'))).round(2)
+    DescriptiveStatistics
+      .median(poker_sessions.where('(cashout - buyin) > 0')
+      .pluck(Arel.sql('(cashout - buyin)')))
+      .round(2)
   end
 
   def self.daily_avg_wins(poker_sessions = all)
-    daily_results(poker_sessions).select { |r| r > 0 }.average.round(2)
+    daily_results(poker_sessions).select(&:positive?).average.round(2)
   end
 
   def self.daily_avg_wins_median(poker_sessions = all)
-    DescriptiveStatistics.median(daily_results(poker_sessions).select { |r| r > 0 }).round(2)
+    DescriptiveStatistics.median(daily_results(poker_sessions).select(&:positive?)).round(2)
   end
 
   def self.weekly_avg_wins(poker_sessions = all)
-    weekly_results(poker_sessions).select { |r| r > 0 }.average.round(2)
+    weekly_results(poker_sessions).select(&:positive?).average.round(2)
   end
 
   def self.weekly_avg_wins_median(poker_sessions = all)
-    DescriptiveStatistics.median(weekly_results(poker_sessions).select { |r| r > 0 }).round(2)
+    DescriptiveStatistics.median(weekly_results(poker_sessions).select(&:positive?)).round(2)
   end
 
   def self.monthly_avg_wins(poker_sessions = all)
-    monthly_results(poker_sessions).select { |r| r > 0 }.average.round(2)
+    monthly_results(poker_sessions).select(&:positive?).average.round(2)
   end
 
   def self.monthly_avg_wins_median(poker_sessions = all)
-    DescriptiveStatistics.median(monthly_results(poker_sessions).select { |r| r > 0 }).round(2)
+    DescriptiveStatistics.median(monthly_results(poker_sessions).select(&:positive?)).round(2)
   end
 
   def self.yearly_avg_wins(poker_sessions = all)
-    yearly_results(poker_sessions).select { |r| r > 0 }.average.round(2)
+    yearly_results(poker_sessions).select(&:positive?).average.round(2)
   end
 
   def self.yearly_avg_wins_median(poker_sessions = all)
-    DescriptiveStatistics.median(yearly_results(poker_sessions).select { |r| r > 0 }).round(2)
+    DescriptiveStatistics.median(yearly_results(poker_sessions).select(&:positive?)).round(2)
   end
 
   def self.avg_losses(poker_sessions = all)
@@ -226,39 +230,42 @@ class PokerSession < ApplicationRecord
   end
 
   def self.avg_losses_median(poker_sessions = all)
-    DescriptiveStatistics.median(poker_sessions.where('(cashout - buyin) < 0').pluck(Arel.sql('(cashout - buyin)'))).round(2)
+    DescriptiveStatistics
+      .median(poker_sessions.where('(cashout - buyin) < 0')
+      .pluck(Arel.sql('(cashout - buyin)')))
+      .round(2)
   end
 
   def self.daily_avg_losses(poker_sessions = all)
-    daily_results(poker_sessions).select { |r| r < 0 }.average.round(2)
+    daily_results(poker_sessions).select(&:negative?).average.round(2)
   end
 
   def self.daily_avg_losses_median(poker_sessions = all)
-    DescriptiveStatistics.median(daily_results(poker_sessions).select { |r| r < 0 }).round(2)
+    DescriptiveStatistics.median(daily_results(poker_sessions).select(&:negative?)).round(2)
   end
 
   def self.weekly_avg_losses(poker_sessions = all)
-    weekly_results(poker_sessions).select { |r| r < 0 }.average.round(2)
+    weekly_results(poker_sessions).select(&:negative?).average.round(2)
   end
 
   def self.weekly_avg_losses_median(poker_sessions = all)
-    DescriptiveStatistics.median(weekly_results(poker_sessions).select { |r| r < 0 }).round(2)
+    DescriptiveStatistics.median(weekly_results(poker_sessions).select(&:negative?)).round(2)
   end
 
   def self.monthly_avg_losses(poker_sessions = all)
-    monthly_results(poker_sessions).select { |r| r < 0 }.average.round(2)
+    monthly_results(poker_sessions).select(&:negative?).average.round(2)
   end
 
   def self.monthly_avg_losses_median(poker_sessions = all)
-    DescriptiveStatistics.median(monthly_results(poker_sessions).select { |r| r < 0 }).round(2)
+    DescriptiveStatistics.median(monthly_results(poker_sessions).select(&:negative?)).round(2)
   end
 
   def self.yearly_avg_losses(poker_sessions = all)
-    yearly_results(poker_sessions).select { |r| r < 0 }.average.round(2)
+    yearly_results(poker_sessions).select(&:negative?).average.round(2)
   end
 
   def self.yearly_avg_losses_median(poker_sessions = all)
-    DescriptiveStatistics.median(yearly_results(poker_sessions).select { |r| r < 0 }).to_f.round(2)
+    DescriptiveStatistics.median(yearly_results(poker_sessions).select(&:negative?)).round(2)
   end
 
   def self.avg(poker_sessions = all)
@@ -358,10 +365,14 @@ class PokerSession < ApplicationRecord
   end
 
   def self.wmsd(poker_sessions = all)
-    poker_sessions.joins(:hand_histories).where(hand_histories: { showdown: true }).where('hand_histories.result >= 0').count('hand_histories.id')
+    poker_sessions
+      .joins(:hand_histories)
+      .where(hand_histories: { showdown: true })
+      .where('hand_histories.result >= 0')
+      .count('hand_histories.id')
   end
 
   def self.vpip(poker_sessions = all)
-    (hands_played(poker_sessions.where.not(hands_dealt: nil)).to_f / hands_dealt(poker_sessions).to_f).round(2)
+    (hands_played(poker_sessions.where.not(hands_dealt: nil)) / hands_dealt(poker_sessions).to_f).round(2)
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 json.ids (1..@raw_numbers.size).to_a
 json.datapoints @raw_numbers.cum_sum
 json.bet_size_colors @hand_histories.pluck('bet_sizes.color')

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe GameType do
   describe '.new' do
     subject { described_class.new('2/5 NL') }

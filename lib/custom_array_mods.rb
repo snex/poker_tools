@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module CustomArrayMods
   def average
     self.sum.to_f / self.count.to_f
@@ -24,7 +26,7 @@ module CustomArrayMods
   end
 
   def to_custom_sql_order(col)
-    ret = 'CASE'
+    ret = +'CASE'
     self.each_with_index do |item, i|
       ret << " WHEN #{col} = '#{item}' THEN #{i}"
     end

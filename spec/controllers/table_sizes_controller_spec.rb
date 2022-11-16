@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe TableSizesController do
   describe 'GET #index' do
     before do

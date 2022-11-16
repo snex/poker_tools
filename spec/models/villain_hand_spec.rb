@@ -1,4 +1,6 @@
+# frozen_string_literal: true
+
 RSpec.describe VillainHand do
-  it { should belong_to :hand_history }
-  it { should belong_to :hand }
+  it { is_expected.to belong_to :hand_history }
+  it { is_expected.to belong_to :hand }
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe IndexController do
   describe 'GET #index' do
     it 'renders index with response 200' do

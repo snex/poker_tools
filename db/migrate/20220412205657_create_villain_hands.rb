@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateVillainHands < ActiveRecord::Migration[7.0]
   def change
     create_table :villain_hands do |t|

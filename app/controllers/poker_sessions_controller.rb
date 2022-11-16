@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PokerSessionsController < AuthorizedPagesController
   skip_before_action :verify_authenticity_token, only: [:index, :upload, :chart]
 

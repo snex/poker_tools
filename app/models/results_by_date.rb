@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ResultsByDate
   def initialize
     ps_yearly = PokerSession.group_by_year('start_time').sum('cashout - buyin')
@@ -8,16 +10,16 @@ class ResultsByDate
     @results = {}
     @results[:yearly] = {}
     @results[:monthly] = {}
-    ps_yearly.keys.each do |year|
+    ps_yearly.each_key do |year|
       @results[:yearly][year] = {}
     end
-    hh_yearly.keys.each do |year|
+    hh_yearly.each_key do |year|
       @results[:yearly][year] = {}
     end
-    ps_monthly.keys.each do |month|
+    ps_monthly.each_key do |month|
       @results[:monthly][month] = {}
     end
-    hh_monthly.keys.each do |month|
+    hh_monthly.each_key do |month|
       @results[:monthly][month] = {}
     end
 
@@ -37,10 +39,10 @@ class ResultsByDate
   end
 
   def yearly_results
-    @results[:yearly].sort { |a,b| b <=> a }
+    @results[:yearly].sort { |a, b| b <=> a }
   end
 
   def monthly_results
-    @results[:monthly].sort { |a,b| b <=> a }
+    @results[:monthly].sort { |a, b| b <=> a }
   end
 end

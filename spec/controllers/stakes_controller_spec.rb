@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe StakesController do
   describe 'GET #index' do
     let(:ps1) { create :poker_session }

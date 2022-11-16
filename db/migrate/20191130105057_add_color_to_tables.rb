@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddColorToTables < ActiveRecord::Migration[6.0]
   def change
     change_table :positions do |t|
