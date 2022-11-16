@@ -12,8 +12,24 @@ FactoryBot.define do
       flop { Faker::Lorem.word }
     end
 
+    trait :with_turn do
+      turn { Faker::Lorem.word }
+    end
+
+    trait :with_river do
+      river { Faker::Lorem.word }
+    end
+
     trait :with_showdown do
       showdown { true }
+    end
+
+    trait :with_all_in do
+      all_in { true }
+    end
+
+    trait :with_villain_hands do
+      villain_hands { build_list :villain_hand, 2 }
     end
   end
 end

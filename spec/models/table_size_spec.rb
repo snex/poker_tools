@@ -6,7 +6,13 @@ RSpec.describe TableSize do
 
   describe 'TABLE_SIZE_ORDER' do
     it 'matches the proper order for table sizes' do
-      expect(described_class::TABLE_SIZE_ORDER).to eq ['10/9/8 handed', '7 handed', '6 handed', '5 handed', '4 handed', '3 handed']
+      expect(described_class::TABLE_SIZE_ORDER).to eq ['10/9/8 handed', '7 handed', '6 handed', '5 handed', '4 handed', '3 handed', 'Heads Up']
+    end
+  end
+
+  describe '#custom_order' do
+    it 'orders the results by TABLE_SIZE_ORDER' do
+      expect(described_class.custom_order.pluck(:description)).to eq(described_class::TABLE_SIZE_ORDER)
     end
   end
 
@@ -17,15 +23,15 @@ RSpec.describe TableSize do
   end
 
   describe '.cached' do
-    let(:ordered) { described_class.order(described_class::TABLE_SIZE_ORDER.to_custom_sql_order(:description)) }
-    let!(:expected) { described_class.order(described_class::TABLE_SIZE_ORDER.to_custom_sql_order(:description)).pluck(:id, :description) }
+    let(:ordered) { described_class.custom_order }
+    let!(:expected) { described_class.custom_order.pluck(:id, :description) }
 
     it 'returns a hash of the TableSize ids and descriptions' do
       expect(described_class.cached).to eq(expected)
     end
 
     it 'memoizes the result' do
-      expect(described_class).to receive(:order).exactly(0).times
+      expect(described_class).to receive(:custom_order).exactly(0).times
       2.times { described_class.cached }
     end
   end

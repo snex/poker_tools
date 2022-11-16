@@ -1,8 +1,9 @@
 RSpec.describe HandHistoriesController do
+  before { sign_in }
+
   describe 'GET #index' do
     context '.html' do
       it 'renders index with response 200, assigns all variables' do
-        sign_in
         get :index
         expect(response).to render_template('index')
         expect(response).to have_http_status(:ok)
@@ -13,7 +14,6 @@ RSpec.describe HandHistoriesController do
 
     context '.json' do
       it 'renders index with response 200, assigns all variables' do
-        sign_in
         get :index, format: :json
         expect(response).to have_http_status(:ok)
 
@@ -25,7 +25,6 @@ RSpec.describe HandHistoriesController do
 
   describe 'GET #by_date' do
     it 'renders by_date with response 200, assigns all variables' do
-      sign_in
       get :by_date
       expect(response).to render_template('by_date')
       expect(response).to have_http_status(:ok)
@@ -38,7 +37,6 @@ RSpec.describe HandHistoriesController do
     let(:hh) { create_list :hand_history, 2 }
 
     it 'renders chart with response 200, assigns all variables' do
-      sign_in
       get :chart, format: :json
       expect(response).to render_template('chart_data')
       expect(response).to have_http_status(:ok)

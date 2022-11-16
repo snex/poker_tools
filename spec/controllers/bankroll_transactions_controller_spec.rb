@@ -3,11 +3,11 @@ RSpec.describe BankrollTransactionsController do
     before do
       create :poker_session, buyin: 100, cashout: 200
       create :bankroll_transaction, amount: 500
+      sign_in
+      get :index
     end
 
     it 'renders index with response 200, assigns all variables' do
-      sign_in
-      get :index
       expect(response).to render_template('index')
       expect(response).to have_http_status(:ok)
 

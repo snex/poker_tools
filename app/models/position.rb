@@ -3,11 +3,15 @@ class Position < ApplicationRecord
 
   validates_uniqueness_of :position
 
+  scope :custom_order, -> do
+    order(POSITION_ORDER.to_custom_sql_order(:position))
+  end
+
   def to_s
     self.position
   end
 
   def self.cached
-    @@cached ||= Position.order(POSITION_ORDER.to_custom_sql_order(:position)).pluck(:id, :position)
+    @@cached ||= Position.custom_order.pluck(:id, :position)
   end
 end

@@ -1,18 +1,19 @@
 RSpec.describe BetSizesController do
   describe 'GET #index' do
     before do
-      BetSize.all.each_with_index do |bs, i|
+      BetSize.custom_order.each_with_index do |bs, i|
         num_hands = i + 1
         (i + 1).times do |j|
           result_mod = (j % 2 == 0) ? -1 : 1
           create :hand_history, bet_size: bs, result: num_hands * result_mod
         end
       end
+
+      sign_in
     end
 
     context 'no params' do
       it 'renders index with response 200, assigns all variables' do
-        sign_in
         get :index
         expect(response).to render_template('index')
         expect(response).to have_http_status(:ok)
@@ -53,7 +54,6 @@ RSpec.describe BetSizesController do
 
     context 'with params' do
       it 'renders index with response 200, assigns all variables' do
-        sign_in
         get :index, params: { bet_size: 3 }
         expect(response).to render_template('index')
         expect(response).to have_http_status(:ok)

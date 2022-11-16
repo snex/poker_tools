@@ -3,11 +3,15 @@ class BetSize < ApplicationRecord
 
   validates_uniqueness_of :bet_size, :description, :color
 
+  scope :custom_order, -> do
+    order(BET_SIZE_ORDER.to_custom_sql_order(:description))
+  end
+
   def to_s
     self.description
   end
 
   def self.cached
-    @@cached ||= BetSize.order(BET_SIZE_ORDER.to_custom_sql_order(:description)).pluck(:id, :description)
+    @@cached ||= BetSize.custom_order.pluck(:id, :description)
   end
 end

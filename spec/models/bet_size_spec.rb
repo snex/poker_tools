@@ -11,6 +11,12 @@ RSpec.describe BetSize do
     end
   end
 
+  describe '#custom_order' do
+    it 'orders the results by BET_SIZE_ORDER' do
+      expect(described_class.custom_order.pluck(:description)).to eq(described_class::BET_SIZE_ORDER)
+    end
+  end
+
   describe '#to_s' do
     it 'returns the description field' do
       expect(subject.to_s).to eq(subject.description)
@@ -18,15 +24,15 @@ RSpec.describe BetSize do
   end
 
   describe '.cached' do
-    let(:ordered) { described_class.order(described_class::BET_SIZE_ORDER.to_custom_sql_order(:description)) }
-    let!(:expected) { described_class.order(described_class::BET_SIZE_ORDER.to_custom_sql_order(:description)).pluck(:id, :description) }
+    let(:ordered) { described_class.custom_order }
+    let!(:expected) { described_class.custom_order.pluck(:id, :description) }
 
     it 'returns a hash of the BetSize ids and descriptions' do
       expect(described_class.cached).to eq(expected)
     end
 
     it 'memoizes the result' do
-      expect(described_class).to receive(:order).exactly(0).times
+      expect(described_class).to receive(:custom_order).exactly(0).times
       2.times { described_class.cached }
     end
   end
