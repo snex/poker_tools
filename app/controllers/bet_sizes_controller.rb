@@ -1,22 +1,9 @@
 class BetSizesController < AuthorizedPagesController
-  include Filter
+  include DataAggregator
 
   skip_before_action :verify_authenticity_token
 
   def index
-    @bet_sizes = HandHistory.includes(:hand, :position, :table_size, poker_session: :stake).joins(:bet_size, poker_session: :stake).group(:'bet_sizes.description')
-    @bet_sizes = apply_filters(@bet_sizes)
-
-    @sums = @bet_sizes.sum(:result)
-    @counts = @bet_sizes.count(:id)
-    @pct_w = @bet_sizes.where('result > 0').count.each_with_object({}) do |(hand, count), h|
-      h[hand] = (100 * count.to_f / @counts[hand].to_f).round(2)
-    end
-    @avgs = @bet_sizes.average(:result)
-    @hands = Hand.all
-    @positions = Position.all
-    @table_sizes = TableSize.all
-    @stakes = Stake.all.order(:stakes_array)
+    generate_data(:bet_size, :'bet_sizes.description')
   end
-
 end

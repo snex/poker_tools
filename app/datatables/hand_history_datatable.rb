@@ -3,19 +3,19 @@ class HandHistoryDatatable < AjaxDatatablesRails::ActiveRecord
 
   def view_columns
     @view_columns ||= {
-      date:       { source: 'PokerSession.start_time', cond: :date_range, delimiter: '-yadcf_delim-' },
-      result:     { source: 'HandHistory.result', cond: between_condition },
-      hand:       { source: 'Hand.hand', cond: :string_eq },
-      position:   { source: 'Position.position', cond: :string_eq },
-      bet_size:   { source: 'BetSize.description', cond: :string_eq },
-      table_size: { source: 'TableSize.description', cond: :string_eq },
-      stake:      { source: 'Stake.stake', cond: :string_eq },
-      flop:       { source: 'HandHistory.flop', cond: not_null_condition },
-      turn:       { source: 'HandHistory.turn', cond: not_null_condition },
-      river:      { source: 'HandHistory.river', cond: not_null_condition },
-      showdown:   { source: 'HandHistory.showdown', cond: boolean_condition },
-      all_in:     { source: 'HandHistory.all_in', cond: boolean_condition },
-      note:       { source: 'HandHistory.note' }
+      date:       { source: 'PokerSession.start_time', cond: :date_range,        delimiter: '-yadcf_delim-' },
+      result:     { source: 'HandHistory.result',      cond: between_condition                              },
+      hand:       { source: 'Hand.id',                 cond: int_eq_condition,   use_regex: false           },
+      position:   { source: 'Position.id',             cond: int_eq_condition,   use_regex: false           },
+      bet_size:   { source: 'BetSize.id',              cond: int_eq_condition,   use_regex: false           },
+      table_size: { source: 'TableSize.id',            cond: int_eq_condition,   use_regex: false           },
+      stake:      { source: 'Stake.id',                cond: int_eq_condition,   use_regex: false           },
+      flop:       { source: 'HandHistory.flop',        cond: not_null_condition                             },
+      turn:       { source: 'HandHistory.turn',        cond: not_null_condition                             },
+      river:      { source: 'HandHistory.river',       cond: not_null_condition                             },
+      showdown:   { source: 'HandHistory.showdown',    cond: boolean_condition                              },
+      all_in:     { source: 'HandHistory.all_in',      cond: boolean_condition                              },
+      note:       { source: 'HandHistory.note',        cond: str_like_condition,                            }
     }
   end
 
@@ -32,7 +32,7 @@ class HandHistoryDatatable < AjaxDatatablesRails::ActiveRecord
         result:     record.result,
         hand:       record.hand,
         position:   record.position,
-        bet_size:   record.bet_size.description,
+        bet_size:   record.bet_size.id,
         table_size: record.table_size.description,
         stake:      record.poker_session.stake.stake,
         flop:       record.flop,

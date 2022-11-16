@@ -1,5 +1,3 @@
-require 'csv'
-
 class PokerSession < ApplicationRecord
   belongs_to :stake
   belongs_to :bet_structure
@@ -15,34 +13,79 @@ class PokerSession < ApplicationRecord
   end
 
   def duration
-    @secs ||= (self.end_time - self.start_time).to_i
+    @secs ||= (self.end_time - self.start_time)
   end
 
   def hourly
-    (result.to_f / (duration.to_f / 3600)).round(2)
+    @hourly ||= (result.to_f / (duration.to_f / 3600)).round(2)
   end
 
   def hands_played
-    hand_histories.count
+    @hands_played ||= hand_histories.count
   end
 
   def saw_flop
-    hand_histories.where.not(flop: nil).count
+    @saw_flop ||= hand_histories.where.not(flop: nil).count
   end
 
   def wtsd
-    hand_histories.where(showdown: true).count
+    @wtsd ||= hand_histories.where(showdown: true).count
   end
 
   def wmsd
-    hand_histories.where(showdown: true).where('result >= 0').count
+    @wmsd ||= hand_histories.where(showdown: true).where('result >= 0').count
   end
 
   def vpip
-    (hands_played.to_f / hands_dealt.to_f).round(2)
+    @vpip ||= (hands_played.to_f / hands_dealt.to_f).round(2)
   end
 
-  def self.result(poker_sessions = all)
+  def self.import(date, data)
+    transaction do
+      session_lines = data.split("\n")
+      stake = bs = pv = start_time = end_time = buyin = cashout = hands_dealt = nil
+
+      session_lines.each do |sl|
+        sl.strip!
+
+        if sl.match?(/^session .*/i)
+          game_type = sl.match(/^session (.*)$/i)[1]
+          gt = GameType.new(game_type)
+          stake = gt.stake
+          bs = gt.bet_structure
+          pv = gt.poker_variant
+        elsif sl.match?(/^start: .*/i)
+          start_time = ActiveSupport::TimeZone[Time.zone.name].parse("#{date} #{sl.match(/^start: (.*)$/i)[1]}")
+        elsif sl.match?(/^end: .*/i)
+          end_time = ActiveSupport::TimeZone[Time.zone.name].parse("#{date} #{sl.match(/^end: (.*)$/i)[1]}")
+        elsif sl.match?(/^in: .*/i)
+          buyin = sl.match(/^in: (.*)$/i)[1].to_i
+        elsif sl.match?(/^out: .*/i)
+          cashout = sl.match(/^out: (.*)$/i)[1].to_i
+        elsif sl.match?(/^hands: .*/i)
+          hands_dealt = sl.match(/^hands: (.*)$/i)[1].to_i
+        end
+      end
+
+      # this can happen if the session goes beyond midnight
+      if end_time < start_time
+        end_time += 1.day
+      end
+
+      self.create!(
+        start_time:    start_time,
+        end_time:      end_time,
+        buyin:         buyin,
+        cashout:       cashout,
+        hands_dealt:   hands_dealt,
+        stake:         stake,
+        bet_structure: bs,
+        poker_variant: pv
+      )
+    end
+  end
+
+  def self.results(poker_sessions = all)
     poker_sessions.sum('cashout - buyin')
   end
 
@@ -71,7 +114,7 @@ class PokerSession < ApplicationRecord
   end
 
   def self.hourly(poker_sessions = all)
-    (result(poker_sessions).to_f / ((duration(poker_sessions).to_f / 3600))).round(2)
+    (results(poker_sessions).to_f / ((duration(poker_sessions).to_f / 3600))).round(2)
   end
 
   def self.pct_won(poker_sessions = all)
@@ -263,19 +306,19 @@ class PokerSession < ApplicationRecord
   end
 
   def self.daily_longest_win_streak(poker_sessions = all)
-    daily_results.longest_streak(0, :>)
+    daily_results(poker_sessions).longest_streak(0, :>)
   end
 
   def self.weekly_longest_win_streak(poker_sessions = all)
-    weekly_results.longest_streak(0, :>)
+    weekly_results(poker_sessions).longest_streak(0, :>)
   end
 
   def self.monthly_longest_win_streak(poker_sessions = all)
-    monthly_results.longest_streak(0, :>)
+    monthly_results(poker_sessions).longest_streak(0, :>)
   end
 
   def self.yearly_longest_win_streak(poker_sessions = all)
-    yearly_results.longest_streak(0, :>)
+    yearly_results(poker_sessions).longest_streak(0, :>)
   end
 
   def self.longest_loss_streak(poker_sessions = all)
@@ -283,19 +326,19 @@ class PokerSession < ApplicationRecord
   end
 
   def self.daily_longest_loss_streak(poker_sessions = all)
-    daily_results.longest_streak(0, :<)
+    daily_results(poker_sessions).longest_streak(0, :<)
   end
 
   def self.weekly_longest_loss_streak(poker_sessions = all)
-    weekly_results.longest_streak(0, :<)
+    weekly_results(poker_sessions).longest_streak(0, :<)
   end
 
   def self.monthly_longest_loss_streak(poker_sessions = all)
-    monthly_results.longest_streak(0, :<)
+    monthly_results(poker_sessions).longest_streak(0, :<)
   end
 
   def self.yearly_longest_loss_streak(poker_sessions = all)
-    yearly_results.longest_streak(0, :<)
+    yearly_results(poker_sessions).longest_streak(0, :<)
   end
 
   def self.hands_dealt(poker_sessions = all)
@@ -320,141 +363,5 @@ class PokerSession < ApplicationRecord
 
   def self.vpip(poker_sessions = all)
     (hands_played(poker_sessions.where.not(hands_dealt: nil)).to_f / hands_dealt(poker_sessions).to_f).round(2)
-  end
-
-  def self.import_csv(filename)
-    transaction do
-      CSV.foreach(filename, headers: true) do |csv|
-        date = ActiveSupport::TimeZone[Time.zone.name].strptime(csv['Date'], '%Y-%m-%d')
-        start_time = csv['Start Time']
-        end_time = csv['End Time']
-        game = csv['Game']
-        stake_str, game_name = game.split(' ')
-        stake = Stake.find_or_create_by(stake: stake_str)
-        bs = BetStructure.find_by(name: 'No Limit')
-        pv = PokerVariant.find_by(name: 'Texas Holdem')
-
-        if start_time.blank? || end_time.blank?
-          duration = csv['Duration']
-          hrs, mins = duration.split(':').map(&:to_i)
-          duration_mins = hrs * 60 + mins
-          start_time = date.at_midnight
-          end_time = start_time + duration_mins.minutes
-        else
-          start_time = "#{date.to_date.to_s} #{start_time}"
-          end_time = "#{date.to_date.to_s} #{end_time}"
-        end
-
-        case game_name
-        when 'BigO'
-          bs = BetStructure.find_by(name: 'Pot Limit')
-          pv = PokerVariant.find_by(name: 'BigO')
-        end
-
-        puts start_time
-        PokerSession.create!(
-          buyin:         csv['Buyin'].to_i,
-          cashout:       csv['Cashout'].to_i,
-          start_time:    start_time,
-          end_time:      end_time,
-          stake:         stake,
-          bet_structure: bs,
-          poker_variant: pv,
-          hands_dealt:   csv['Hands Dealt'].to_i
-        )
-      end
-    end
-  end
-
-  def self.import_xml(filename)
-    xml = Nokogiri::XML(File.readlines(filename).join(''))
-
-    transaction do
-      xml.xpath('//sessions/cash').select do |c|
-        c.attributes['bankroll'].value == 'Live'
-      end.each do |c|
-        attrs = c.attributes
-        res_attrs = c.xpath('./results/result').first.attributes
-        stake = "#{attrs['sb']}/#{attrs['bb']}"
-        bs = case attrs['limit'].value
-             when '0'
-               BetStructure.find_by(name: 'No Limit')
-             when '1'
-               BetStructure.find_by(name: 'Pot Limit')
-             when '2'
-               BetStructure.find_by(name: 'Fixed Limit')
-             else
-               raise 'unknown limit'
-             end
-        pv = case attrs['variant'].value
-             when 'OH|Omaha'
-               PokerVariant.find_by(name: 'Omaha')
-             when 'Texas Hold\'em|Texas Hold\'em'
-               PokerVariant.find_by(name: 'Texas Holdem')
-             when 'Mixed|Mixed'
-               PokerVariant.find_by(name: 'Mix')
-             when 'BigO|BigO'
-               PokerVariant.find_by(name: 'BigO')
-             when 'OH8|Omaha Hi-Low'
-               PokerVariant.find_by(name: 'Omaha Hi-Lo')
-             else
-               raise 'unknown variant'
-             end
-
-        PokerSession.create!(
-          buyin:         res_attrs['buyin'].value.to_i,
-          cashout:       res_attrs['chipcount'].value.to_i,
-          start_time:    DateTime.strptime(attrs['startdate'].value, '%m/%d/%y %H:%M:%S'),
-          end_time:      DateTime.strptime(attrs['enddate'].value, '%m/%d/%y %H:%M:%S'),
-          stake:         Stake.find_or_create_by(stake: stake),
-          bet_structure: bs,
-          poker_variant: pv
-        )
-      end
-    end
-
-    transaction do
-      xml.xpath('//sessions/tournament').select do |c|
-        c.attributes['bankroll'].value == 'Live'
-      end.each do |c|
-        attrs = c.attributes
-        res_attrs = c.xpath('./results/result').first.attributes
-        stake = attrs['entryfee'].value
-        bs = case attrs['limit'].value
-             when '0'
-               BetStructure.find_by(name: 'No Limit')
-             when '1'
-               BetStructure.find_by(name: 'Pot Limit')
-             when '2'
-               BetStructure.find_by(name: 'Fixed Limit')
-             else
-               raise 'unknown limit'
-             end
-        pv = case attrs['variant'].value
-             when 'OH|Omaha'
-               PokerVariant.find_by(name: 'Omaha')
-             when 'Texas Hold\'em|Texas Hold\'em', ''
-               PokerVariant.find_by(name: 'Texas Holdem')
-             when 'Mixed|Mixed'
-               PokerVariant.find_by(name: 'Mix')
-             when 'BigO|BigO'
-               PokerVariant.find_by(name: 'BigO')
-             when 'OH8|Omaha Hi-Low'
-               PokerVariant.find_by(name: 'Omaha Hi-Lo')
-             else
-               raise 'unknown variant'
-             end
-
-        PokerSession.create!(
-          buyin:         res_attrs['buyin'].value.to_i,
-          cashout:       res_attrs['chipcount'].value.to_i,
-          start_time:    DateTime.strptime(attrs['startdate'].value, '%m/%d/%y %H:%M:%S'),
-          end_time:      DateTime.strptime(attrs['enddate'].value, '%m/%d/%y %H:%M:%S'),
-          stake:         Stake.find_or_create_by(stake: stake),
-          bet_structure: bs,
-          poker_variant: pv
-        )
-      end
-    end
   end
 end

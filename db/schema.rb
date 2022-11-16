@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_03_191002) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_14_041349) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -26,6 +26,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_03_191002) do
     t.integer "bet_size"
     t.string "description"
     t.string "color"
+    t.index ["bet_size"], name: "index_bet_sizes_on_bet_size", unique: true
+    t.index ["color"], name: "index_bet_sizes_on_color", unique: true
+    t.index ["description"], name: "index_bet_sizes_on_description", unique: true
   end
 
   create_table "bet_structures", force: :cascade do |t|
@@ -33,6 +36,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_03_191002) do
     t.string "abbreviation", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["abbreviation"], name: "index_bet_structures_on_abbreviation", unique: true
+    t.index ["name"], name: "index_bet_structures_on_name", unique: true
   end
 
   create_table "hand_histories", force: :cascade do |t|
@@ -59,6 +64,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_03_191002) do
 
   create_table "hands", force: :cascade do |t|
     t.string "hand"
+    t.index ["hand"], name: "index_hands_on_hand", unique: true
   end
 
   create_table "poker_sessions", force: :cascade do |t|
@@ -82,11 +88,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_03_191002) do
     t.string "abbreviation", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["abbreviation"], name: "index_poker_variants_on_abbreviation", unique: true
+    t.index ["name"], name: "index_poker_variants_on_name", unique: true
   end
 
   create_table "positions", force: :cascade do |t|
     t.string "position"
     t.string "color"
+    t.index ["position"], name: "index_positions_on_position", unique: true
   end
 
   create_table "stakes", force: :cascade do |t|
@@ -97,6 +106,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_03_191002) do
   create_table "table_sizes", force: :cascade do |t|
     t.integer "table_size"
     t.string "description"
+    t.index ["description"], name: "index_table_sizes_on_description", unique: true
+    t.index ["table_size"], name: "index_table_sizes_on_table_size", unique: true
   end
 
   create_table "users", force: :cascade do |t|

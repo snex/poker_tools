@@ -1,6 +1,4 @@
 class PokerSessionsController < AuthorizedPagesController
-  include Filter
-
   skip_before_action :verify_authenticity_token, only: [:index, :upload, :chart]
 
   def index
@@ -17,17 +15,13 @@ class PokerSessionsController < AuthorizedPagesController
     end
   end
 
-  def show
-  end
-
   def upload
     begin
       date = File.basename(params['file'].original_filename.split('.')[0], '.*')
-      HandHistory.import(date, params['file'].path)
-      render plain: '' and return
+      FileImporter.import(date, params['file'].path)
+      redirect_to poker_sessions_path and return
     rescue => e
       render plain: e.message, status: :unprocessable_entity
-      raise e
     end
   end
 
@@ -37,7 +31,7 @@ class PokerSessionsController < AuthorizedPagesController
     elsif params[:year]
       @poker_sessions = PokerSession.where("date_part('year', start_time) = ?", params[:year]).order(:start_time)
     else
-      @poker_sessions = PokerSession.all.order(:start_time)
+      @poker_sessions = PokerSession.order(:start_time)
     end
 
     render 'chart_data'

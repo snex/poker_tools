@@ -20,6 +20,8 @@
 /public/assets
 .byebug_history
 
+coverage/
+
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 
@@ -33,3 +35,6 @@ yarn-debug.log*
 /lib/r_scripts/data
 /lib/r_scripts/data.txt
 /**/*.pdf
+
+# vim swap files
+/**/*.swp

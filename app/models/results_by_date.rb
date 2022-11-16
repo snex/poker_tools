@@ -11,7 +11,13 @@ class ResultsByDate
     ps_yearly.keys.each do |year|
       @results[:yearly][year] = {}
     end
+    hh_yearly.keys.each do |year|
+      @results[:yearly][year] = {}
+    end
     ps_monthly.keys.each do |month|
+      @results[:monthly][month] = {}
+    end
+    hh_monthly.keys.each do |month|
       @results[:monthly][month] = {}
     end
 
@@ -31,7 +37,7 @@ class ResultsByDate
   end
 
   def yearly_results
-    @results[:yearly].sort { |a,b| b <=> a}
+    @results[:yearly].sort { |a,b| b <=> a }
   end
 
   def monthly_results

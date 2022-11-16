@@ -5,13 +5,13 @@
       .card-title= obj.blank? ? obj_name : button_to(obj_name, hand_histories_path, params: search_params)
       %div{style: 'display: flex; justify-content: space-between'}
         .card-text.text-left= "Tot"
-        .card-text.text-right= "#{obj.blank? ? '0' : @sums[obj_name]}"
+        .card-text.text-right= "#{obj.blank? ? '0' : @sums[obj_name].to_i}"
       %div{style: 'display: flex; justify-content: space-between'}
         .card-text.text-left= "Num"
-        .card-text.text-right= "#{obj.blank? ? '0' : @counts[obj_name]}"
+        .card-text.text-right= "#{obj.blank? ? '0' : @counts[obj_name].to_i}"
       %div{style: 'display: flex; justify-content: space-between'}
         .card-text.text-left= "% won"
-        .card-text.text-right= "#{obj.blank? ? '0' : @pct_w[obj_name].to_f}%"
+        .card-text.text-right= "#{obj.blank? ? '0.0' : @pct_w[obj_name].to_f}%"
       %div{style: 'display: flex; justify-content: space-between'}
         .card-text.text-left= "$/H"
-        .card-text.text-right= "#{obj.blank? ? '0' : @avgs[obj_name].round(2)}"
+        .card-text.text-right= "#{obj.blank? ? '0.0' : @avgs[obj_name].to_f}"

@@ -4,18 +4,22 @@
 .container-fluid
   .row
     =form_with(url: villain_hands_path, local: true, html: {id: 'filter-form', class: 'form-inline'}) do |f|
-      =hand_filter @hands, params[:hand]
-      =position_filter @positions, params[:position]
-      =bet_size_filter @bet_sizes, params[:bet_size]
-      =table_size_filter @table_sizes, params[:table_size]
-      =stake_filter @stakes, params[:stake]
-      =date_filter params[:from], params[:to]
-      =advanced_filters params[:flop], params[:turn], params[:river], params[:showdown], params[:all_in]
+      =hand_filter       params[:hand]
+      =position_filter   params[:position]
+      =bet_size_filter   params[:bet_size]
+      =table_size_filter params[:table_size]
+      =stake_filter      params[:stake]
+      .form-check.form-check-inline
+        =date_filter       params[:from], params[:to]
+      .form-check.form-check-inline
+        =advanced_filters  params[:flop], params[:turn], params[:river], params[:showdown], params[:all_in]
   %div{style: 'margin-top: 20px;'}
-  -Hand::HAND_ORDER.each do |ho_row|
+  -Hand.cached.each_slice(13) do |slice|
     .row
-      -ho_row.each do |hand_name|
-        =render partial: 'shared/data_card', locals: { obj_name: hand_name, search_params: { hand: hand_name,
-          position: @positions.find { |p| p.id.to_s == params[:position] }.try(:position),
-          bet_size: @bet_sizes.find { |b| b.id.to_s == params[:bet_size] }.try(:description),
-          table_size: @table_sizes.find { |t| t.id.to_s == params[:table_size] }.try(:description) } }
+      -slice.each do |id, hand|
+        =render partial: 'shared/data_card', locals: { obj_name: hand,
+          search_params: { hand: id,
+            bet_size:   params[:bet_size],
+            position:   params[:position],
+            stake:      params[:stake],
+            table_size: params[:table_size] } }
