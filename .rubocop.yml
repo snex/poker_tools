@@ -14,4 +14,9 @@ AllCops:
   Exclude:
     - 'bin/**'
     - 'db/**'
+    - 'db/migrate/2019*'
+    - 'db/migrate/2021*'
+    - 'db/migrate/20220*'
+    - 'db/migrate/202210*'
+    - 'db/migrate/202211*'
     - 'spec/features/clearance/**'
