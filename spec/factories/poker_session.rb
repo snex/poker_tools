@@ -12,7 +12,7 @@ FactoryBot.define do
     poker_variant { PokerVariant.all.sample(1).first }
 
     trait :with_hand_histories do
-      hand_histories { build_list :hand_history, 5 }
+      hand_histories { build_list(:hand_history, 5) }
     end
 
     trait :with_hand_histories_flops do
@@ -20,7 +20,11 @@ FactoryBot.define do
     end
 
     trait :with_hand_histories_showdowns do
-      hand_histories { build_list(:hand_history, 3) + build_list(:hand_history, 2, :with_showdown) }
+      hand_histories do
+        build_list(:hand_history, 3) <<
+          build(:hand_history, :with_showdown, result: 100) <<
+          build(:hand_history, :with_showdown, result: -100)
+      end
     end
   end
 end

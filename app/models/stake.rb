@@ -3,6 +3,8 @@
 class Stake < ApplicationRecord
   before_save :set_stakes_array
 
+  scope :custom_order, -> { order(:stakes_array) }
+
   def to_s
     stake
   end
@@ -10,7 +12,7 @@ class Stake < ApplicationRecord
   def self.cached
     # stakes cannot be memoized because they can dynamically be created,
     # but we will maintain the naming scheme for simplicity sake
-    order(:stakes_array).pluck(:id, :stake)
+    custom_order.pluck(:id, :stake)
   end
 
   private

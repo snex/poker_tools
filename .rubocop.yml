@@ -14,3 +14,4 @@ AllCops:
   Exclude:
     - 'bin/**'
     - 'db/**'
+    - 'spec/features/clearance/**'

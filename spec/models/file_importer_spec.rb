@@ -2,13 +2,17 @@
 
 RSpec.describe FileImporter do
   describe '.import' do
-    context 'basic import' do
+    context 'when a good file is supplied' do
       it 'imports a PokerSession' do
-        expect { described_class.import('2022-01-01', 'spec/data/file_importer/import_basic.txt') }.to change { PokerSession.count }.from(0).to(1)
+        expect do
+          described_class.import('2022-01-01', 'spec/data/file_importer/import_basic.txt')
+        end.to change(PokerSession, :count).from(0).to(1)
       end
 
       it 'imports a HandHistory' do
-        expect { described_class.import('2022-01-01', 'spec/data/file_importer/import_basic.txt') }.to change { HandHistory.count }.from(0).to(1)
+        expect do
+          described_class.import('2022-01-01', 'spec/data/file_importer/import_basic.txt')
+        end.to change(HandHistory, :count).from(0).to(1)
       end
 
       it 'associates the HandHistory to the PokerSession' do

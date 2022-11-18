@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe TableSize do
-  subject(:ts) { build(:table_size) }
-
   it { is_expected.to validate_uniqueness_of(:table_size) }
   it { is_expected.to validate_uniqueness_of(:description) }
 
@@ -21,9 +19,11 @@ RSpec.describe TableSize do
   end
 
   describe '#to_s' do
-    it 'returns the description field' do
-      expect(ts.to_s).to eq(ts.description)
-    end
+    subject { ts.to_s }
+
+    let(:ts) { build(:table_size) }
+
+    it { is_expected.to eq(ts.description) }
   end
 
   describe '.cached' do

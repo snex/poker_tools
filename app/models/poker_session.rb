@@ -7,7 +7,7 @@ class PokerSession < ApplicationRecord
   has_many :hand_histories, dependent: :restrict_with_exception
 
   def game_type
-    "#{stake.stake} #{bet_structure.abbreviation}#{poker_variant.abbreviation}"
+    @game_type ||= "#{stake.stake} #{bet_structure.abbreviation}#{poker_variant.abbreviation}"
   end
 
   def result
@@ -15,11 +15,11 @@ class PokerSession < ApplicationRecord
   end
 
   def duration
-    @duration ||= (end_time - start_time)
+    @duration ||= (end_time - start_time).to_i
   end
 
   def hourly
-    @hourly ||= (result.to_f / (duration.to_f / 3600)).round(2)
+    @hourly ||= (result / (duration / 3600.0)).round(2)
   end
 
   def hands_played
@@ -27,15 +27,15 @@ class PokerSession < ApplicationRecord
   end
 
   def saw_flop
-    @saw_flop ||= hand_histories.where.not(flop: nil).count
+    @saw_flop ||= hand_histories.saw_flop.count
   end
 
   def wtsd
-    @wtsd ||= hand_histories.where(showdown: true).count
+    @wtsd ||= hand_histories.showdown.count
   end
 
   def wmsd
-    @wmsd ||= hand_histories.where(showdown: true).where('result >= 0').count
+    @wmsd ||= hand_histories.won.showdown.count
   end
 
   def vpip
@@ -91,19 +91,19 @@ class PokerSession < ApplicationRecord
   end
 
   def self.daily_results(poker_sessions = all)
-    poker_sessions.group_by_day(:start_time, series: false).sum('cashout - buyin').values
+    results(poker_sessions.group_by_day(:start_time, series: false)).values
   end
 
   def self.weekly_results(poker_sessions = all)
-    poker_sessions.group_by_week(:start_time, series: false).sum('cashout - buyin').values
+    results(poker_sessions.group_by_week(:start_time, series: false)).values
   end
 
   def self.monthly_results(poker_sessions = all)
-    poker_sessions.group_by_month(:start_time, series: false).sum('cashout - buyin').values
+    results(poker_sessions.group_by_month(:start_time, series: false)).values
   end
 
   def self.yearly_results(poker_sessions = all)
-    poker_sessions.group_by_year(:start_time, series: false).sum('cashout - buyin').values
+    results(poker_sessions.group_by_year(:start_time, series: false)).values
   end
 
   def self.duration(poker_sessions = all)
@@ -111,7 +111,7 @@ class PokerSession < ApplicationRecord
   end
 
   def self.daily_durations(poker_sessions = all)
-    poker_sessions.group_by_day(:start_time, series: false).sum('end_time - start_time').values
+    duration(poker_sessions.group_by_day(:start_time, series: false)).values
   end
 
   def self.hourly(poker_sessions = all)
@@ -353,26 +353,25 @@ class PokerSession < ApplicationRecord
   end
 
   def self.hands_played(poker_sessions = all)
-    poker_sessions.joins(:hand_histories).count('hand_histories.id')
+    HandHistory.with_poker_sessions(poker_sessions).count
   end
 
   def self.saw_flop(poker_sessions = all)
-    poker_sessions.joins(:hand_histories).where.not(hand_histories: { flop: nil }).count('hand_histories.id')
+    HandHistory.with_poker_sessions(poker_sessions).saw_flop.count
   end
 
   def self.wtsd(poker_sessions = all)
-    poker_sessions.joins(:hand_histories).where(hand_histories: { showdown: true }).count('hand_histories.id')
+    HandHistory.with_poker_sessions(poker_sessions).showdown.count
   end
 
   def self.wmsd(poker_sessions = all)
-    poker_sessions
-      .joins(:hand_histories)
-      .where(hand_histories: { showdown: true })
-      .where('hand_histories.result >= 0')
-      .count('hand_histories.id')
+    HandHistory.with_poker_sessions(poker_sessions).won.showdown.count
   end
 
   def self.vpip(poker_sessions = all)
-    (hands_played(poker_sessions.where.not(hands_dealt: nil)) / hands_dealt(poker_sessions).to_f).round(2)
+    # exclude sessions where we have hands played but did not record hands_dealt
+    # in order to avoid infinity vpips
+    hands_played_calc = poker_sessions.where.not(hands_dealt: nil)
+    (hands_played(hands_played_calc) / hands_dealt(poker_sessions).to_f).round(2)
   end
 end

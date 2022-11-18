@@ -33,9 +33,9 @@ RSpec.describe Stake do
     end
 
     it 'does not memoize the result' do
-      allow(described_class).to receive(:order).and_call_original
+      allow(described_class).to receive(:custom_order).and_call_original
       2.times { described_class.cached }
-      expect(described_class).to have_received(:order).with(:stakes_array).twice
+      expect(described_class).to have_received(:custom_order).with(no_args).twice
     end
   end
 end

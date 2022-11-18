@@ -8,23 +8,38 @@ class HandHistory < ApplicationRecord
   belongs_to :poker_session, optional: true
   has_many   :villain_hands, dependent: :delete_all
 
-  scope :custom_filter, ->(params) do
+  scope :saw_flop, -> { where.not(flop: nil) }
+  scope :saw_turn, -> { where.not(turn: nil) }
+  scope :saw_river, -> { where.not(river: nil) }
+  scope :showdown, -> { where(showdown: true) }
+  scope :all_in, -> { where(all_in: true) }
+  scope :won, -> { where(result: 0..Float::INFINITY) }
+  scope :lost, -> { where(result: Float::INFINITY...0) }
+  scope :with_poker_sessions, ->(ps) { joins(:poker_session).where(poker_session_id: ps) }
+  scope :custom_filter, lambda { |params|
     relation = all
     if params[:bet_size].present?
-      relation = relation.where(bet_size: params[:bet_size])
+      relation = relation
+                 .where(bet_size: params[:bet_size])
     end
     if params[:hand].present?
-      relation = relation.where(hand: params[:hand])
+      relation = relation
+                 .where(hand: params[:hand])
     end
     if params[:position].present?
-      relation = relation.where(position: params[:position])
+      relation = relation
+                 .where(position: params[:position])
     end
     if params[:stake].present?
-      relation = relation.joins(poker_session: :stake).where(poker_sessions: { stake: params[:stake] })
+      relation = relation
+                 .joins(poker_session: :stake)
+                 .where(poker_sessions: { stake: params[:stake] })
     end
     if params[:table_size].present?
-      relation = relation.where(table_size: params[:table_size])
+      relation = relation
+                 .where(table_size: params[:table_size])
     end
+
     if params[:from].present? && params[:to].present?
       relation = relation.joins(:poker_session).where(poker_sessions: { start_time: params[:from]..params[:to] })
     elsif params[:from].present?
@@ -32,53 +47,55 @@ class HandHistory < ApplicationRecord
     elsif params[:to].present?
       relation = relation.joins(:poker_session).where('poker_sessions.start_time <= ?', params[:to])
     end
-    # note - since these params come directly from controllers, booleans are assumed to be strings
+    # NOTE: since these params come directly from controllers, booleans are assumed to be strings
     # with 'true' or 'false' as values
     if params[:flop].present?
-      if ActiveModel::Type::Boolean.new.cast(params[:flop])
-        relation = relation.where.not(flop: nil)
-      else
-        relation = relation.where(flop: nil)
-      end
+      relation = if ActiveModel::Type::Boolean.new.cast(params[:flop])
+                   relation.saw_flop
+                 else
+                   relation.where(flop: nil)
+                 end
     end
     if params[:turn].present?
-      if ActiveModel::Type::Boolean.new.cast(params[:turn])
-        relation = relation.where.not(turn: nil)
-      else
-        relation = relation.where(turn: nil)
-      end
+      relation = if ActiveModel::Type::Boolean.new.cast(params[:turn])
+                   relation.saw_turn
+                 else
+                   relation.where(turn: nil)
+                 end
     end
     if params[:river].present?
-      if ActiveModel::Type::Boolean.new.cast(params[:river])
-        relation = relation.where.not(river: nil)
-      else
-        relation = relation.where(river: nil)
-      end
+      relation = if ActiveModel::Type::Boolean.new.cast(params[:river])
+                   relation.saw_river
+                 else
+                   relation.where(river: nil)
+                 end
     end
     if params[:showdown].present?
-      relation = relation.where(showdown: ActiveModel::Type::Boolean.new.cast(params[:showdown]))
+      relation = relation
+                 .where(showdown: ActiveModel::Type::Boolean.new.cast(params[:showdown]))
     end
     if params[:all_in].present?
-      relation = relation.where(all_in: ActiveModel::Type::Boolean.new.cast(params[:all_in]))
+      relation = relation
+                 .where(all_in: ActiveModel::Type::Boolean.new.cast(params[:all_in]))
     end
 
     relation
-  end
+  }
 
   def self.import(poker_session, data)
     transaction do
       data.strip!
       note, _, status_line = data.rpartition("\n")
-      res, pos, hand, size, tbl_size = status_line.split(' ', 5).map { |l| l.strip }
+      res, pos, hand, size, tbl_size = status_line.split(' ', 5).map(&:strip)
       tbl_size = 9 if tbl_size.nil?
       hand = hand[0].upcase + hand[1].upcase + hand[2].try(:downcase).to_s
       pos.upcase!
 
-      if size == 'limp'
-        size = 1
-      else
-        size = size.delete('^2-6').to_i
-      end
+      size = if size == 'limp'
+               1
+             else
+               size.delete('^2-6').to_i
+             end
 
       showdown = note.match?(/Vs? (show|muck)/)
       all_in = note.match?(/all in/) && (
@@ -95,9 +112,7 @@ class HandHistory < ApplicationRecord
       tbl_size = TableSize.find_by!(table_size: tbl_size)
       v_hands = []
 
-      if showdown
-        v_hands = note.scan(/Vs? show (.+)/).map { |str| Hand.from_str(str.first.split(' ').first) }
-      end
+      v_hands = note.scan(/Vs? show (.+)/).map { |str| Hand.from_str(str.first.split.first) } if showdown
 
       hh = HandHistory.create!(
         result:        res.to_i,

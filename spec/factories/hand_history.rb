@@ -31,7 +31,7 @@ FactoryBot.define do
     end
 
     trait :with_villain_hands do
-      villain_hands { build_list :villain_hand, 2 }
+      villain_hands { build_list(:villain_hand, 2) }
     end
   end
 end
