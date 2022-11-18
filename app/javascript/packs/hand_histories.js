@@ -213,7 +213,13 @@ $(document).ready(function() {
       ],
       'order': [[0, 'desc']],
       'columnDefs': [
-        {'width': '5%', 'targets': [0,1,2,3,4,5,6]}
+        {'width': '5%', 'targets': [0,1,2,3,4,5,6]},
+        {
+          'targets': 12,
+          'render': function(data, type, row, meta) {
+            return data.replace("\n", '<br/>');
+          }
+        }
       ]
     });
 

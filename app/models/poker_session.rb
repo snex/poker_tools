@@ -190,6 +190,7 @@ class PokerSession < ApplicationRecord
     DescriptiveStatistics
       .median(poker_sessions.where('(cashout - buyin) > 0')
       .pluck(Arel.sql('(cashout - buyin)')))
+      .to_f
       .round(2)
   end
 
@@ -198,7 +199,7 @@ class PokerSession < ApplicationRecord
   end
 
   def self.daily_avg_wins_median(poker_sessions = all)
-    DescriptiveStatistics.median(daily_results(poker_sessions).select(&:positive?)).round(2)
+    DescriptiveStatistics.median(daily_results(poker_sessions).select(&:positive?)).to_f.round(2)
   end
 
   def self.weekly_avg_wins(poker_sessions = all)
@@ -206,7 +207,7 @@ class PokerSession < ApplicationRecord
   end
 
   def self.weekly_avg_wins_median(poker_sessions = all)
-    DescriptiveStatistics.median(weekly_results(poker_sessions).select(&:positive?)).round(2)
+    DescriptiveStatistics.median(weekly_results(poker_sessions).select(&:positive?)).to_f.round(2)
   end
 
   def self.monthly_avg_wins(poker_sessions = all)
@@ -214,7 +215,7 @@ class PokerSession < ApplicationRecord
   end
 
   def self.monthly_avg_wins_median(poker_sessions = all)
-    DescriptiveStatistics.median(monthly_results(poker_sessions).select(&:positive?)).round(2)
+    DescriptiveStatistics.median(monthly_results(poker_sessions).select(&:positive?)).to_f.round(2)
   end
 
   def self.yearly_avg_wins(poker_sessions = all)
@@ -222,7 +223,7 @@ class PokerSession < ApplicationRecord
   end
 
   def self.yearly_avg_wins_median(poker_sessions = all)
-    DescriptiveStatistics.median(yearly_results(poker_sessions).select(&:positive?)).round(2)
+    DescriptiveStatistics.median(yearly_results(poker_sessions).select(&:positive?)).to_f.round(2)
   end
 
   def self.avg_losses(poker_sessions = all)
@@ -233,6 +234,7 @@ class PokerSession < ApplicationRecord
     DescriptiveStatistics
       .median(poker_sessions.where('(cashout - buyin) < 0')
       .pluck(Arel.sql('(cashout - buyin)')))
+      .to_f
       .round(2)
   end
 
@@ -241,7 +243,7 @@ class PokerSession < ApplicationRecord
   end
 
   def self.daily_avg_losses_median(poker_sessions = all)
-    DescriptiveStatistics.median(daily_results(poker_sessions).select(&:negative?)).round(2)
+    DescriptiveStatistics.median(daily_results(poker_sessions).select(&:negative?)).to_f.round(2)
   end
 
   def self.weekly_avg_losses(poker_sessions = all)
@@ -249,7 +251,7 @@ class PokerSession < ApplicationRecord
   end
 
   def self.weekly_avg_losses_median(poker_sessions = all)
-    DescriptiveStatistics.median(weekly_results(poker_sessions).select(&:negative?)).round(2)
+    DescriptiveStatistics.median(weekly_results(poker_sessions).select(&:negative?)).to_f.round(2)
   end
 
   def self.monthly_avg_losses(poker_sessions = all)
@@ -257,7 +259,7 @@ class PokerSession < ApplicationRecord
   end
 
   def self.monthly_avg_losses_median(poker_sessions = all)
-    DescriptiveStatistics.median(monthly_results(poker_sessions).select(&:negative?)).round(2)
+    DescriptiveStatistics.median(monthly_results(poker_sessions).select(&:negative?)).to_f.round(2)
   end
 
   def self.yearly_avg_losses(poker_sessions = all)
@@ -265,7 +267,7 @@ class PokerSession < ApplicationRecord
   end
 
   def self.yearly_avg_losses_median(poker_sessions = all)
-    DescriptiveStatistics.median(yearly_results(poker_sessions).select(&:negative?)).round(2)
+    DescriptiveStatistics.median(yearly_results(poker_sessions).select(&:negative?)).to_f.round(2)
   end
 
   def self.avg(poker_sessions = all)
@@ -273,7 +275,7 @@ class PokerSession < ApplicationRecord
   end
 
   def self.avg_median(poker_sessions = all)
-    DescriptiveStatistics.median(poker_sessions.pluck(Arel.sql('(cashout - buyin)'))).round(2)
+    DescriptiveStatistics.median(poker_sessions.pluck(Arel.sql('(cashout - buyin)'))).to_f.round(2)
   end
 
   def self.daily_avg(poker_sessions = all)
@@ -281,7 +283,7 @@ class PokerSession < ApplicationRecord
   end
 
   def self.daily_avg_median(poker_sessions = all)
-    DescriptiveStatistics.median(daily_results(poker_sessions)).round(2)
+    DescriptiveStatistics.median(daily_results(poker_sessions)).to_f.round(2)
   end
 
   def self.weekly_avg(poker_sessions = all)
@@ -289,7 +291,7 @@ class PokerSession < ApplicationRecord
   end
 
   def self.weekly_avg_median(poker_sessions = all)
-    DescriptiveStatistics.median(weekly_results(poker_sessions)).round(2)
+    DescriptiveStatistics.median(weekly_results(poker_sessions)).to_f.round(2)
   end
 
   def self.monthly_avg(poker_sessions = all)
@@ -297,7 +299,7 @@ class PokerSession < ApplicationRecord
   end
 
   def self.monthly_avg_median(poker_sessions = all)
-    DescriptiveStatistics.median(monthly_results(poker_sessions)).round(2)
+    DescriptiveStatistics.median(monthly_results(poker_sessions)).to_f.round(2)
   end
 
   def self.yearly_avg(poker_sessions = all)
@@ -305,7 +307,7 @@ class PokerSession < ApplicationRecord
   end
 
   def self.yearly_avg_median(poker_sessions = all)
-    DescriptiveStatistics.median(yearly_results(poker_sessions)).round(2)
+    DescriptiveStatistics.median(yearly_results(poker_sessions)).to_f.round(2)
   end
 
   def self.longest_win_streak(poker_sessions = all)

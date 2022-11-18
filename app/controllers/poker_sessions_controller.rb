@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class PokerSessionsController < AuthorizedPagesController
-  skip_before_action :verify_authenticity_token, only: [:index, :upload, :chart]
+  skip_before_action :verify_authenticity_token, only: %i[index upload chart]
 
   def index
     @params = poker_sessions_params
@@ -18,23 +18,24 @@ class PokerSessionsController < AuthorizedPagesController
   end
 
   def upload
-    begin
-      date = File.basename(params['file'].original_filename.split('.')[0], '.*')
-      FileImporter.import(date, params['file'].path)
-      redirect_to poker_sessions_path and return
-    rescue => e
-      render plain: e.message, status: :unprocessable_entity
-    end
+    date = File.basename(params['file'].original_filename.split('.')[0], '.*')
+    FileImporter.import(date, params['file'].path)
+    redirect_to poker_sessions_path and return
+  rescue StandardError => e
+    render plain: e.message, status: :unprocessable_entity
   end
 
   def chart
-    if params[:month]
-      @poker_sessions = PokerSession.where("date_part('year', start_time) = ?", params[:year]).where("date_part('month', start_time) = ?", params[:month]).order(:start_time)
-    elsif params[:year]
-      @poker_sessions = PokerSession.where("date_part('year', start_time) = ?", params[:year]).order(:start_time)
-    else
-      @poker_sessions = PokerSession.order(:start_time)
-    end
+    @poker_sessions = if params[:month]
+                        PokerSession
+                          .where("date_part('year', start_time) = ?", params[:year])
+                          .where("date_part('month', start_time) = ?", params[:month])
+                          .order(:start_time)
+                      elsif params[:year]
+                        PokerSession.where("date_part('year', start_time) = ?", params[:year]).order(:start_time)
+                      else
+                        PokerSession.order(:start_time)
+                      end
 
     render 'chart_data'
   end

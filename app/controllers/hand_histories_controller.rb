@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class HandHistoriesController < AuthorizedPagesController
-  skip_before_action :verify_authenticity_token, only: [:index, :chart]
+  skip_before_action :verify_authenticity_token, only: %i[index chart]
 
   def index
     @params = hand_histories_params
@@ -24,7 +24,7 @@ class HandHistoriesController < AuthorizedPagesController
     @params.delete(:length)
     @params.delete(:order)
     @params.delete(:start)
-    @hand_histories = HandHistoryDatatable.new(@params).get_records_for_chart
+    @hand_histories = HandHistoryDatatable.new(@params).records_for_chart
     @raw_numbers = @hand_histories.pluck(:result).extend(DescriptiveStatistics)
 
     render 'chart_data'

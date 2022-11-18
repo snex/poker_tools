@@ -2,32 +2,33 @@
 
 module CustomArrayMods
   def average
-    self.sum.to_f / self.count.to_f
+    sum / count.to_f
   end
 
   def cum_sum
     sum = 0
-    self.map { |x| sum += x }
+    map { |x| sum += x }
   end
 
   def longest_streak(comparator, operator)
     tmp_res = res = 0
-    self.each do |r|
+
+    each do |r|
       if r.send(operator, comparator)
         tmp_res += 1
       else
         tmp_res = 0
       end
-      if tmp_res > res
-        res = tmp_res
-      end
+
+      res = tmp_res if tmp_res > res
     end
+
     res
   end
 
   def to_custom_sql_order(col)
     ret = +'CASE'
-    self.each_with_index do |item, i|
+    each_with_index do |item, i|
       ret << " WHEN #{col} = '#{item}' THEN #{i}"
     end
     ret << ' END'

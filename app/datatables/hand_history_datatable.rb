@@ -5,7 +5,7 @@ class HandHistoryDatatable < AjaxDatatablesRails::ActiveRecord
 
   def view_columns
     @view_columns ||= {
-      date:       { source: 'PokerSession.start_time', cond: :date_range,        delimiter: '-yadcf_delim-' },
+      date:       { source: 'PokerSession.start_time', cond: :date_range, delimiter: '-yadcf_delim-'        },
       result:     { source: 'HandHistory.result',      cond: between_condition                              },
       hand:       { source: 'Hand.id',                 cond: int_eq_condition,   use_regex: false           },
       position:   { source: 'Position.id',             cond: int_eq_condition,   use_regex: false           },
@@ -17,12 +17,19 @@ class HandHistoryDatatable < AjaxDatatablesRails::ActiveRecord
       river:      { source: 'HandHistory.river',       cond: not_null_condition                             },
       showdown:   { source: 'HandHistory.showdown',    cond: boolean_condition                              },
       all_in:     { source: 'HandHistory.all_in',      cond: boolean_condition                              },
-      note:       { source: 'HandHistory.note',        cond: str_like_condition,                            }
+      note:       { source: 'HandHistory.note',        cond: str_like_condition                             }
     }
   end
 
-  def get_records_for_chart
+  def records_for_chart
     records.unscope(:limit, :offset).order('poker_sessions.start_time asc, hand_histories.id asc')
+  end
+
+  def fetch_records
+    HandHistory
+      .all
+      .includes(:hand, :position, :bet_size, :table_size, poker_session: :stake)
+      .joins(:hand, :position, :bet_size, :table_size, poker_session: :stake)
   end
 
   private
@@ -42,13 +49,9 @@ class HandHistoryDatatable < AjaxDatatablesRails::ActiveRecord
         river:      record.river,
         showdown:   record.showdown,
         all_in:     record.all_in,
-        note:       record.note.gsub("\n", '<br>').html_safe,
+        note:       record.note,
         DT_RowId:   record.id
       }
     end
-  end
-
-  def get_raw_records
-    HandHistory.all.includes(:hand, :position, :bet_size, :table_size, poker_session: :stake).joins(:hand, :position, :bet_size, :table_size, poker_session: :stake)
   end
 end

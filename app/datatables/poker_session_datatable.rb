@@ -21,6 +21,10 @@ class PokerSessionDatatable < AjaxDatatablesRails::ActiveRecord
     }
   end
 
+  def fetch_records
+    PokerSession.all.includes(:stake, :bet_structure, :poker_variant).joins(:stake, :bet_structure, :poker_variant)
+  end
+
   private
 
   def data
@@ -42,9 +46,5 @@ class PokerSessionDatatable < AjaxDatatablesRails::ActiveRecord
         DT_RowId:     record.id
       }
     end
-  end
-
-  def get_raw_records
-    PokerSession.all.includes(:stake, :bet_structure, :poker_variant).joins(:stake, :bet_structure, :poker_variant)
   end
 end

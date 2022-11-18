@@ -21,7 +21,7 @@ RSpec.shared_examples 'DataAggregator' do |klass, join, group_by|
         expect(response).to render_template('index')
       end
 
-      it 'has response 200' do
+      it 'has response :ok' do
         expect(response).to have_http_status(:ok)
       end
 
@@ -39,7 +39,7 @@ RSpec.shared_examples 'DataAggregator' do |klass, join, group_by|
         expect(response).to render_template('index')
       end
 
-      it 'has response 200' do
+      it 'has response :ok' do
         expect(response).to have_http_status(:ok)
       end
 

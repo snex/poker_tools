@@ -4,11 +4,11 @@ module DataAggregator
   extend ActiveSupport::Concern
 
   def generate_data(join, group_by)
-    hh = HandHistory.
-      includes(:hand, :position, :bet_size, :table_size, poker_session: :stake).
-      joins(join).
-      custom_filter(params).
-      group(group_by)
+    hh = HandHistory
+         .includes(:hand, :position, :bet_size, :table_size, poker_session: :stake)
+         .joins(join)
+         .custom_filter(params)
+         .group(group_by)
 
     sums = hh.sum(:result)
     counts = hh.count(:id)
