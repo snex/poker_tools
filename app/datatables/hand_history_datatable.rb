@@ -5,19 +5,19 @@ class HandHistoryDatatable < AjaxDatatablesRails::ActiveRecord
 
   def view_columns
     @view_columns ||= {
-      date:       { source: 'PokerSession.start_time', cond: :date_range, delimiter: '-yadcf_delim-'        },
-      result:     { source: 'HandHistory.result',      cond: between_condition                              },
-      hand:       { source: 'Hand.id',                 cond: int_eq_condition,   use_regex: false           },
-      position:   { source: 'Position.id',             cond: int_eq_condition,   use_regex: false           },
-      bet_size:   { source: 'BetSize.id',              cond: int_eq_condition,   use_regex: false           },
-      table_size: { source: 'TableSize.id',            cond: int_eq_condition,   use_regex: false           },
-      stake:      { source: 'Stake.id',                cond: int_eq_condition,   use_regex: false           },
-      flop:       { source: 'HandHistory.flop',        cond: not_null_condition                             },
-      turn:       { source: 'HandHistory.turn',        cond: not_null_condition                             },
-      river:      { source: 'HandHistory.river',       cond: not_null_condition                             },
-      showdown:   { source: 'HandHistory.showdown',    cond: boolean_condition                              },
-      all_in:     { source: 'HandHistory.all_in',      cond: boolean_condition                              },
-      note:       { source: 'HandHistory.note',        cond: str_like_condition                             }
+      date:       { source: 'PokerSession.start_time', cond: :date_range, delimiter: '-yadcf_delim-' },
+      result:     { source: 'HandHistory.result',      cond: between_condition                       },
+      hand:       { source: 'Hand.id',                 cond: int_eq_condition,   use_regex: false    },
+      position:   { source: 'Position.id',             cond: int_eq_condition,   use_regex: false    },
+      bet_size:   { source: 'BetSize.id',              cond: int_eq_condition,   use_regex: false    },
+      table_size: { source: 'TableSize.id',            cond: int_eq_condition,   use_regex: false    },
+      stake:      { source: 'Stake.id',                cond: int_eq_condition,   use_regex: false    },
+      flop:       { source: 'HandHistory.flop',        cond: not_null_condition                      },
+      turn:       { source: 'HandHistory.turn',        cond: not_null_condition                      },
+      river:      { source: 'HandHistory.river',       cond: not_null_condition                      },
+      showdown:   { source: 'HandHistory.showdown',    cond: boolean_condition                       },
+      all_in:     { source: 'HandHistory.all_in',      cond: boolean_condition                       },
+      note:       { source: 'HandHistory.note',        cond: str_like_condition                      }
     }
   end
 

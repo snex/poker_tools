@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 class TableSizesController < AuthorizedPagesController
-  include DataAggregator
-
   skip_before_action :verify_authenticity_token
 
   def index
-    generate_data(:table_size, :'table_sizes.description')
+    @hh_data = HandHistory.aggregates(:table_size, :'table_sizes.description', params)
   end
 end

@@ -16,124 +16,97 @@ class HandHistory < ApplicationRecord
   scope :won, -> { where(result: 0..Float::INFINITY) }
   scope :lost, -> { where(result: Float::INFINITY...0) }
   scope :with_poker_sessions, ->(ps) { joins(:poker_session).where(poker_session_id: ps) }
-  scope :custom_filter, lambda { |params|
-    relation = all
-    if params[:bet_size].present?
-      relation = relation
-                 .where(bet_size: params[:bet_size])
-    end
-    if params[:hand].present?
-      relation = relation
-                 .where(hand: params[:hand])
-    end
-    if params[:position].present?
-      relation = relation
-                 .where(position: params[:position])
-    end
-    if params[:stake].present?
-      relation = relation
-                 .joins(poker_session: :stake)
-                 .where(poker_sessions: { stake: params[:stake] })
-    end
-    if params[:table_size].present?
-      relation = relation
-                 .where(table_size: params[:table_size])
-    end
 
-    if params[:from].present? && params[:to].present?
-      relation = relation.joins(:poker_session).where(poker_sessions: { start_time: params[:from]..params[:to] })
-    elsif params[:from].present?
-      relation = relation.joins(:poker_session).where('poker_sessions.start_time >= ?', params[:from])
-    elsif params[:to].present?
-      relation = relation.joins(:poker_session).where('poker_sessions.start_time <= ?', params[:to])
+  scope :filter_bet_size, lambda { |bet_size|
+    bet_size.present? ? where(bet_size: bet_size) : all
+  }
+  scope :filter_hand, lambda { |hand|
+    hand.present? ? where(hand: hand) : all
+  }
+  scope :filter_position, lambda { |position|
+    position.present? ? where(position: position) : all
+  }
+  scope :filter_stake, lambda { |stake|
+    stake.present? ? joins(poker_session: :stake).where(poker_sessions: { stake: stake }) : all
+  }
+  scope :filter_table_size, lambda { |table_size|
+    table_size.present? ? where(table_size: table_size) : all
+  }
+  scope :filter_times, lambda { |from, to|
+    if from.present? && to.present?
+      joins(:poker_session).where(poker_sessions: { start_time: from..to })
+    elsif from.present?
+      joins(:poker_session).where('poker_sessions.start_time >= ?', from)
+    elsif to.present?
+      joins(:poker_session).where('poker_sessions.start_time <= ?', to)
+    else
+      all
     end
+  }
+  scope :filter_by_presence, lambda { |attr, value|
     # NOTE: since these params come directly from controllers, booleans are assumed to be strings
     # with 'true' or 'false' as values
-    if params[:flop].present?
-      relation = if ActiveModel::Type::Boolean.new.cast(params[:flop])
-                   relation.saw_flop
-                 else
-                   relation.where(flop: nil)
-                 end
-    end
-    if params[:turn].present?
-      relation = if ActiveModel::Type::Boolean.new.cast(params[:turn])
-                   relation.saw_turn
-                 else
-                   relation.where(turn: nil)
-                 end
-    end
-    if params[:river].present?
-      relation = if ActiveModel::Type::Boolean.new.cast(params[:river])
-                   relation.saw_river
-                 else
-                   relation.where(river: nil)
-                 end
-    end
-    if params[:showdown].present?
-      relation = relation
-                 .where(showdown: ActiveModel::Type::Boolean.new.cast(params[:showdown]))
-    end
-    if params[:all_in].present?
-      relation = relation
-                 .where(all_in: ActiveModel::Type::Boolean.new.cast(params[:all_in]))
-    end
+    return all if value.blank?
 
-    relation
+    ActiveModel::Type::Boolean.new.cast(value) ? where.not("#{attr}": nil) : where("#{attr}": nil)
+  }
+  scope :filter_boolean, lambda { |attr, value|
+    # NOTE: since these params come directly from controllers, booleans are assumed to be strings
+    # with 'true' or 'false' as values
+    return all if value.blank?
+
+    ActiveModel::Type::Boolean.new.cast(value) ? where("#{attr}": true) : where("#{attr}": false)
+  }
+  scope :filter_flop, ->(flop) { filter_by_presence(:flop, flop) }
+  scope :filter_turn, ->(turn) { filter_by_presence(:turn, turn) }
+  scope :filter_river, ->(river) { filter_by_presence(:river, river) }
+  scope :filter_showdown, ->(showdown) { filter_boolean(:showdown, showdown) }
+  scope :filter_all_in, ->(all_in) { filter_boolean(:all_in, all_in) }
+  scope :custom_filter, lambda { |params|
+    filter_bet_size(params[:bet_size])
+      .filter_hand(params[:hand])
+      .filter_position(params[:position])
+      .filter_stake(params[:stake])
+      .filter_table_size(params[:table_size])
+      .filter_times(params[:from], params[:to])
+      .filter_flop(params[:flop])
+      .filter_turn(params[:turn])
+      .filter_river(params[:river])
+      .filter_showdown(params[:showdown])
+      .filter_all_in(params[:all_in])
   }
 
-  def self.import(poker_session, data)
-    transaction do
-      data.strip!
-      note, _, status_line = data.rpartition("\n")
-      res, pos, hand, size, tbl_size = status_line.split(' ', 5).map(&:strip)
-      tbl_size = 9 if tbl_size.nil?
-      hand = hand[0].upcase + hand[1].upcase + hand[2].try(:downcase).to_s
-      pos.upcase!
+  def self.aggregates(joins, group_by, params)
+    {
+      sums:   aggregate_sums(joins, group_by, params),
+      counts: aggregate_counts(joins, group_by, params),
+      pct_w:  aggregate_pct_w(joins, group_by, params),
+      avgs:   aggregate_avgs(joins, group_by, params)
+    }
+  end
 
-      size = if size == 'limp'
-               1
-             else
-               size.delete('^2-6').to_i
-             end
+  private_class_method def self.partial_query_for_aggregates(joins, group_by, params)
+    includes(:hand, :position, :bet_size, :table_size, poker_session: :stake)
+      .joins(joins)
+      .custom_filter(params)
+      .group(group_by)
+  end
 
-      showdown = note.match?(/Vs? (show|muck)/)
-      all_in = note.match?(/all in/) && (
-        status_line[0] == '+' ||
-        note.match?(/Vs? (show|muck)/)
-      )
-      flop = note.match(/Flop (.*?),/).try(:[], 1)
-      turn = note.match(/Turn (.*?),/).try(:[], 1)
-      river = note.match(/River (.*?),/).try(:[], 1)
+  private_class_method def self.aggregate_sums(joins, group_by, params)
+    partial_query_for_aggregates(joins, group_by, params).sum(:result)
+  end
 
-      hand = Hand.find_by!(hand: hand)
-      pos = Position.find_by!(position: pos)
-      size = BetSize.find_by!(bet_size: size)
-      tbl_size = TableSize.find_by!(table_size: tbl_size)
-      v_hands = []
+  private_class_method def self.aggregate_counts(joins, group_by, params)
+    partial_query_for_aggregates(joins, group_by, params).count(:id)
+  end
 
-      v_hands = note.scan(/Vs? show (.+)/).map { |str| Hand.from_str(str.first.split.first) } if showdown
-
-      hh = HandHistory.create!(
-        result:        res.to_i,
-        hand:          hand,
-        position:      pos,
-        bet_size:      size,
-        table_size:    tbl_size,
-        flop:          flop,
-        turn:          turn,
-        river:         river,
-        note:          note,
-        all_in:        all_in,
-        showdown:      showdown,
-        poker_session: poker_session
-      )
-      v_hands.each do |v_hand|
-        VillainHand.create!(
-          hand:         v_hand,
-          hand_history: hh
-        )
-      end
+  private_class_method def self.aggregate_pct_w(joins, group_by, params)
+    partial_query_for_aggregates(joins, group_by, params).won.count.each_with_object({}) do |(obj, count), h|
+      h[obj] = (100 * count.to_f / aggregate_counts(joins, group_by, params)[obj].to_f).round(2)
     end
+  end
+
+  private_class_method def self.aggregate_avgs(joins, group_by, params)
+    partial_query_for_aggregates(joins, group_by, params).average(:result).transform_values { |v| v.round(2) }
   end
 end

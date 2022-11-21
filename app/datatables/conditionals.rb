@@ -22,25 +22,18 @@ module Conditionals
       min, max = column.search.value.split('-yadcf_delim-')
       use_abs = (min.try(:[], 0) == '!')
       min = min[1..] if use_abs
+      value_range = min_value(min)..max_value(max)
 
-      min = if min.blank?
-              -Float::INFINITY
-            else
-              min.to_i
-            end
-
-      max = if max.blank?
-              Float::INFINITY
-            else
-              max.to_i
-            end
-
-      if use_abs
-        column.table[column.field].abs.between(min..max)
-      else
-        column.table[column.field].between(min..max)
-      end
+      between_condition_abs(column, value_range, use_abs)
     }
+  end
+
+  def between_condition_abs(column, value_range, use_abs)
+    if use_abs
+      column.table[column.field].abs.between(value_range)
+    else
+      column.table[column.field].between(value_range)
+    end
   end
 
   def boolean_condition
@@ -57,5 +50,21 @@ module Conditionals
         column.table[column.field].eq(nil)
       end
     }
+  end
+
+  def min_value(min)
+    if min.blank?
+      -Float::INFINITY
+    else
+      min.to_i
+    end
+  end
+
+  def max_value(max)
+    if max.blank?
+      Float::INFINITY
+    else
+      max.to_i
+    end
   end
 end

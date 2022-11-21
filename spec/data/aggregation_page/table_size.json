@@ -1,0 +1,37 @@
+{
+  "sums": {
+    "10/9/8 handed": -1,
+    "7 handed":       0,
+    "6 handed":      -3,
+    "5 handed":       0,
+    "4 handed":      -5,
+    "3 handed":       0,
+    "Heads Up":      -7
+  },
+  "counts": {
+    "10/9/8 handed": 1,
+    "7 handed":      2,
+    "6 handed":      3,
+    "5 handed":      4,
+    "4 handed":      5,
+    "3 handed":      6,
+    "Heads Up":      7
+  },
+  "pct_w": {
+    "7 handed": 50.00,
+    "6 handed": 33.33,
+    "5 handed": 50.00,
+    "4 handed": 40.00,
+    "3 handed": 50.00,
+    "Heads Up": 42.86
+  },
+  "avgs": {
+    "10/9/8 handed": -1.0,
+    "7 handed":       0.0,
+    "6 handed":      -1.0,
+    "5 handed":       0.0,
+    "4 handed":      -1.0,
+    "3 handed":       0.0,
+    "Heads Up":      -1.0
+  }
+}

@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 class VillainHandsController < AuthorizedPagesController
-  include DataAggregator
-
   skip_before_action :verify_authenticity_token
 
   def index
-    generate_data([villain_hands: :hand], :'hands.hand')
+    @hh_data = HandHistory.aggregates([villain_hands: :hand], :'hands.hand', params)
   end
 end

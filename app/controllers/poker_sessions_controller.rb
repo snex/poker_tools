@@ -27,20 +27,32 @@ class PokerSessionsController < AuthorizedPagesController
 
   def chart
     @poker_sessions = if params[:month]
-                        PokerSession
-                          .where("date_part('year', start_time) = ?", params[:year])
-                          .where("date_part('month', start_time) = ?", params[:month])
-                          .order(:start_time)
+                        month_chart_data
                       elsif params[:year]
-                        PokerSession.where("date_part('year', start_time) = ?", params[:year]).order(:start_time)
+                        year_chart_data
                       else
-                        PokerSession.order(:start_time)
+                        all_chart_data
                       end
 
     render 'chart_data'
   end
 
   private
+
+  def month_chart_data
+    PokerSession
+      .where("date_part('year', start_time) = ?", params[:year])
+      .where("date_part('month', start_time) = ?", params[:month])
+      .order(:start_time)
+  end
+
+  def year_chart_data
+    PokerSession.where("date_part('year', start_time) = ?", params[:year]).order(:start_time)
+  end
+
+  def all_chart_data
+    PokerSession.order(:start_time)
+  end
 
   def poker_sessions_params
     params.permit!

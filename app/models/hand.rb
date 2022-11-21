@@ -26,26 +26,36 @@ class Hand < ApplicationRecord
   end
 
   def self.from_str(hand_str)
-    if (hand = find_by(hand: hand_str))
-      return hand
-    end
+    hand = find_by(hand: hand_str) ||
+           pair_from_str(hand_str) ||
+           suited_from_str(hand_str) ||
+           offsuit_from_str(hand_str)
 
-    ranks_str = hand_str.tr('cdhs', '')
+    hand or raise ActiveRecord::RecordNotFound, "Hand cannot be parsed: #{hand_str}"
+  end
 
-    # check for pairs with suits
-    if ranks_str.squeeze.size == 1 && (hand = find_by(hand: ranks_str))
-      return hand
-    end
+  private_class_method def self.ranks_str(hand_str)
+    hand_str.tr('cdhs', '')
+  end
 
-    suits_str = hand_str.tr('^cdhs', '')
+  private_class_method def self.suits_str(hand_str)
+    hand_str.tr('^cdhs', '')
+  end
 
-    # check for suited hand
-    if suits_str.squeeze.size == 1
-      find_by!(hand: "#{ranks_str}s")
-    # check for offsuit hand
-    else
-      find_by!(hand: "#{ranks_str}o")
-    end
+  private_class_method def self.pair_from_str(hand_str)
+    find_by(hand: ranks_str(hand_str))
+  end
+
+  private_class_method def self.suited_from_str(hand_str)
+    return if suits_str(hand_str).squeeze.size != 1
+
+    find_by(hand: "#{ranks_str(hand_str)}s")
+  end
+
+  private_class_method def self.offsuit_from_str(hand_str)
+    return if suits_str(hand_str).squeeze.size == 1
+
+    find_by(hand: "#{ranks_str(hand_str)}o")
   end
 
   def self.cached

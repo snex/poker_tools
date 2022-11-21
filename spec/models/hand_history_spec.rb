@@ -89,213 +89,303 @@ RSpec.describe HandHistory do
     it { is_expected.to eq(hh) }
   end
 
-  describe '.custom_filter' do
-    subject { described_class.custom_filter(params) }
+  describe '.filter_bet_size' do
+    subject { described_class.filter_bet_size(bet_size) }
 
-    let(:hh) { create(:hand_history, :with_flop, :with_turn, :with_river, :with_showdown, :with_all_in) }
+    let(:hh) { create(:hand_history) }
 
-    context 'when bet_size is passed' do
-      context 'when filter matches' do
-        let(:params) { { bet_size: hh.bet_size.id } }
+    context 'when bet_size is nil' do
+      let(:bet_size) { nil }
 
-        it { is_expected.to eq([hh]) }
-      end
-
-      context 'when filter doesnt match' do
-        let(:params) { { bet_size: 0 } }
-
-        it { is_expected.to eq([]) }
-      end
+      it { is_expected.to eq([hh]) }
     end
 
-    context 'when hand is passed' do
-      context 'when filter matches' do
-        let(:params) { { hand: hh.hand.id } }
+    context 'when bet_size is passed, filter_matches' do
+      let(:bet_size) { hh.bet_size.id }
 
-        it { is_expected.to eq([hh]) }
-      end
-
-      context 'when filter doesnt match' do
-        let(:params) { { hand: 0 } }
-
-        it { is_expected.to eq([]) }
-      end
+      it { is_expected.to eq([hh]) }
     end
 
-    context 'when position is passed' do
-      context 'when filter matches' do
-        let(:params) { { position: hh.position.id } }
+    context 'when bet_size is passed, filter doesnt match' do
+      let(:bet_size) { 0 }
 
-        it { is_expected.to eq([hh]) }
-      end
-
-      context 'when filter doesnt match' do
-        let(:params) { { position: 0 } }
-
-        it { is_expected.to eq([]) }
-      end
-    end
-
-    context 'when stake is passed' do
-      context 'when filter matches' do
-        let(:params) { { stake: hh.poker_session.stake.id } }
-
-        it { is_expected.to eq([hh]) }
-      end
-
-      context 'when filter doesnt match' do
-        let(:params) { { stake: 0 } }
-
-        it { is_expected.to eq([]) }
-      end
-    end
-
-    context 'when table_size is passed' do
-      context 'when filter matches' do
-        let(:params) { { table_size: hh.table_size.id } }
-
-        it { is_expected.to eq([hh]) }
-      end
-
-      context 'when filter doesnt match' do
-        let(:params) { { table_size: 0 } }
-
-        it { is_expected.to eq([]) }
-      end
-    end
-
-    context 'when to and from are passed' do
-      context 'when filter matches' do
-        let(:params) { { from: hh.poker_session.start_time - 1.day, to: hh.poker_session.start_time + 1.day } }
-
-        it { is_expected.to eq([hh]) }
-      end
-
-      context 'when filter doesnt match' do
-        let(:params) { { from: hh.poker_session.start_time + 1.day, to: hh.poker_session.start_time - 1.day } }
-
-        it { is_expected.to eq([]) }
-      end
-    end
-
-    context 'when only from is passed' do
-      context 'when filter matches' do
-        let(:params) { { from: hh.poker_session.start_time - 1.day } }
-
-        it { is_expected.to eq([hh]) }
-      end
-
-      context 'when filter doesnt match' do
-        let(:params) { { from: hh.poker_session.start_time + 1.day } }
-
-        it { is_expected.to eq([]) }
-      end
-    end
-
-    context 'when only to is passed' do
-      context 'when filter matches' do
-        let(:params) { { to: hh.poker_session.start_time + 1.day } }
-
-        it { is_expected.to eq([hh]) }
-      end
-
-      context 'when filter doesnt match' do
-        let(:params) { { to: hh.poker_session.start_time - 1.day } }
-
-        it { is_expected.to eq([]) }
-      end
-    end
-
-    # NOTE: since these params come directly from controllers, booleans are assumed to be strings
-    # with 'true' or 'false' as values. this applies to 'flop', 'turn', 'river', 'showdown', and 'all_in'
-
-    context 'when flop is passed' do
-      context 'when filter matches' do
-        let(:params) { { flop: 'true' } }
-
-        it { is_expected.to eq([hh]) }
-      end
-
-      context 'when filter doesnt match' do
-        let(:params) { { flop: 'false' } }
-
-        it { is_expected.to eq([]) }
-      end
-    end
-
-    context 'when turn is passed' do
-      context 'when filter matches' do
-        let(:params) { { turn: 'true' } }
-
-        it { is_expected.to eq([hh]) }
-      end
-
-      context 'when filter doesnt match' do
-        let(:params) { { turn: 'false' } }
-
-        it { is_expected.to eq([]) }
-      end
-    end
-
-    context 'when river is passed' do
-      context 'when filter matches' do
-        let(:params) { { river: 'true' } }
-
-        it { is_expected.to eq([hh]) }
-      end
-
-      context 'when filter doesnt match' do
-        let(:params) { { river: 'false' } }
-
-        it { is_expected.to eq([]) }
-      end
-    end
-
-    context 'when showdown is passed' do
-      context 'when filter matches' do
-        let(:params) { { showdown: 'true' } }
-
-        it { is_expected.to eq([hh]) }
-      end
-
-      context 'when filter doesnt match' do
-        let(:params) { { showdown: 'false' } }
-
-        it { is_expected.to eq([]) }
-      end
-    end
-
-    context 'when all_in is passed' do
-      context 'when filter matches' do
-        let(:params) { { all_in: 'true' } }
-
-        it { is_expected.to eq([hh]) }
-      end
-
-      context 'when filter doesnt match' do
-        let(:params) { { all_in: 'false' } }
-
-        it { is_expected.to eq([]) }
-      end
+      it { is_expected.to eq([]) }
     end
   end
 
-  describe '.import' do
-    let!(:ps) { create(:poker_session) }
+  describe '.filter_hand' do
+    subject { described_class.filter_hand(hand) }
 
-    context 'when given a valid file' do
-      it 'imports a HandHistory' do
-        expect do
-          described_class.import(ps, File.readlines('spec/data/hand_histories/import_basic.txt').join)
-        end.to change(described_class, :count).from(0).to(1)
-      end
+    let(:hh) { create(:hand_history) }
+
+    context 'when hand is nil' do
+      let(:hand) { nil }
+
+      it { is_expected.to eq([hh]) }
     end
 
-    context 'when "limp" is passed in as bet_size' do
-      it 'imports a HandHistory' do
-        described_class.import(ps, File.readlines('spec/data/hand_histories/import_limp.txt').join)
-        expect(described_class.first.bet_size).to eq(BetSize.find_by(bet_size: 1))
-      end
+    context 'when hand is passed, filter_matches' do
+      let(:hand) { hh.hand.id }
+
+      it { is_expected.to eq([hh]) }
+    end
+
+    context 'when hand is passed, filter doesnt match' do
+      let(:hand) { 0 }
+
+      it { is_expected.to eq([]) }
+    end
+  end
+
+  describe '.filter_position' do
+    subject { described_class.filter_position(position) }
+
+    let(:hh) { create(:hand_history) }
+
+    context 'when position is nil' do
+      let(:position) { nil }
+
+      it { is_expected.to eq([hh]) }
+    end
+
+    context 'when position is passed, filter_matches' do
+      let(:position) { hh.position.id }
+
+      it { is_expected.to eq([hh]) }
+    end
+
+    context 'when position is passed, filter doesnt match' do
+      let(:position) { 0 }
+
+      it { is_expected.to eq([]) }
+    end
+  end
+
+  describe '.filter_stake' do
+    subject { described_class.filter_stake(stake) }
+
+    let(:hh) { create(:hand_history) }
+
+    context 'when stake is nil' do
+      let(:stake) { nil }
+
+      it { is_expected.to eq([hh]) }
+    end
+
+    context 'when stake is passed, filter_matches' do
+      let(:stake) { hh.poker_session.stake.id }
+
+      it { is_expected.to eq([hh]) }
+    end
+
+    context 'when stake is passed, filter doesnt match' do
+      let(:stake) { 0 }
+
+      it { is_expected.to eq([]) }
+    end
+  end
+
+  describe '.filter_table_size' do
+    subject { described_class.filter_table_size(table_size) }
+
+    let(:hh) { create(:hand_history) }
+
+    context 'when table_size is nil' do
+      let(:table_size) { nil }
+
+      it { is_expected.to eq([hh]) }
+    end
+
+    context 'when table_size is passed, filter_matches' do
+      let(:table_size) { hh.table_size.id }
+
+      it { is_expected.to eq([hh]) }
+    end
+
+    context 'when table_size is passed, filter doesnt match' do
+      let(:table_size) { 0 }
+
+      it { is_expected.to eq([]) }
+    end
+  end
+
+  describe '.filter_times' do
+    subject { described_class.filter_times(from, to) }
+
+    let(:hh) { create(:hand_history) }
+
+    context 'when from and to are passed, filter matches' do
+      let(:from) { hh.poker_session.start_time - 1.day }
+      let(:to) { hh.poker_session.start_time + 1.day }
+
+      it { is_expected.to eq([hh]) }
+    end
+
+    context 'when from and to are passed, filter doesnt' do
+      let(:from) { hh.poker_session.start_time + 1.day }
+      let(:to) { hh.poker_session.start_time - 1.day }
+
+      it { is_expected.to eq([]) }
+    end
+
+    context 'when only from is passed, filter_matches' do
+      let(:from) { hh.poker_session.start_time - 1.day }
+      let(:to) { nil }
+
+      it { is_expected.to eq([hh]) }
+    end
+
+    context 'when only from is passed, filter_doesnt match' do
+      let(:from) { hh.poker_session.start_time + 1.day }
+      let(:to) { nil }
+
+      it { is_expected.to eq([]) }
+    end
+
+    context 'when only to is passed, filter matches' do
+      let(:from) { nil }
+      let(:to) { hh.poker_session.start_time + 1.day }
+
+      it { is_expected.to eq([hh]) }
+    end
+
+    context 'when only to is passed, filter doesnt match' do
+      let(:from) { nil }
+      let(:to) { hh.poker_session.start_time - 1.day }
+
+      it { is_expected.to eq([]) }
+    end
+
+    context 'when neither from or to are passed' do
+      let(:from) { nil }
+      let(:to) { nil }
+
+      it { is_expected.to eq([]) }
+    end
+  end
+
+  describe '.filter_flop' do
+    subject { described_class.filter_flop(flop) }
+
+    let(:hh1) { create(:hand_history, :with_flop) }
+    let(:hh2) { create(:hand_history) }
+
+    context 'when flop is nil' do
+      let(:flop) { nil }
+
+      it { is_expected.to eq([hh1, hh2]) }
+    end
+
+    context 'when flop is true' do
+      let(:flop) { 'true' }
+
+      it { is_expected.to eq([hh1]) }
+    end
+
+    context 'when flop is false' do
+      let(:flop) { 'false' }
+
+      it { is_expected.to eq([hh2]) }
+    end
+  end
+
+  describe '.filter_turn' do
+    subject { described_class.filter_turn(turn) }
+
+    let(:hh1) { create(:hand_history, :with_turn) }
+    let(:hh2) { create(:hand_history) }
+
+    context 'when turn is nil' do
+      let(:turn) { nil }
+
+      it { is_expected.to eq([hh1, hh2]) }
+    end
+
+    context 'when turn is true' do
+      let(:turn) { 'true' }
+
+      it { is_expected.to eq([hh1]) }
+    end
+
+    context 'when turn is false' do
+      let(:turn) { 'false' }
+
+      it { is_expected.to eq([hh2]) }
+    end
+  end
+
+  describe '.filter_river' do
+    subject { described_class.filter_river(river) }
+
+    let(:hh1) { create(:hand_history, :with_river) }
+    let(:hh2) { create(:hand_history) }
+
+    context 'when river is nil' do
+      let(:river) { nil }
+
+      it { is_expected.to eq([hh1, hh2]) }
+    end
+
+    context 'when river is true' do
+      let(:river) { 'true' }
+
+      it { is_expected.to eq([hh1]) }
+    end
+
+    context 'when river is false' do
+      let(:river) { 'false' }
+
+      it { is_expected.to eq([hh2]) }
+    end
+  end
+
+  describe '.filter_showdown' do
+    subject { described_class.filter_showdown(showdown) }
+
+    let(:hh1) { create(:hand_history, :with_showdown) }
+    let(:hh2) { create(:hand_history) }
+
+    context 'when showdown is nil' do
+      let(:showdown) { nil }
+
+      it { is_expected.to eq([hh1, hh2]) }
+    end
+
+    context 'when showdown is true' do
+      let(:showdown) { 'true' }
+
+      it { is_expected.to eq([hh1]) }
+    end
+
+    context 'when showdown is false' do
+      let(:showdown) { 'false' }
+
+      it { is_expected.to eq([hh2]) }
+    end
+  end
+
+  describe '.filter_all_in' do
+    subject { described_class.filter_all_in(all_in) }
+
+    let(:hh1) { create(:hand_history, :with_all_in) }
+    let(:hh2) { create(:hand_history) }
+
+    context 'when all_in is nil' do
+      let(:all_in) { nil }
+
+      it { is_expected.to eq([hh1, hh2]) }
+    end
+
+    context 'when all_in is true' do
+      let(:all_in) { 'true' }
+
+      it { is_expected.to eq([hh1]) }
+    end
+
+    context 'when all_in is false' do
+      let(:all_in) { 'false' }
+
+      it { is_expected.to eq([hh2]) }
     end
   end
 end

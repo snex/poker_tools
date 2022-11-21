@@ -47,13 +47,16 @@ RSpec.describe HandHistoriesController do
     it 'has response :ok' do
       expect(response).to have_http_status(:ok)
     end
-
-    it 'assigns @results_by_date' do
-      expect(assigns(:results_by_date)).to be_a(ResultsByDate)
-    end
   end
 
   describe 'GET #chart' do
+    let(:expected_params) do
+      {
+        'format'     => 'json',
+        'controller' => 'hand_histories',
+        'action'     => 'chart'
+      }
+    end
     let!(:hh) { create_list(:hand_history, 2) }
 
     before { get :chart, format: :json }
@@ -67,13 +70,7 @@ RSpec.describe HandHistoriesController do
     end
 
     it 'assigns @params' do
-      expect(assigns(:params)).to eq(
-        {
-          'format'     => 'json',
-          'controller' => 'hand_histories',
-          'action'     => 'chart'
-        }
-      )
+      expect(assigns(:params)).to eq(expected_params)
     end
 
     it 'assigns @hand_histories' do

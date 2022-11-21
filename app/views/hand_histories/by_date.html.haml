@@ -8,9 +8,9 @@
         %th Session Result (Actual $)
         %th VPIP Result
       %tbody
-        -@results_by_date.yearly_results.each do |year, result_h|
+        -ResultsByDate.yearly_results.each do |year, result_h|
           %tr
-            %td= year.strftime('%Y')
+            %td= year
             %td{class: bg_color_by_result(result_h[:session])}
               =result_h[:session]
             %td{class: bg_color_by_result(result_h[:vpip])}
@@ -23,7 +23,7 @@
         %th Session Result (Actual $)
         %th VPIP Result
       %tbody
-        -@results_by_date.monthly_results.each do |month, result_h|
+        -ResultsByDate.monthly_results.each do |month, result_h|
           %tr
             %td= month.strftime('%B %Y')
             %td{class: bg_color_by_result(result_h[:session])}

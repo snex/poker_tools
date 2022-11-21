@@ -15,9 +15,7 @@ class HandHistoriesController < AuthorizedPagesController
     end
   end
 
-  def by_date
-    @results_by_date = ResultsByDate.new
-  end
+  def by_date; end
 
   def chart
     @params = hand_histories_params

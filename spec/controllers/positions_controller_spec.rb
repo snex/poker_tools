@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'support/data_aggregator'
+require 'support/aggregation_page'
 
 RSpec.describe PositionsController do
-  it_behaves_like 'DataAggregator', Position, :position, :'positions.position'
+  it_behaves_like 'AggregationPage', Position
 end

@@ -7,8 +7,19 @@ FactoryBot.define do
     position { Position.all.sample(1).first }
     bet_size { BetSize.all.sample(1).first }
     table_size { TableSize.all.sample(1).first }
-    poker_session
     note { Faker::Lorem.paragraph }
+
+    transient do
+      stake { nil }
+    end
+
+    poker_session do
+      if stake.present?
+        association(:poker_session, stake: Stake.find_or_initialize_by(stake: stake))
+      else
+        association(:poker_session)
+      end
+    end
 
     trait :with_flop do
       flop { Faker::Lorem.word }
