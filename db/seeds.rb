@@ -256,7 +256,7 @@ seed Position, {
 }
 seed Position, {
   position: 'UTG1',
-  color:    '#52e000'
+  color:    '#edff5b'
 }
 seed Position, {
   position: 'UTG2',
