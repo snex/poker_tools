@@ -5,17 +5,17 @@
   =render partial: 'stats_table_headers'
 %tbody.text-center
   %tr
-    %td= @ps_records.monthly_pct_won
-    %td= @ps_records.monthly_best
-    %td= @ps_records.monthly_worst
+    %td= @ps_records.pct_won(:month)
+    %td= @ps_records.best(:month)
+    %td= @ps_records.worst(:month)
     %td
-      %div= "#{@ps_records.monthly_avg_wins} (mean)"
-      %div= "#{@ps_records.monthly_avg_wins_median} (median)"
+      %div= "#{@ps_records.avg_wins(:month)} (mean)"
+      %div= "#{@ps_records.avg_wins_median(:month)} (median)"
     %td
-      %div= "#{@ps_records.monthly_avg_losses} (mean)"
-      %div= "#{@ps_records.monthly_avg_losses_median} (median)"
+      %div= "#{@ps_records.avg_losses(:month)} (mean)"
+      %div= "#{@ps_records.avg_losses_median(:month)} (median)"
     %td
-      %div= "#{@ps_records.monthly_avg} (mean)"
-      %div= "#{@ps_records.monthly_avg_median} (median)"
-    %td= @ps_records.monthly_longest_win_streak
-    %td= @ps_records.monthly_longest_loss_streak
+      %div= "#{@ps_records.avg(:month)} (mean)"
+      %div= "#{@ps_records.avg_median(:month)} (median)"
+    %td= @ps_records.longest_win_streak(:month)
+    %td= @ps_records.longest_loss_streak(:month)

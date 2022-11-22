@@ -2,8 +2,30 @@ require:
   - rubocop-rails
   - rubocop-rspec
 
+Layout/HashAlignment:
+  EnforcedHashRocketStyle: table
+  EnforcedColonStyle: table
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/AbcSize:
+  Exclude:
+    - 'app/datatables/*'
+
+Metrics/MethodLength:
+  Exclude:
+    - 'app/datatables/*'
+
 AllCops:
   NewCops: enable
   Exclude:
     - 'bin/**'
     - 'db/**'
+    - 'db/migrate/2019*'
+    - 'db/migrate/2021*'
+    - 'db/migrate/20220*'
+    - 'db/migrate/202210*'
+    - 'db/migrate/2022110*'
+    - 'db/migrate/2022111*'
+    - 'spec/features/clearance/**'

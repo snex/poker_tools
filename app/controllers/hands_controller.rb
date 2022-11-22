@@ -1,9 +1,9 @@
-class HandsController < AuthorizedPagesController
-  include DataAggregator
+# frozen_string_literal: true
 
+class HandsController < AuthorizedPagesController
   skip_before_action :verify_authenticity_token
 
   def index
-    generate_data(:hand, :'hands.hand')
+    @hh_data = HandHistory.aggregates(:hand, :'hands.hand', params)
   end
 end

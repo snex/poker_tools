@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PokerSessionDatatable < AjaxDatatablesRails::ActiveRecord
   include Conditionals
 
@@ -19,10 +21,16 @@ class PokerSessionDatatable < AjaxDatatablesRails::ActiveRecord
     }
   end
 
+  def fetch_records
+    PokerSession
+      .includes(game_type: %i[stake bet_structure poker_variant])
+      .joins(game_type: %i[stake bet_structure poker_variant])
+  end
+
   private
 
   def data
-    records.includes(:stake, :bet_structure, :poker_variant).map do |record|
+    records.includes(game_type: %i[stake bet_structure poker_variant]).map do |record|
       {
         start_time:   record.start_time.strftime('%Y-%m-%d %l:%M %p'),
         end_time:     record.end_time.strftime('%Y-%m-%d %l:%M %p'),
@@ -40,9 +48,5 @@ class PokerSessionDatatable < AjaxDatatablesRails::ActiveRecord
         DT_RowId:     record.id
       }
     end
-  end
-
-  def get_raw_records
-    PokerSession.all.includes(:stake, :bet_structure, :poker_variant).joins(:stake, :bet_structure, :poker_variant)
   end
 end

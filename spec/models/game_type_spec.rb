@@ -1,105 +1,38 @@
+# frozen_string_literal: true
+
 RSpec.describe GameType do
-  describe '.new' do
-    subject { described_class.new('2/5 NL') }
+  it { is_expected.to belong_to(:bet_structure) }
+  it { is_expected.to belong_to(:poker_variant) }
+  it { is_expected.to belong_to(:stake) }
 
-    context 'setting the bet_structure' do
-      context 'NL' do
-        context 'input is NL' do
-          it 'sets the bet_structure to NL' do
-            expect(subject.bet_structure).to eq(BetStructure.find_by_name('No Limit'))
-          end
-        end
-      end
+  describe 'validations' do
+    before { create(:game_type) }
 
-      context 'PL' do
-        context 'input is BigO' do
-          subject { described_class.new('2/5 BigO') }
+    it { is_expected.to validate_uniqueness_of(:game_type) }
+    it { is_expected.to validate_uniqueness_of(:bet_structure_id).scoped_to(%i[poker_variant_id stake_id]) }
+  end
 
-          it 'sets the bet_structure to PL' do
-            expect(subject.bet_structure).to eq(BetStructure.find_by_name('Pot Limit'))
-          end
-        end
+  describe 'before save hook' do
+    let(:gt) { build(:game_type) }
 
-        context 'input is PLO' do
-          subject { described_class.new('2/5 PLO') }
+    it 'saves game_type string' do
+      expected = "#{gt.stake.stake} #{gt.bet_structure.abbreviation}#{gt.poker_variant.abbreviation}"
+      expect { gt.save }.to change(gt, :game_type).from(nil).to(expected)
+    end
+  end
 
-          it 'sets the bet_structure to PL' do
-            expect(subject.bet_structure).to eq(BetStructure.find_by_name('Pot Limit'))
-          end
-        end
+  describe '#to_s' do
+    subject { game_type.to_s }
 
-        context 'input is PLDBomb' do
-          subject { described_class.new('5 PLDBomb') }
-
-          it 'sets the bet_structure to PL' do
-            expect(subject.bet_structure).to eq(BetStructure.find_by_name('Pot Limit'))
-          end
-        end
-      end
+    let!(:game_type) do
+      create(
+        :game_type,
+        stake:         Stake.find_or_create_by!(stake: '1/2'),
+        bet_structure: BetStructure.find_by(name: 'No Limit'),
+        poker_variant: PokerVariant.find_by(name: 'Texas Holdem')
+      )
     end
 
-    context 'setting the poker_variant' do
-      context 'Texas Holdem' do
-        context 'input is NL' do
-          it 'sets the poker_variant to Texas Holdem' do
-            expect(subject.poker_variant).to eq(PokerVariant.find_by_name('Texas Holdem'))
-          end
-        end
-      end
-
-      context 'BigO' do
-        context 'input is BigO' do
-          subject { described_class.new('2/5 BigO') }
-
-          it 'sets the poker_variant to BigO' do
-            expect(subject.poker_variant).to eq(PokerVariant.find_by_name('BigO'))
-          end
-        end
-      end
-
-      context 'Omaha' do
-        context 'input is PLO' do
-          subject { described_class.new('2/5 PLO') }
-
-          it 'sets the poker_variant to Omaha' do
-            expect(subject.poker_variant).to eq(PokerVariant.find_by_name('Omaha'))
-          end
-        end
-      end
-
-      context 'Double Board Bomb Pots' do
-        context 'input is PLDBomb' do
-          subject { described_class.new('2/5 PLDBomb') }
-
-          it 'sets the poker_variant to Double Board Bomb Pots' do
-            expect(subject.poker_variant).to eq(PokerVariant.find_by_name('Double Board Bomb Pots'))
-          end
-        end
-      end
-    end
-
-    context 'unknown game type' do
-      context 'no game type supplied' do
-        subject { described_class.new('2/5 ') }
-
-        it 'raises an exception' do
-          expect { subject }.to raise_error(described_class::UnknownGameTypeException, /Unknown Game Type: /)
-        end
-      end
-
-      context 'invalid game type supplied' do
-        subject { described_class.new('2/5 UWOT') }
-
-        it 'raises an exception' do
-          expect { subject }.to raise_error(described_class::UnknownGameTypeException, /Unknown Game Type: UWOT/)
-        end
-      end
-    end
-
-    context 'setting the stake' do
-      it 'sets the stake' do
-        expect(subject.stake).to eq(Stake.find_by_stake('2/5'))
-      end
-    end
+    it { is_expected.to eq('1/2 NLHE') }
   end
 end

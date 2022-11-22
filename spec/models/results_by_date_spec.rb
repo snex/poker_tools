@@ -1,80 +1,36 @@
-RSpec.describe ResultsByDate do
-  subject { described_class.new }
+# frozen_string_literal: true
 
-  let(:hh) { double(HandHistory) }
-  let(:ps) { double(PokerSession) }
+RSpec.describe ResultsByDate do
+  before do
+    create(:poker_session, start_time: DateTime.parse('2020-12-25 16:02 PST'), buyin: 500, cashout: 1000)
+    ps = create(:poker_session, start_time: DateTime.parse('2021-02-01 05:00 PST'), buyin: 1000, cashout: 2100)
+    create(:hand_history, poker_session: ps, result: 1000)
+  end
 
   describe '#yearly_results' do
-    it 'lists the yearly results sorted by year descending' do
-      expect(HandHistory).to receive(:joins).with(:poker_session).and_return(hh, hh)
-      expect(hh).to receive(:group_by_year).with('start_time').and_return(hh)
-      expect(hh).to receive(:sum).with(:result).and_return({
-        2020 =>  500,
-        2021 => 1100
-      })
-      expect(hh).to receive(:group_by_month).and_return(hh)
-      expect(hh).to receive(:sum).with(:result).and_return({})
-      expect(PokerSession).to receive(:group_by_year).with('start_time').and_return(ps)
-      expect(ps).to receive(:sum).with('cashout - buyin').and_return({
-        2021 => 1000,
-        2022 => 2000
-      })
-      expect(subject.yearly_results).to eq([
-        [
-          2022,
-          { session: 2000 }
-        ],
-        [
-          2021,
-          { session: 1000, vpip: 1100 }
-        ],
-        [
-          2020,
-          { vpip: 500 }
-        ]
-      ])
+    subject { described_class.yearly_results }
+
+    let(:expected) do
+      {
+        2021 => { session: 1100, vpip: 1000 },
+        2020 => { session: 500, vpip: nil }
+      }
     end
+
+    it { is_expected.to eq(expected) }
   end
 
   describe '#monthly_results' do
-    it 'lists the monthly results sorted by year and month descending' do
-      expect(HandHistory).to receive(:joins).with(:poker_session).and_return(hh, hh)
-      expect(hh).to receive(:group_by_year).with('start_time').and_return(hh)
-      expect(hh).to receive(:sum).with(:result).and_return({})
-      expect(hh).to receive(:group_by_month).and_return(hh)
-      expect(hh).to receive(:sum).with(:result).and_return({
-        Date.parse('2020-01-01') =>  500,
-        Date.parse('2020-02-01') => 1100,
-        Date.parse('2021-01-01') => 1500
-      })
-      expect(PokerSession).to receive(:group_by_month).with('start_time').and_return(ps)
-      expect(ps).to receive(:sum).with('cashout - buyin').and_return({
-        Date.parse('2020-03-01') =>  600,
-        Date.parse('2021-01-01') => 1200,
-        Date.parse('2021-02-01') => 2000
-      })
-      expect(subject.monthly_results).to eq([
-        [
-          Date.parse('2021-02-01'),
-          { session: 2000 }
-        ],
-        [
-          Date.parse('2021-01-01'),
-          { session: 1200, vpip: 1500 }
-        ],
-        [
-          Date.parse('2020-03-01'),
-          { session: 600 }
-        ],
-        [
-          Date.parse('2020-02-01'),
-          { vpip: 1100 }
-        ],
-        [
-          Date.parse('2020-01-01'),
-          { vpip: 500 }
-        ]
-      ])
+    subject { described_class.monthly_results }
+
+    let(:expected) do
+      {
+        Date.parse('2021-02-01') => { session: 1100, vpip: 1000 },
+        Date.parse('2021-01-01') => { session: nil, vpip: nil },
+        Date.parse('2020-12-01') => { session: 500, vpip: nil }
+      }
     end
+
+    it { is_expected.to eq(expected) }
   end
 end

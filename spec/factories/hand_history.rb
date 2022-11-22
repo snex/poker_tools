@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :hand_history do
     result { Faker::Number.between(from: -1000, to: 1000) }
@@ -5,8 +7,19 @@ FactoryBot.define do
     position { Position.all.sample(1).first }
     bet_size { BetSize.all.sample(1).first }
     table_size { TableSize.all.sample(1).first }
-    poker_session
     note { Faker::Lorem.paragraph }
+
+    transient do
+      stake { nil }
+    end
+
+    poker_session do
+      if stake.present?
+        association(:poker_session, stake: stake)
+      else
+        association(:poker_session)
+      end
+    end
 
     trait :with_flop do
       flop { Faker::Lorem.word }
@@ -29,7 +42,7 @@ FactoryBot.define do
     end
 
     trait :with_villain_hands do
-      villain_hands { build_list :villain_hand, 2 }
+      villain_hands { build_list(:villain_hand, 2) }
     end
   end
 end

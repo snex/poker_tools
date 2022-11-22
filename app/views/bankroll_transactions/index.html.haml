@@ -7,10 +7,10 @@
       %th Total
   %tbody
     %tr
-      %td= @poker_sessions.count
-      %td= @amount_won
-      %td= @num_transactions
-      %td= @total_amount
+      %td= @bankroll.poker_sessions.count
+      %td= @bankroll.poker_sessions.results
+      %td= @bankroll.bankroll_transactions.count
+      %td= @bankroll.total_amount
 
 %table.table.table-bordered
   %thead
@@ -20,7 +20,7 @@
       %th Note
       %th Actions
   %tbody
-    -@bankroll_transactions.each do |tx|
+    -@bankroll.bankroll_transactions.each do |tx|
       %tr
         %td= tx.date
         %td= tx.amount

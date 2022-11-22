@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :bet_size do
     sequence(:bet_size) { |n| n }

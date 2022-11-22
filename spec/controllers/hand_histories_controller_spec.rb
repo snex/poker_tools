@@ -1,45 +1,84 @@
+# frozen_string_literal: true
+
 RSpec.describe HandHistoriesController do
   before { sign_in }
 
   describe 'GET #index' do
-    context '.html' do
-      it 'renders index with response 200, assigns all variables' do
-        get :index
-        expect(response).to render_template('index')
-        expect(response).to have_http_status(:ok)
+    context 'with format .html' do
+      before { get :index }
 
+      it 'renders index' do
+        expect(response).to render_template('index')
+      end
+
+      it 'has response :ok' do
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'assigns @hand_histories' do
         expect(assigns(:hand_histories)).to be_a(HandHistoryDatatable)
       end
     end
 
-    context '.json' do
-      it 'renders index with response 200, assigns all variables' do
-        get :index, format: :json
-        expect(response).to have_http_status(:ok)
+    context 'with format .json' do
+      before { get :index, format: :json }
 
-        expect(assigns(:hand_histories)).to be_a(HandHistoryDatatable)
+      it 'returns a HandHistoryDataTable in the body' do
         expect(response.body).to eq(HandHistoryDatatable.new({}).to_json)
+      end
+
+      it 'has response :ok' do
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'assigns @hand_histories' do
+        expect(assigns(:hand_histories)).to be_a(HandHistoryDatatable)
       end
     end
   end
 
   describe 'GET #by_date' do
-    it 'renders by_date with response 200, assigns all variables' do
-      get :by_date
-      expect(response).to render_template('by_date')
-      expect(response).to have_http_status(:ok)
+    before { get :by_date }
 
-      expect(assigns(:results_by_date)).to be_a(ResultsByDate)
+    it 'renders by_date' do
+      expect(response).to render_template('by_date')
+    end
+
+    it 'has response :ok' do
+      expect(response).to have_http_status(:ok)
     end
   end
 
   describe 'GET #chart' do
-    let(:hh) { create_list :hand_history, 2 }
+    let(:expected_params) do
+      {
+        'format'     => 'json',
+        'controller' => 'hand_histories',
+        'action'     => 'chart'
+      }
+    end
+    let!(:hh) { create_list(:hand_history, 2) }
 
-    it 'renders chart with response 200, assigns all variables' do
-      get :chart, format: :json
+    before { get :chart, format: :json }
+
+    it 'renders chart_data' do
       expect(response).to render_template('chart_data')
+    end
+
+    it 'has response :ok' do
       expect(response).to have_http_status(:ok)
+    end
+
+    it 'assigns @params' do
+      expect(assigns(:params)).to eq(expected_params)
+    end
+
+    it 'assigns @hand_histories' do
+      expect(assigns(:hand_histories)).to match_array(hh)
+    end
+
+    it 'assigns @raw_numbers' do
+      expect(assigns(:raw_numbers)).to match_array(hh.map(&:result))
     end
   end
 end

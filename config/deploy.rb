@@ -1,7 +1,8 @@
+# frozen_string_literal: true
+
 require 'mina/rails'
 require 'mina/git'
-# require 'mina/rbenv'  # for rbenv support. (https://rbenv.org)
-require 'mina/rvm'    # for rvm support. (https://rvm.io)
+require 'mina/rvm' # for rvm support. (https://rvm.io)
 
 # Basic settings:
 #   domain       - The hostname to SSH to.
@@ -25,9 +26,11 @@ set :branch, 'master'
 # run `mina -d` to see all folders and files already included in `shared_dirs` and `shared_files`
 # set :shared_dirs, fetch(:shared_dirs, []).push('public/assets')
 # set :shared_files, fetch(:shared_files, []).push('config/database.yml', 'config/secrets.yml')
-set :shared_files, fetch(:shared_files, []).concat(%w(
-  config/master.key
-))
+set :shared_files, fetch(:shared_files, []).concat(
+  %w[
+    config/master.key
+  ]
+)
 
 # This task is the environment that is loaded for all remote run commands, such as
 # `mina deploy` or `mina rake`.
@@ -48,7 +51,7 @@ task :setup do
   # command %{gem install bundler}
 end
 
-desc "Deploys the current version to the server."
+desc 'Deploys the current version to the server.'
 task :deploy do
   # uncomment this line to make sure you pushed your local branch to the remote origin
   # invoke :'git:ensure_pushed'
@@ -59,14 +62,15 @@ task :deploy do
     invoke :'deploy:link_shared_paths'
     invoke :'bundle:install'
     invoke :'rails:db_migrate'
+    invoke :'rake:db:seed'
     command 'yarn install'
     invoke :'rails:assets_precompile'
     invoke :'deploy:cleanup'
 
     on :launch do
       in_path(fetch(:current_path)) do
-        command %{mkdir -p tmp/}
-        command %{touch tmp/restart.txt}
+        command %(mkdir -p tmp/)
+        command %(touch tmp/restart.txt)
       end
     end
   end

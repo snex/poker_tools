@@ -1,6 +1,8 @@
-require_relative "boot"
+# frozen_string_literal: true
 
-require "rails/all"
+require_relative 'boot'
+
+require 'rails/all'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -17,7 +19,7 @@ module Stats
     # in config/environments, which are processed later.
     #
     config.beginning_of_week = :sunday
-    config.time_zone = "Pacific Time (US & Canada)"
+    config.time_zone = 'Pacific Time (US & Canada)'
     # config.eager_load_paths << Rails.root.join("extras")
   end
 end

@@ -5,17 +5,17 @@
   =render partial: 'stats_table_headers'
 %tbody.text-center
   %tr
-    %td= @ps_records.daily_pct_won
-    %td= @ps_records.daily_best
-    %td= @ps_records.daily_worst
+    %td= @ps_records.pct_won(:day)
+    %td= @ps_records.best(:day)
+    %td= @ps_records.worst(:day)
     %td
-      %div= "#{@ps_records.daily_avg_wins} (mean)"
-      %div= "#{@ps_records.daily_avg_wins_median} (median)"
+      %div= "#{@ps_records.avg_wins(:day)} (mean)"
+      %div= "#{@ps_records.avg_wins_median(:day)} (median)"
     %td
-      %div= "#{@ps_records.daily_avg_losses} (mean)"
-      %div= "#{@ps_records.daily_avg_losses_median} (median)"
+      %div= "#{@ps_records.avg_losses(:day)} (mean)"
+      %div= "#{@ps_records.avg_losses_median(:day)} (median)"
     %td
-      %div= "#{@ps_records.daily_avg} (mean)"
-      %div= "#{@ps_records.daily_avg_median} (median)"
-    %td= @ps_records.daily_longest_win_streak
-    %td= @ps_records.daily_longest_loss_streak
+      %div= "#{@ps_records.avg(:day)} (mean)"
+      %div= "#{@ps_records.avg_median(:day)} (median)"
+    %td= @ps_records.longest_win_streak(:day)
+    %td= @ps_records.longest_loss_streak(:day)

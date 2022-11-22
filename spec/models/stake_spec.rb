@@ -1,39 +1,41 @@
-RSpec.describe Stake do
-  subject { build :stake }
+# frozen_string_literal: true
 
-  describe :before_save do
-    context 'bad value passed' do
-      subject { build :stake, stake: 'a/5' }
+RSpec.describe Stake do
+  subject(:s) { build(:stake) }
+
+  describe 'before_save hook' do
+    context 'with bad value passed' do
+      subject(:s) { build(:stake, stake: 'a/5') }
 
       it 'fails to save with an error' do
-        expect { subject.save }.to raise_error(ArgumentError, /invalid value for Integer\(\): "a"/)
+        expect { s.save }.to raise_error(ArgumentError, /invalid value for Integer\(\): "a"/)
       end
     end
 
     it 'saves to stakes_array' do
-      expected = subject.stake.split('/').map(&:to_i).reverse
-      expect { subject.save }.to change { subject.stakes_array }.from(nil).to(expected)
+      expected = s.stake.split('/').map(&:to_i).reverse
+      expect { s.save }.to change(s, :stakes_array).from(nil).to(expected)
     end
   end
 
   describe '#to_s' do
     it 'returns the stake field' do
-      expect(subject.to_s).to eq(subject.stake)
+      expect(s.to_s).to eq(s.stake)
     end
   end
 
   describe '.cached' do
-    subject! { create :stake }
-    let(:ordered) { described_class.order(:stakes_array) }
-    let!(:expected) { described_class.order(:stakes_array).pluck(:id, :stake) }
+    let!(:s1) { create(:stake, stake: '10/20') }
+    let!(:s2) { create(:stake, stake: '5/10') }
 
     it 'returns a hash of the Stake ids and stakes' do
-      expect(described_class.cached).to eq(expected)
+      expect(described_class.cached).to eq([[s2.id, '5/10'], [s1.id, '10/20']])
     end
 
     it 'does not memoize the result' do
-      expect(described_class).to receive(:order).and_call_original.exactly(2).times
+      allow(described_class).to receive(:custom_order).and_call_original
       2.times { described_class.cached }
+      expect(described_class).to have_received(:custom_order).with(no_args).twice
     end
   end
 end

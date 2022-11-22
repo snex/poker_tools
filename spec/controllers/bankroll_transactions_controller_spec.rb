@@ -1,21 +1,24 @@
+# frozen_string_literal: true
+
 RSpec.describe BankrollTransactionsController do
   describe 'GET #index' do
     before do
-      create :poker_session, buyin: 100, cashout: 200
-      create :bankroll_transaction, amount: 500
+      create(:poker_session, buyin: 100, cashout: 200)
+      create(:bankroll_transaction, amount: 500)
       sign_in
       get :index
     end
 
-    it 'renders index with response 200, assigns all variables' do
+    it 'renders index' do
       expect(response).to render_template('index')
-      expect(response).to have_http_status(:ok)
+    end
 
-      expect(assigns(:poker_sessions)).to eq(PokerSession.all)
-      expect(assigns(:amount_won)).to eq(100)
-      expect(assigns(:bankroll_transactions)).to eq(BankrollTransaction.order(date: :desc))
-      expect(assigns(:num_transactions)).to eq(1)
-      expect(assigns(:total_amount)).to eq(600)
+    it 'has response :ok' do
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'assigns @bankroll' do
+      expect(assigns(:bankroll)).to be_a(Bankroll)
     end
   end
 end

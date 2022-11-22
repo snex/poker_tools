@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
@@ -37,6 +39,7 @@ gem 'guard'
 gem 'guard-rake'
 gem 'haml'
 gem 'passenger', '~> 6.0'
+gem 'seed_box'
 gem 'simple_calendar', '~> 2.4'
 
 group :development, :test do
