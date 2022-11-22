@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
 RSpec.describe PokerSession do
-  # TODO: remove optional once game_types are deployed to production
-  it { is_expected.to belong_to(:game_type).optional(true) }
+  it { is_expected.to belong_to(:game_type) }
   it { is_expected.to have_many :hand_histories }
 
   describe 'memoized instance methods' do
     before do
-      allow(ps).to receive(:stake).and_call_original
+      allow(ps).to receive(:game_type).and_call_original
       allow(ps).to receive(:cashout).and_call_original
       allow(ps).to receive(:end_time).and_call_original
       allow(ps).to receive(:result).and_call_original

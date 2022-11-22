@@ -1,11 +1,7 @@
 # frozen_string_literal: true
 
 class PokerSession < ApplicationRecord
-  belongs_to :stake, optional: true
-  belongs_to :bet_structure, optional: true
-  belongs_to :poker_variant, optional: true
-  # TODO: remove optional once game_types are deployed to production
-  belongs_to :game_type, optional: true
+  belongs_to :game_type
   has_many :hand_histories, dependent: :restrict_with_exception
 
   extend PokerSessionsStats
