@@ -4,6 +4,15 @@ RSpec.describe FileImporter::PokerSessionImporter do
   describe '.import' do
     subject(:import) { described_class.import('2022-01-01', file_fixture(filename).read.strip) }
 
+    before do
+      create(
+        :game_type,
+        stake:         Stake.find_or_create_by!(stake: '1/2'),
+        bet_structure: BetStructure.find_by(name: 'No Limit'),
+        poker_variant: PokerVariant.find_by(name: 'Texas Holdem')
+      )
+    end
+
     context 'when a good file is supplied' do
       let(:filename) { 'poker_sessions/import_basic.txt' }
 
@@ -30,7 +39,7 @@ RSpec.describe FileImporter::PokerSessionImporter do
 
       it 'raises an exception' do
         expect { import }.to(
-          raise_error(GameType::UnknownGameTypeException, /Unknown Game Type: UWOT/)
+          raise_error(GameType::UnknownGameTypeException, %r{Unknown Game Type: 1/2 UWOT})
         )
       end
     end

@@ -173,7 +173,7 @@ RSpec.describe HandHistory do
     end
 
     context 'when stake is passed, filter_matches' do
-      let(:stake) { hh.poker_session.stake.id }
+      let(:stake) { hh.poker_session.game_type.stake.id }
 
       it { is_expected.to eq([hh]) }
     end

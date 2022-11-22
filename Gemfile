@@ -39,6 +39,7 @@ gem 'guard'
 gem 'guard-rake'
 gem 'haml'
 gem 'passenger', '~> 6.0'
+gem 'seed_box'
 gem 'simple_calendar', '~> 2.4'
 
 group :development, :test do

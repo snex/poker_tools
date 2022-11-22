@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_14_041349) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_21_204732) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -38,6 +38,20 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_14_041349) do
     t.datetime "updated_at", null: false
     t.index ["abbreviation"], name: "index_bet_structures_on_abbreviation", unique: true
     t.index ["name"], name: "index_bet_structures_on_name", unique: true
+  end
+
+  create_table "game_types", force: :cascade do |t|
+    t.string "game_type", null: false
+    t.bigint "stake_id", null: false
+    t.bigint "bet_structure_id", null: false
+    t.bigint "poker_variant_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["bet_structure_id"], name: "index_game_types_on_bet_structure_id"
+    t.index ["game_type"], name: "index_game_types_on_game_type", unique: true
+    t.index ["poker_variant_id"], name: "index_game_types_on_poker_variant_id"
+    t.index ["stake_id", "bet_structure_id", "poker_variant_id"], name: "game_types_unique", unique: true
+    t.index ["stake_id"], name: "index_game_types_on_stake_id"
   end
 
   create_table "hand_histories", force: :cascade do |t|
@@ -73,14 +87,10 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_14_041349) do
     t.datetime "start_time", null: false
     t.datetime "end_time", null: false
     t.integer "hands_dealt"
-    t.bigint "stake_id", null: false
-    t.bigint "bet_structure_id", null: false
-    t.bigint "poker_variant_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["bet_structure_id"], name: "index_poker_sessions_on_bet_structure_id"
-    t.index ["poker_variant_id"], name: "index_poker_sessions_on_poker_variant_id"
-    t.index ["stake_id"], name: "index_poker_sessions_on_stake_id"
+    t.integer "game_type_id", null: false
+    t.index ["game_type_id"], name: "index_poker_sessions_on_game_type_id"
   end
 
   create_table "poker_variants", force: :cascade do |t|
@@ -129,14 +139,15 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_14_041349) do
     t.index ["hand_id"], name: "index_villain_hands_on_hand_id"
   end
 
+  add_foreign_key "game_types", "bet_structures"
+  add_foreign_key "game_types", "poker_variants"
+  add_foreign_key "game_types", "stakes"
   add_foreign_key "hand_histories", "bet_sizes"
   add_foreign_key "hand_histories", "hands"
   add_foreign_key "hand_histories", "poker_sessions"
   add_foreign_key "hand_histories", "positions"
   add_foreign_key "hand_histories", "table_sizes"
-  add_foreign_key "poker_sessions", "bet_structures"
-  add_foreign_key "poker_sessions", "poker_variants"
-  add_foreign_key "poker_sessions", "stakes"
+  add_foreign_key "poker_sessions", "game_types"
   add_foreign_key "villain_hands", "hand_histories"
   add_foreign_key "villain_hands", "hands"
 end

@@ -1,29 +1,24 @@
 # frozen_string_literal: true
 
-class GameType
+class GameType < ApplicationRecord
   class UnknownGameTypeException < StandardError; end
 
-  attr_reader :bet_structure, :poker_variant, :stake
+  belongs_to :bet_structure
+  belongs_to :poker_variant
+  belongs_to :stake
 
-  def initialize(game_type_name)
-    stake_name, game_name = game_type_name.split
-    @stake = Stake.find_or_create_by(stake: stake_name)
+  validates :game_type, uniqueness: true
+  validates :bet_structure_id, uniqueness: { scope: %i[poker_variant_id stake_id] }
 
-    case game_name.try(:downcase)
-    when 'nl'
-      @bet_structure = BetStructure.find_by(name: 'No Limit')
-      @poker_variant = PokerVariant.find_by(name: 'Texas Holdem')
-    when 'bigo'
-      @bet_structure = BetStructure.find_by(name: 'Pot Limit')
-      @poker_variant = PokerVariant.find_by(name: 'BigO')
-    when 'plo'
-      @bet_structure = BetStructure.find_by(name: 'Pot Limit')
-      @poker_variant = PokerVariant.find_by(name: 'Omaha')
-    when 'pldbomb'
-      @bet_structure = BetStructure.find_by(name: 'Pot Limit')
-      @poker_variant = PokerVariant.find_by(name: 'Double Board Bomb Pots')
-    else
-      raise UnknownGameTypeException, "Unknown Game Type: #{game_name}"
-    end
+  before_save :set_game_type
+
+  def to_s
+    "#{stake} #{bet_structure.abbreviation}#{poker_variant.abbreviation}"
+  end
+
+  private
+
+  def set_game_type
+    self.game_type = "#{stake.stake} #{bet_structure.abbreviation}#{poker_variant.abbreviation}"
   end
 end

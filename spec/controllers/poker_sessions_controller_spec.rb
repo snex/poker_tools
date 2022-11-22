@@ -56,6 +56,12 @@ RSpec.describe PokerSessionsController do
   describe 'POST #upload' do
     context 'when file is good' do
       before do
+        create(
+          :game_type,
+          stake:         Stake.find_or_create_by!(stake: '1/2'),
+          bet_structure: BetStructure.find_by(name: 'No Limit'),
+          poker_variant: PokerVariant.find_by(name: 'Texas Holdem')
+        )
         post :upload, params: { file: Rack::Test::UploadedFile.new('spec/data/file_importer/import_basic.txt') }
       end
 
@@ -78,7 +84,7 @@ RSpec.describe PokerSessionsController do
       end
 
       it 'returns an error in the body' do
-        expect(response.body).to eq('Unknown Game Type: UWOT')
+        expect(response.body).to eq('Unknown Game Type: 1/2 UWOT')
       end
 
       it 'has response :unprocessable_entity' do

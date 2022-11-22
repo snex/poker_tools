@@ -19,10 +19,11 @@ class FileImporter
     private
 
     def parse_game_type
-      gt = GameType.new(@data.match(/session (.+)/i)[1])
-      @ps_attrs[:stake] = gt.stake
-      @ps_attrs[:bet_structure] = gt.bet_structure
-      @ps_attrs[:poker_variant] = gt.poker_variant
+      game_type = @data.match(/session (.+)/i)[1]
+      gt = GameType.find_by!(game_type: game_type)
+      @ps_attrs[:game_type] = gt
+    rescue ActiveRecord::RecordNotFound
+      raise GameType::UnknownGameTypeException, "Unknown Game Type: #{game_type}"
     end
 
     def parse_result

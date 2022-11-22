@@ -2,19 +2,15 @@
 
 module PokerSessionsStats
   def results(group_by = :all, poker_sessions = all)
-    if group_by == :all
-      poker_sessions.sum('cashout - buyin')
-    else
-      poker_sessions.send("group_by_#{group_by}", :start_time, series: false).sum('cashout - buyin').values
-    end
+    return poker_sessions.sum('cashout - buyin') if group_by == :all
+
+    poker_sessions.send("group_by_#{group_by}", :start_time, series: false).sum('cashout - buyin').values
   end
 
   def duration(group_by = :all, poker_sessions = all)
-    if group_by == :all
-      poker_sessions.sum('end_time - start_time')
-    else
-      poker_sessions.send("group_by_#{group_by}", :start_time, series: false).sum('end_time - start_time').values
-    end
+    return poker_sessions.sum('end_time - start_time') if group_by == :all
+
+    poker_sessions.send("group_by_#{group_by}", :start_time, series: false).sum('end_time - start_time').values
   end
 
   def hourly(poker_sessions = all)
@@ -31,91 +27,43 @@ module PokerSessionsStats
   end
 
   def best(group_by = :all, poker_sessions = all)
-    if group_by == :all
-      poker_sessions.maximum('cashout - buyin')
-    else
-      results(group_by, poker_sessions).max
-    end
+    extreme(:maximum, group_by, poker_sessions)
   end
 
   def worst(group_by = :all, poker_sessions = all)
-    if group_by == :all
-      poker_sessions.minimum('cashout - buyin')
-    else
-      results(group_by, poker_sessions).min
-    end
+    extreme(:minimum, group_by, poker_sessions)
   end
 
   def avg_wins(group_by = :all, poker_sessions = all)
-    if group_by == :all
-      poker_sessions.where('(cashout - buyin) > 0').average('cashout - buyin').round(2)
-    else
-      results(group_by, poker_sessions).select(&:positive?).average.round(2)
-    end
+    avg_condition('(cashout - buyin) > 0', group_by, poker_sessions)
   end
 
   def avg_wins_median(group_by = :all, poker_sessions = all)
-    if group_by == :all
-      DescriptiveStatistics
-        .median(poker_sessions.where('(cashout - buyin) > 0')
-        .pluck(Arel.sql('cashout - buyin')))
-        .to_f
-        .round(2)
-    else
-      DescriptiveStatistics.median(results(group_by, poker_sessions).select(&:positive?)).to_f.round(2)
-    end
+    avg_median_condition('(cashout - buyin) > 0', group_by, poker_sessions)
   end
 
   def avg_losses(group_by = :all, poker_sessions = all)
-    if group_by == :all
-      poker_sessions.where('(cashout - buyin) < 0').average('cashout - buyin').round(2)
-    else
-      results(group_by, poker_sessions).select(&:negative?).average.round(2)
-    end
+    avg_condition('(cashout - buyin) < 0', group_by, poker_sessions)
   end
 
   def avg_losses_median(group_by = :all, poker_sessions = all)
-    if group_by == :all
-      DescriptiveStatistics
-        .median(poker_sessions.where('(cashout - buyin) < 0')
-        .pluck(Arel.sql('cashout - buyin')))
-        .to_f
-        .round(2)
-    else
-      DescriptiveStatistics.median(results(group_by, poker_sessions).select(&:negative?)).to_f.round(2)
-    end
+    avg_median_condition('(cashout - buyin) < 0', group_by, poker_sessions)
   end
 
   def avg(group_by = :all, poker_sessions = all)
-    if group_by == :all
-      poker_sessions.average('cashout - buyin').round(2)
-    else
-      results(group_by, poker_sessions).average.round(2)
-    end
+    avg_condition(nil, group_by, poker_sessions)
   end
 
   def avg_median(group_by = :all, poker_sessions = all)
-    if group_by == :all
-      DescriptiveStatistics.median(poker_sessions.pluck(Arel.sql('cashout - buyin'))).to_f.round(2)
-    else
-      DescriptiveStatistics.median(results(group_by, poker_sessions)).to_f.round(2)
-    end
+    avg_median_condition(nil, group_by, poker_sessions)
   end
 
   def longest_win_streak(group_by = :all, poker_sessions = all)
-    if group_by == :all
-      poker_sessions.pluck(Arel.sql('cashout - buyin')).longest_streak(0, :>)
-    else
-      results(group_by, poker_sessions).longest_streak(0, :>)
-    end
+    longest_streak_condition(:>, group_by, poker_sessions)
   end
 
   def longest_loss_streak(group_by = :all, poker_sessions = all)
-    if group_by == :all
-      poker_sessions.pluck(Arel.sql('cashout - buyin')).longest_streak(0, :<)
-    else
-      results(group_by, poker_sessions).longest_streak(0, :<)
-    end
+    longest_streak_condition(:<, group_by, poker_sessions)
   end
 
   def hands_dealt(poker_sessions = all)
@@ -143,5 +91,37 @@ module PokerSessionsStats
     # in order to avoid infinity vpips
     hands_played_calc = poker_sessions.where.not(hands_dealt: nil)
     (hands_played(hands_played_calc) / hands_dealt(poker_sessions).to_f).round(2)
+  end
+
+  private
+
+  def extreme(type, group_by = :all, poker_sessions = all)
+    return poker_sessions.calculate(type, 'cashout - buyin') if group_by == :all
+
+    results(group_by, poker_sessions).send(type, :itself)
+  end
+
+  def avg_condition(condition, group_by = :all, poker_sessions = all)
+    return poker_sessions.where(condition).average('cashout - buyin').round(2) if group_by == :all
+
+    results(group_by, poker_sessions.where(condition)).average.round(2)
+  end
+
+  def avg_median_condition(condition, group_by = :all, poker_sessions = all)
+    if group_by == :all
+      DescriptiveStatistics
+        .median(poker_sessions.where(condition)
+        .pluck(Arel.sql('cashout - buyin')))
+        .to_f
+        .round(2)
+    else
+      DescriptiveStatistics.median(results(group_by, poker_sessions.where(condition))).to_f.round(2)
+    end
+  end
+
+  def longest_streak_condition(condition, group_by = :all, poker_sessions = all)
+    return poker_sessions.pluck(Arel.sql('cashout - buyin')).longest_streak(0, condition) if group_by == :all
+
+    results(group_by, poker_sessions).longest_streak(0, condition)
   end
 end

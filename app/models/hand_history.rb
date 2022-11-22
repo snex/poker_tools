@@ -27,7 +27,11 @@ class HandHistory < ApplicationRecord
     position.present? ? where(position: position) : all
   }
   scope :filter_stake, lambda { |stake|
-    stake.present? ? joins(poker_session: :stake).where(poker_sessions: { stake: stake }) : all
+    if stake.present?
+      joins(poker_session: { game_type: :stake }).where(poker_sessions: { game_types: { stakes: stake } })
+    else
+      all
+    end
   }
   scope :filter_table_size, lambda { |table_size|
     table_size.present? ? where(table_size: table_size) : all
@@ -86,7 +90,7 @@ class HandHistory < ApplicationRecord
   end
 
   private_class_method def self.partial_query_for_aggregates(joins, group_by, params)
-    includes(:hand, :position, :bet_size, :table_size, poker_session: :stake)
+    includes(:hand, :position, :bet_size, :table_size, poker_session: { game_type: :stake })
       .joins(joins)
       .custom_filter(params)
       .group(group_by)

@@ -2,6 +2,15 @@
 
 RSpec.describe FileImporter do
   describe '.import' do
+    before do
+      create(
+        :game_type,
+        stake:         Stake.find_or_create_by!(stake: '1/2'),
+        bet_structure: BetStructure.find_by(name: 'No Limit'),
+        poker_variant: PokerVariant.find_by(name: 'Texas Holdem')
+      )
+    end
+
     context 'when a good file is supplied' do
       it 'imports a PokerSession' do
         expect do

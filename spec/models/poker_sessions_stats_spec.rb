@@ -103,7 +103,7 @@ RSpec.describe PokerSessionsStats do
     context 'when group_by is :all' do
       let(:group_by) { :all }
 
-      before { allow(ps).to receive(:maximum).with('cashout - buyin').and_return(1) }
+      before { allow(ps).to receive(:calculate).with(:maximum, 'cashout - buyin').and_return(1) }
 
       it { is_expected.to eq(1) }
     end
@@ -125,7 +125,7 @@ RSpec.describe PokerSessionsStats do
     context 'when group_by is :all' do
       let(:group_by) { :all }
 
-      before { allow(ps).to receive(:minimum).with('cashout - buyin').and_return(1) }
+      before { allow(ps).to receive(:calculate).with(:minimum, 'cashout - buyin').and_return(1) }
 
       it { is_expected.to eq(1) }
     end
@@ -144,13 +144,12 @@ RSpec.describe PokerSessionsStats do
   describe '.avg_wins' do
     subject { PokerSession.avg_wins(group_by) }
 
+    before { allow(ps).to receive(:where).with('(cashout - buyin) > 0').and_return(ps) }
+
     context 'when group_by is :all' do
       let(:group_by) { :all }
 
-      before do
-        allow(ps).to receive(:where).with('(cashout - buyin) > 0').and_return(ps)
-        allow(ps).to receive(:average).with('cashout - buyin').and_return(1)
-      end
+      before { allow(ps).to receive(:average).with('cashout - buyin').and_return(1) }
 
       it { is_expected.to eq(1) }
     end
@@ -159,7 +158,7 @@ RSpec.describe PokerSessionsStats do
       let(:group_by) { %i[day week month year].sample }
 
       before do
-        allow(PokerSession).to receive(:results).with(group_by, ps).and_return([1, -2, 3])
+        allow(PokerSession).to receive(:results).with(group_by, ps).and_return([1, 2, 3])
       end
 
       it { is_expected.to eq(2) }
@@ -169,13 +168,12 @@ RSpec.describe PokerSessionsStats do
   describe '.avg_wins_median' do
     subject { PokerSession.avg_wins_median(group_by) }
 
+    before { allow(ps).to receive(:where).with('(cashout - buyin) > 0').and_return(ps) }
+
     context 'when group_by is :all' do
       let(:group_by) { :all }
 
-      before do
-        allow(ps).to receive(:where).with('(cashout - buyin) > 0').and_return(ps)
-        allow(ps).to receive(:pluck).with(Arel.sql('cashout - buyin')).and_return([2, 4, 2, 5, 1])
-      end
+      before { allow(ps).to receive(:pluck).with(Arel.sql('cashout - buyin')).and_return([2, 4, 2, 5, 1]) }
 
       it { is_expected.to eq(2) }
     end
@@ -184,23 +182,22 @@ RSpec.describe PokerSessionsStats do
       let(:group_by) { %i[day week month year].sample }
 
       before do
-        allow(PokerSession).to receive(:results).with(group_by, ps).and_return([1, -2, 3, -4])
+        allow(PokerSession).to receive(:results).with(group_by, ps).and_return([1, 2, 3, 4])
       end
 
-      it { is_expected.to eq(2) }
+      it { is_expected.to eq(2.5) }
     end
   end
 
   describe '.avg_losses' do
     subject { PokerSession.avg_losses(group_by) }
 
+    before { allow(ps).to receive(:where).with('(cashout - buyin) < 0').and_return(ps) }
+
     context 'when group_by is :all' do
       let(:group_by) { :all }
 
-      before do
-        allow(ps).to receive(:where).with('(cashout - buyin) < 0').and_return(ps)
-        allow(ps).to receive(:average).with(Arel.sql('cashout - buyin')).and_return(-2)
-      end
+      before { allow(ps).to receive(:average).with(Arel.sql('cashout - buyin')).and_return(-2) }
 
       it { is_expected.to eq(-2) }
     end
@@ -209,23 +206,22 @@ RSpec.describe PokerSessionsStats do
       let(:group_by) { %i[day week month year].sample }
 
       before do
-        allow(PokerSession).to receive(:results).with(group_by, ps).and_return([-1, -2, 3])
+        allow(PokerSession).to receive(:results).with(group_by, ps).and_return([-1, -2, -3])
       end
 
-      it { is_expected.to eq(-1.5) }
+      it { is_expected.to eq(-2) }
     end
   end
 
   describe '.avg_losses_median' do
     subject { PokerSession.avg_losses_median(group_by) }
 
+    before { allow(ps).to receive(:where).with('(cashout - buyin) < 0').and_return(ps) }
+
     context 'when group_by is :all' do
       let(:group_by) { :all }
 
-      before do
-        allow(ps).to receive(:where).with('(cashout - buyin) < 0').and_return(ps)
-        allow(ps).to receive(:pluck).with(Arel.sql('cashout - buyin')).and_return([2, 4, 2, 5, 1])
-      end
+      before { allow(ps).to receive(:pluck).with(Arel.sql('cashout - buyin')).and_return([2, 4, 2, 5, 1]) }
 
       it { is_expected.to eq(2) }
     end
@@ -233,23 +229,21 @@ RSpec.describe PokerSessionsStats do
     context 'when group_by is a named time period' do
       let(:group_by) { %i[day week month year].sample }
 
-      before do
-        allow(PokerSession).to receive(:results).with(group_by, ps).and_return([1, -2, 3, -4])
-      end
+      before { allow(PokerSession).to receive(:results).with(group_by, ps).and_return([-1, -2, -3, -4]) }
 
-      it { is_expected.to eq(-3) }
+      it { is_expected.to eq(-2.5) }
     end
   end
 
   describe '.avg' do
     subject { PokerSession.avg(group_by) }
 
+    before { allow(ps).to receive(:where).with(nil).and_return(ps) }
+
     context 'when group_by is :all' do
       let(:group_by) { :all }
 
-      before do
-        allow(ps).to receive(:average).with('cashout - buyin').and_return(2)
-      end
+      before { allow(ps).to receive(:average).with('cashout - buyin').and_return(2) }
 
       it { is_expected.to eq(2) }
     end
@@ -268,12 +262,12 @@ RSpec.describe PokerSessionsStats do
   describe '.avg_median' do
     subject { PokerSession.avg_median(group_by) }
 
+    before { allow(ps).to receive(:where).with(nil).and_return(ps) }
+
     context 'when group_by is :all' do
       let(:group_by) { :all }
 
-      before do
-        allow(ps).to receive(:pluck).with(Arel.sql('cashout - buyin')).and_return([1, 3, 5])
-      end
+      before { allow(ps).to receive(:pluck).with(Arel.sql('cashout - buyin')).and_return([1, 3, 5]) }
 
       it { is_expected.to eq(3) }
     end
@@ -281,9 +275,7 @@ RSpec.describe PokerSessionsStats do
     context 'when group_by is a named time period' do
       let(:group_by) { %i[day week month year].sample }
 
-      before do
-        allow(PokerSession).to receive(:results).with(group_by, ps).and_return([1, -2, 3, -4])
-      end
+      before { allow(PokerSession).to receive(:results).with(group_by, ps).and_return([1, -2, 3, -4]) }
 
       it { is_expected.to eq(-0.5) }
     end

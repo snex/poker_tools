@@ -28,14 +28,14 @@ class HandHistoryDatatable < AjaxDatatablesRails::ActiveRecord
   def fetch_records
     HandHistory
       .all
-      .includes(:hand, :position, :bet_size, :table_size, poker_session: :stake)
-      .joins(:hand, :position, :bet_size, :table_size, poker_session: :stake)
+      .includes(:hand, :position, :bet_size, :table_size, poker_session: { game_type: :stake })
+      .joins(:hand, :position, :bet_size, :table_size, poker_session: { game_type: :stake })
   end
 
   private
 
   def data
-    records.includes(:hand, :position, :bet_size, :table_size, poker_session: :stake).map do |record|
+    records.includes(:hand, :position, :bet_size, :table_size, poker_session: { game_type: :stake }).map do |record|
       {
         date:       record.poker_session.start_time.to_date,
         result:     record.result,
@@ -43,7 +43,7 @@ class HandHistoryDatatable < AjaxDatatablesRails::ActiveRecord
         position:   record.position,
         bet_size:   record.bet_size.id,
         table_size: record.table_size.description,
-        stake:      record.poker_session.stake.stake,
+        stake:      record.poker_session.game_type.stake.stake,
         flop:       record.flop,
         turn:       record.turn,
         river:      record.river,

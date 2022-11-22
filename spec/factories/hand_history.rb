@@ -15,7 +15,7 @@ FactoryBot.define do
 
     poker_session do
       if stake.present?
-        association(:poker_session, stake: Stake.find_or_initialize_by(stake: stake))
+        association(:poker_session, stake: stake)
       else
         association(:poker_session)
       end

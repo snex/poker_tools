@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe PokerSession do
-  it { is_expected.to belong_to :stake }
-  it { is_expected.to belong_to :bet_structure }
-  it { is_expected.to belong_to :poker_variant }
+  # TODO: remove optional once game_types are deployed to production
+  it { is_expected.to belong_to(:game_type).optional(true) }
   it { is_expected.to have_many :hand_histories }
 
   describe 'memoized instance methods' do
@@ -14,18 +13,6 @@ RSpec.describe PokerSession do
       allow(ps).to receive(:result).and_call_original
       allow(ps).to receive(:hand_histories).and_call_original
       2.times { s }
-    end
-
-    describe '#game_type' do
-      subject(:s) { ps.game_type }
-
-      let(:ps) { build(:poker_session) }
-
-      it { is_expected.to eq("#{ps.stake.stake} #{ps.bet_structure.abbreviation}#{ps.poker_variant.abbreviation}") }
-
-      it 'memoizes the result' do
-        expect(ps).to have_received(:stake).with(no_args).once
-      end
     end
 
     describe '#result' do

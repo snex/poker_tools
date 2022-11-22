@@ -1,91 +1,38 @@
 # frozen_string_literal: true
 
 RSpec.describe GameType do
-  describe '.new' do
-    let(:gt) { described_class.new(input) }
+  it { is_expected.to belong_to(:bet_structure) }
+  it { is_expected.to belong_to(:poker_variant) }
+  it { is_expected.to belong_to(:stake) }
 
-    context 'when determining the stake' do
-      subject { gt.stake }
+  describe 'validations' do
+    before { create(:game_type) }
 
-      let(:input) { '2/5 NL' }
+    it { is_expected.to validate_uniqueness_of(:game_type) }
+    it { is_expected.to validate_uniqueness_of(:bet_structure_id).scoped_to(%i[poker_variant_id stake_id]) }
+  end
 
-      it { is_expected.to eq(Stake.find_by(stake: '2/5')) }
+  describe 'before save hook' do
+    let(:gt) { build(:game_type) }
+
+    it 'saves game_type string' do
+      expected = "#{gt.stake.stake} #{gt.bet_structure.abbreviation}#{gt.poker_variant.abbreviation}"
+      expect { gt.save }.to change(gt, :game_type).from(nil).to(expected)
+    end
+  end
+
+  describe '#to_s' do
+    subject { game_type.to_s }
+
+    let!(:game_type) do
+      create(
+        :game_type,
+        stake:         Stake.find_or_create_by!(stake: '1/2'),
+        bet_structure: BetStructure.find_by(name: 'No Limit'),
+        poker_variant: PokerVariant.find_by(name: 'Texas Holdem')
+      )
     end
 
-    context 'when determining the bet_structure' do
-      subject { gt.bet_structure }
-
-      context 'when input is NL' do
-        let(:input) { '2/5 NL' }
-
-        it { is_expected.to eq(BetStructure.find_by(name: 'No Limit')) }
-      end
-
-      context 'when input is BigO' do
-        let(:input) { '2/5 BigO' }
-
-        it { is_expected.to eq(BetStructure.find_by(name: 'Pot Limit')) }
-      end
-
-      context 'when input is PLO' do
-        let(:input) { '2/5 PLO' }
-
-        it { is_expected.to eq(BetStructure.find_by(name: 'Pot Limit')) }
-      end
-
-      context 'when input is PLDBomb' do
-        let(:input) { '2/5 PLDBomb' }
-
-        it { is_expected.to eq(BetStructure.find_by(name: 'Pot Limit')) }
-      end
-    end
-
-    context 'when determining the poker_variant' do
-      subject { gt.poker_variant }
-
-      context 'when input is NL' do
-        let(:input) { '2/5 NL' }
-
-        it { is_expected.to eq(PokerVariant.find_by(name: 'Texas Holdem')) }
-      end
-
-      context 'when input is BigO' do
-        let(:input) { '2/5 BigO' }
-
-        it { is_expected.to eq(PokerVariant.find_by(name: 'BigO')) }
-      end
-
-      context 'when input is PLO' do
-        let(:input) { '2/5 PLO' }
-
-        it { is_expected.to eq(PokerVariant.find_by(name: 'Omaha')) }
-      end
-
-      context 'when input is PLDBomb' do
-        let(:input) { '2/5 PLDBomb' }
-
-        it { is_expected.to eq(PokerVariant.find_by(name: 'Double Board Bomb Pots')) }
-      end
-    end
-
-    context 'when invalid string is passed' do
-      subject { -> { gt } }
-
-      context 'when no game type supplied' do
-        let(:input) { '2/5 ' }
-
-        it 'raises and exception' do
-          expect { gt }.to raise_error(described_class::UnknownGameTypeException, /Unknown Game Type: /)
-        end
-      end
-
-      context 'when an invalid game type supplied' do
-        let(:input) { '2/5 UWOT' }
-
-        it 'raises and exception' do
-          expect { gt }.to raise_error(described_class::UnknownGameTypeException, /Unknown Game Type: UWOT/)
-        end
-      end
-    end
+    it { is_expected.to eq('1/2 NLHE') }
   end
 end
