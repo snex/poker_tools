@@ -5,6 +5,8 @@ require('chosen-js')
 require('jquery-ui/ui/widgets/datepicker')
 require('chart.js')
 
+import Chart from 'chart.js/auto';
+
 var chart;
 var betSizeLabels = [
   { text: 'limp', fillStyle: 'red', strokeStyle: 'red', lineWidth: 2, hidden: false, index: 1 },
@@ -29,47 +31,56 @@ var positionLabels = [
 ];
 var currentLabels = betSizeLabels;
 
-Chart.defaults.multicolorLine = Chart.defaults.line;
-Chart.controllers.multicolorLine = Chart.controllers.line.extend({
-  draw: function(ease) {
+import {LineController} from 'chart.js';
+
+//Chart.defaults.multicolorLine = Chart.defaults.line;
+//Chart.controllers.multicolorLine = Chart.controllers.line.extend({
+class MultiColorLine extends LineController {
+  draw() {
     var
     startIndex = 0,
       meta = this.getMeta(),
       points = meta.data || [],
       colors = this.getDataset().colors,
       area = this.chart.chartArea,
-      originalDatasets = meta.dataset._children
+      originalDatasets = meta.dataset._points
       .filter(function(data) {
-        return !isNaN(data._view.y);
+        return !isNaN(data.y);
       });
 
     function _setColor(newColor, meta) {
-      meta.dataset._view.borderColor = newColor;
+      meta.dataset.options.borderColor = newColor;
     }
 
     if (!colors) {
-      Chart.controllers.line.prototype.draw.call(this, ease);
+      super.draw();
       return;
     }
 
     for (var i = 2; i <= colors.length; i++) {
       if (colors[i-1] !== colors[i]) {
         _setColor(colors[i-1], meta);
-        meta.dataset._children = originalDatasets.slice(startIndex, i);
-        meta.dataset.draw();
+        meta.dataset._points = originalDatasets.slice(startIndex, i);
+        //meta.dataset.draw();
+        super.draw();
         startIndex = i - 1;
       }
     }
 
-    meta.dataset._children = originalDatasets.slice(startIndex);
-    meta.dataset.draw();
-    meta.dataset._children = originalDatasets;
+    meta.dataset._points = originalDatasets.slice(startIndex);
+    //meta.dataset.draw();
+    super.draw();
+    meta.dataset._points = originalDatasets;
 
-    points.forEach(function(point) {
-      point.draw(area);
-    });
+    //points.forEach(function(point) {
+    //  point.draw(area);
+    //});
   }
-});
+};
+MultiColorLine.id = 'multicolorLine';
+MultiColorLine.defaults = LineController.defaults;
+
+Chart.register(MultiColorLine);
 
 $(document).ready(function() {
   var updateStats = function(num, sum, pct, avg, stddev) {
@@ -132,6 +143,7 @@ $(document).ready(function() {
           ]
         },
         options: {
+          /*
           legend: {
             display: true,
             onClick: function() {
@@ -151,6 +163,7 @@ $(document).ready(function() {
               }
             }
           },
+          */
           tooltips: {
             callbacks: {
               afterLabel: function(tooltipItem, data) {

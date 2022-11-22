@@ -5,6 +5,8 @@ require('chosen-js')
 require('jquery-ui/ui/widgets/datepicker')
 require('chart.js')
 
+import Chart from 'chart.js/auto';
+
 const monthNames = ["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
 ];
@@ -14,9 +16,6 @@ window.globalThis.updateCharts = (isoDate) => {
   var curYear = parseInt($('#yearchart').data().year);
   var year = newDate.getYear() + 1900;
   var month = newDate.getMonth() + 1;
-
-  console.log('curYear: ' + curYear);
-  console.log('year: ' + year);
 
   if (curYear != year) {
     $('#yearchart').data('year', year);
@@ -141,7 +140,6 @@ $(document).ready(function() {
     fileDialog.addEventListener('change', function(e) {
       var formData = new FormData();
       formData.append('file', e.path[0].files[0]);
-      console.log(e.path[0].files[0]);
       $.post({
         url:         'poker_sessions/upload',
         data:        formData,
