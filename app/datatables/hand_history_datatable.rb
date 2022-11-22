@@ -41,7 +41,7 @@ class HandHistoryDatatable < AjaxDatatablesRails::ActiveRecord
         result:     record.result,
         hand:       record.hand,
         position:   record.position,
-        bet_size:   record.bet_size.id,
+        bet_size:   record.bet_size.description,
         table_size: record.table_size.description,
         stake:      record.poker_session.game_type.stake.stake,
         flop:       record.flop,
