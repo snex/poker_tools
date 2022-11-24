@@ -39,7 +39,7 @@ class FileImporter
     end
 
     def parse_v_hands
-      @v_hands = @note.scan(/Vs? show (.+)/).map { |str| Hand.from_str(str.first.split.first) } if @hh_attrs[:showdown]
+      @v_hands = @note.scan(/Vs? show (.+)/).map { |str| Hand.from_str(str.first.split.first) }
     end
 
     def parse_status_line

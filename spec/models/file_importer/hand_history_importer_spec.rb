@@ -18,5 +18,13 @@ RSpec.describe FileImporter::HandHistoryImporter do
         expect(HandHistory.first.bet_size).to eq(BetSize.find_by(bet_size: 1))
       end
     end
+
+    context 'when there is no showdown (Issue #72)' do
+      it 'imports a HandHistory' do
+        expect do
+          described_class.import(ps, file_fixture('hand_histories/import_no_showdown_issue_72.txt').read.strip)
+        end.to change(HandHistory, :count).from(0).to(1)
+      end
+    end
   end
 end
