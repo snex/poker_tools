@@ -41,6 +41,7 @@ gem 'haml'
 gem 'passenger', '~> 6.0'
 gem 'seed_box'
 gem 'simple_calendar', '~> 2.4'
+gem 'whenever'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -50,6 +51,7 @@ group :development, :test do
   gem 'factory_bot_rails'
   gem 'faker'
   gem 'mina'
+  gem 'mina-whenever'
   gem 'rails-controller-testing'
   gem 'rspec-rails'
   gem 'shoulda-matchers'

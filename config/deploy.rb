@@ -68,6 +68,7 @@ task :deploy do
     invoke :'deploy:cleanup'
 
     on :launch do
+      invoke :'whenever:update'
       in_path(fetch(:current_path)) do
         command %(mkdir -p tmp/)
         command %(touch tmp/restart.txt)

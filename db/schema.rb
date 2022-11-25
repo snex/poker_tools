@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_21_204732) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_24_191021) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -108,6 +108,16 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_21_204732) do
     t.index ["position"], name: "index_positions_on_position", unique: true
   end
 
+  create_table "shared_hand_histories", force: :cascade do |t|
+    t.bigint "hand_history_id", null: false
+    t.string "uuid", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["hand_history_id"], name: "index_shared_hand_histories_on_hand_history_id"
+    t.index ["uuid"], name: "index_shared_hand_histories_on_uuid", unique: true
+  end
+
   create_table "stakes", force: :cascade do |t|
     t.string "stake"
     t.integer "stakes_array", array: true
@@ -148,6 +158,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_21_204732) do
   add_foreign_key "hand_histories", "positions"
   add_foreign_key "hand_histories", "table_sizes"
   add_foreign_key "poker_sessions", "game_types"
+  add_foreign_key "shared_hand_histories", "hand_histories"
   add_foreign_key "villain_hands", "hand_histories"
   add_foreign_key "villain_hands", "hands"
 end

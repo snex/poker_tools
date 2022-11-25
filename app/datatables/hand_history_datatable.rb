@@ -5,6 +5,7 @@ class HandHistoryDatatable < AjaxDatatablesRails::ActiveRecord
 
   def view_columns
     @view_columns ||= {
+      share_link: { source: 'HandHistory.id'                                                         },
       date:       { source: 'PokerSession.start_time', cond: :date_range, delimiter: '-yadcf_delim-' },
       result:     { source: 'HandHistory.result',      cond: between_condition                       },
       hand:       { source: 'Hand.id',                 cond: int_eq_condition,   use_regex: false    },
@@ -37,6 +38,7 @@ class HandHistoryDatatable < AjaxDatatablesRails::ActiveRecord
   def data
     records.includes(:hand, :position, :bet_size, :table_size, poker_session: { game_type: :stake }).map do |record|
       {
+        share_link: record.share_link,
         date:       record.poker_session.start_time.to_date,
         result:     record.result,
         hand:       record.hand,
