@@ -1,4 +1,12 @@
 %div
+  Date:
+  = @hand_history.poker_session.start_time.to_date.iso8601
+  %br
+%div
+  Game:
+  = @hand_history.poker_session.game_type
+  %br
+%div
   Amount Won/Lost:
   = @hand_history.result
   %br

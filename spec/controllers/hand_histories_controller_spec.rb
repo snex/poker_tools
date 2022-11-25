@@ -25,6 +25,14 @@ RSpec.describe HandHistoriesController do
         expect(response).to have_http_status(:ok)
       end
 
+      it 'has the date the hand was played', :nologin do
+        expect(page).to have_text("Date: #{shh.hand_history.poker_session.start_time.to_date.iso8601}")
+      end
+
+      it 'has the game_type', :nologin do
+        expect(page).to have_text("Game: #{shh.hand_history.poker_session.game_type}")
+      end
+
       it 'has the hand_history result', :nologin do
         expect(page).to have_text("Amount Won/Lost: #{shh.hand_history.result}")
       end
