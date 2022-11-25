@@ -3,6 +3,7 @@
 require 'mina/rails'
 require 'mina/git'
 require 'mina/rvm' # for rvm support. (https://rvm.io)
+require 'mina/whenever'
 
 # Basic settings:
 #   domain       - The hostname to SSH to.
