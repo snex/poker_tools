@@ -68,7 +68,7 @@ task :deploy do
     invoke :'rails:assets_precompile'
     invoke :'deploy:cleanup'
 
-    on :launch do
+    on launch: :remote_environment do
       invoke :'whenever:update'
       in_path(fetch(:current_path)) do
         command %(mkdir -p tmp/)
