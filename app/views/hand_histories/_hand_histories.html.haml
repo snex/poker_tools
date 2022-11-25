@@ -5,6 +5,7 @@
 .hidden#table-sizes{'data-table-sizes': TableSize.cached.map { |id, desc| { value: id, label: desc } }.to_json }
 %table.table.table-bordered#hh-datatable{style: 'font-size:12px;width:100%;', 'data-source': "#{hand_histories_path(@params)}.json"}
   %thead
+    %th
     %th Date
     %th Result
     %th Hand

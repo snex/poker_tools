@@ -1,0 +1,12 @@
+%div
+  Amount Won/Lost:
+  = @hand_history.result
+  %br
+  %br
+-note_lines = @hand_history.note.split("\n")
+%div
+  Hand History:
+  %br
+  -note_lines.each do |line|
+    =line
+    %br

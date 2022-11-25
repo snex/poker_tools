@@ -8,6 +8,7 @@ Clearance.configure do |config|
   config.password_strategy = Clearance::PasswordStrategies::BCrypt
   config.redirect_url = '/'
   config.rotate_csrf_on_sign_in = true
+  config.routes = false
   config.secure_cookie = !Rails.env.test?
   config.signed_cookie = true
   config.cookie_domain = ->(request) { request.host }

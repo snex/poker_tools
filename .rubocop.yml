@@ -13,6 +13,10 @@ Metrics/AbcSize:
   Exclude:
     - 'app/datatables/*'
 
+Metrics/BlockLength:
+  Exclude:
+    - 'config/routes.rb'
+
 Metrics/MethodLength:
   Exclude:
     - 'app/datatables/*'

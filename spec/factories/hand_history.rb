@@ -7,7 +7,7 @@ FactoryBot.define do
     position { Position.all.sample(1).first }
     bet_size { BetSize.all.sample(1).first }
     table_size { TableSize.all.sample(1).first }
-    note { Faker::Lorem.paragraph }
+    note { Faker::Lorem.paragraphs.join("\n") }
 
     transient do
       stake { nil }

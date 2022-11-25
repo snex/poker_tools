@@ -2,6 +2,7 @@
 
 class HandHistoriesController < AuthorizedPagesController
   skip_before_action :verify_authenticity_token, only: %i[index chart]
+  skip_before_action :require_login, only: :show
 
   def index
     @params = hand_histories_params
@@ -13,6 +14,20 @@ class HandHistoriesController < AuthorizedPagesController
         render json: @hand_histories
       end
     end
+  end
+
+  def show
+    @hand_history = SharedHandHistory.find_by!(uuid: params[:uuid], expires_at: Time.zone.now..).hand_history
+    render layout: false
+  end
+
+  def share
+    hh = HandHistory.find(params[:id])
+    shh = SharedHandHistory.create!(
+      hand_history: hh,
+      expires_at:   1.day.from_now
+    )
+    redirect_to hand_history_path(shh.uuid)
   end
 
   def by_date; end

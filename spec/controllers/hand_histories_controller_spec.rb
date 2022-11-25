@@ -1,7 +1,66 @@
 # frozen_string_literal: true
 
 RSpec.describe HandHistoriesController do
-  before { sign_in }
+  before { |spec| sign_in unless spec.metadata[:nologin] }
+
+  describe 'GET #show', type: :feature do
+    render_views
+
+    context 'when shared_hand_history does not exist' do
+      it 'throws a 404', :nologin do
+        expect { visit '/abc123' }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context 'when shared_hand_history exists and is not expired' do
+      let(:shh) { create(:shared_hand_history) }
+
+      before { visit "/#{shh.uuid}" }
+
+      it 'renders show', :nologin do
+        expect(response).to render_template('show', layout: [])
+      end
+
+      it 'has response :ok', :nologin do
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'has the hand_history result', :nologin do
+        expect(page).to have_text("Amount Won/Lost: #{shh.hand_history.result}")
+      end
+
+      it 'has the hand_history note', :nologin do
+        expect(page).to have_text("Hand History: #{shh.hand_history.note.gsub("\n", ' ')}")
+      end
+    end
+
+    context 'when shared_hand_history exists but is expired' do
+      let(:shh) { create(:shared_hand_history, expires_at: 1.hour.ago) }
+
+      it 'throws a 404', :nologin do
+        expect { visit "/#{shh.uuid}" }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+  end
+
+  describe 'POST #share' do
+    let(:hh) { create(:hand_history) }
+
+    before { post :share, params: { id: hh.id } }
+
+    it 'creates a SharedHandHistory' do
+      expect(SharedHandHistory.count).to eq(1)
+    end
+
+    it 'redirects to hand_history_path with the SharedHandHistory uuid' do
+      shh = SharedHandHistory.first
+      expect(response).to redirect_to(hand_history_path(shh.uuid))
+    end
+
+    it 'has response :found' do
+      expect(response).to have_http_status(:found)
+    end
+  end
 
   describe 'GET #index' do
     context 'with format .html' do

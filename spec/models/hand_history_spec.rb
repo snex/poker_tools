@@ -388,4 +388,15 @@ RSpec.describe HandHistory do
       it { is_expected.to eq([hh2]) }
     end
   end
+
+  describe '#share_link' do
+    subject { hh.share_link }
+
+    let(:hh) { create(:hand_history) }
+
+    it { is_expected.to match(%r{href="/hand_histories/#{hh.id}/share}) }
+    it { is_expected.to match(/target="_new"/) }
+    it { is_expected.to match(/data-method="POST"/) }
+    it { is_expected.to match(/i class="fa fa-share"/) }
+  end
 end

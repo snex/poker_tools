@@ -197,6 +197,7 @@ $(document).ready(function() {
       },
       'pagingType': 'full_numbers',
       'columns': [
+        {'data': 'share_link', 'orderable': false},
         {'data': 'date'},
         {'data': 'result'},
         {'data': 'hand'},
@@ -211,11 +212,11 @@ $(document).ready(function() {
         {'data': 'all_in'},
         {'data': 'note'}
       ],
-      'order': [[0, 'desc']],
+      'order': [[1, 'desc']],
       'columnDefs': [
-        {'width': '5%', 'targets': [0,1,2,3,4,5,6]},
+        {'width': '5%', 'targets': [1,2,3,4,5,6,7]},
         {
-          'targets': 12,
+          'targets': 13,
           'render': function(data, type, row, meta) {
             return data.replace("\n", '<br/>');
           }
@@ -228,38 +229,38 @@ $(document).ready(function() {
     });
 
     yadcf.init(dt, [
-      { column_number: 0, filter_type:  'range_date',   date_format: 'yyyy-mm-dd', filter_delay: 500 },
-      { column_number: 1, filter_type:  'range_number', exclude: true, exclude_label: 'Use ABS', filter_delay: 500 },
-      { column_number: 2, filter_type:  'multi_select', data: $('#hands').data('hands'), sort_as: 'none', filter_match_mode: 'contains', select_type: 'chosen', select_type_options: {width: '100px'} },
-      { column_number: 3, filter_type:  'multi_select', data: $('#positions').data('positions'), sort_as: 'none', filter_match_mode: 'contains', select_type: 'chosen' },
-      { column_number: 4, filter_type:  'multi_select', data: $('#bet-sizes').data('bet-sizes'), filter_match_mode: 'contains', select_type: 'chosen' },
-      { column_number: 5, filter_type:  'multi_select', data: $('#table-sizes').data('table-sizes'), sort_as: 'none', filter_match_mode: 'contains', select_type: 'chosen' },
-      { column_number: 6, filter_type:  'multi_select', data: $('#stakes').data('stakes'), sort_as: 'none', filter_match_mode: 'contains', select_type: 'chosen' },
-      { column_number: 7, filter_type:  'select',       data: [true, false] },
-      { column_number: 8, filter_type:  'select',       data: [true, false] },
-      { column_number: 9, filter_type:  'select',       data: [true, false] },
+      { column_number: 1,  filter_type: 'range_date',   date_format: 'yyyy-mm-dd', filter_delay: 500 },
+      { column_number: 2,  filter_type: 'range_number', exclude: true, exclude_label: 'Use ABS', filter_delay: 500 },
+      { column_number: 3,  filter_type: 'multi_select', data: $('#hands').data('hands'), sort_as: 'none', filter_match_mode: 'contains', select_type: 'chosen', select_type_options: {width: '100px'} },
+      { column_number: 4,  filter_type: 'multi_select', data: $('#positions').data('positions'), sort_as: 'none', filter_match_mode: 'contains', select_type: 'chosen' },
+      { column_number: 5,  filter_type: 'multi_select', data: $('#bet-sizes').data('bet-sizes'), filter_match_mode: 'contains', select_type: 'chosen' },
+      { column_number: 6,  filter_type: 'multi_select', data: $('#table-sizes').data('table-sizes'), sort_as: 'none', filter_match_mode: 'contains', select_type: 'chosen' },
+      { column_number: 7,  filter_type: 'multi_select', data: $('#stakes').data('stakes'), sort_as: 'none', filter_match_mode: 'contains', select_type: 'chosen' },
+      { column_number: 8,  filter_type: 'select',       data: [true, false] },
+      { column_number: 9,  filter_type: 'select',       data: [true, false] },
       { column_number: 10, filter_type: 'select',       data: [true, false] },
       { column_number: 11, filter_type: 'select',       data: [true, false] },
-      { column_number: 12, filter_type: 'text' },
+      { column_number: 12, filter_type: 'select',       data: [true, false] },
+      { column_number: 13, filter_type: 'text' },
     ]);
 
     var default_search = [];
     var default_search_data = $('#default-search').data('default-search');
 
     if ('bet_size' in default_search_data) {
-      default_search.push([4, default_search_data.bet_size]);
+      default_search.push([5, default_search_data.bet_size]);
     }
     if ('hand' in default_search_data) {
-      default_search.push([2, default_search_data.hand]);
+      default_search.push([3, default_search_data.hand]);
     }
     if ('position' in default_search_data) {
-      default_search.push([3, default_search_data.position]);
+      default_search.push([4, default_search_data.position]);
     }
     if ('table_size' in default_search_data) {
-      default_search.push([5, default_search_data.table_size]);
+      default_search.push([6, default_search_data.table_size]);
     }
     if ('stake' in default_search_data) {
-      default_search.push([6, default_search_data.stake]);
+      default_search.push([7, default_search_data.stake]);
     }
 
     yadcf.exFilterColumn(dt, default_search);
