@@ -218,7 +218,7 @@ $(document).ready(function() {
         {
           'targets': 13,
           'render': function(data, type, row, meta) {
-            return data.replace("\n", '<br/>');
+            return data.replace(/\n/g, '<br/>');
           }
         }
       ]
