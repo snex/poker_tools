@@ -1,0 +1,5 @@
+Error Parsing HandHistory:
+Note: 6 handed, open BU 10 AA, BB call
+Flop AA7r, x x
+Turn 7, all in 150, c
+Status Line: V show 77 and lose

@@ -2,6 +2,8 @@
 
 class FileImporter
   class HandHistoryParser
+    class HandHistoryParseException < StandardError; end
+
     def initialize(poker_session, data)
       @poker_session = poker_session
       data.strip!
@@ -9,6 +11,8 @@ class FileImporter
       @hh_attrs = {}
       parse_notes
       parse_status_line
+    rescue StandardError
+      raise HandHistoryParseException, "Error Parsing HandHistory:\nNote: #{@note}\nStatus Line: #{@status_line}"
     end
 
     def call
