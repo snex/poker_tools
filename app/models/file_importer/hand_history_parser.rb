@@ -8,7 +8,7 @@ class FileImporter
       @poker_session = poker_session
       data.strip!
       @note, _, @status_line = data.rpartition("\n")
-      @hh_attrs = {}
+      @hh_attrs = { note: @note }
       parse_notes
       parse_status_line
     rescue StandardError

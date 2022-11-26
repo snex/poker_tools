@@ -12,6 +12,11 @@ RSpec.describe FileImporter::HandHistoryImporter do
       it 'imports a HandHistory' do
         expect { import }.to change(HandHistory, :count).from(0).to(1)
       end
+
+      it 'imports a note on the HandHistory' do
+        import
+        expect(HandHistory.first.note).not_to be_nil
+      end
     end
 
     context 'when "limp" is passed in as bet_size' do
