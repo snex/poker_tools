@@ -22,7 +22,8 @@ select
   round(cast(sum(cashout - buyin) / extract(epoch from sum(end_time - start_time)/ 3600) as numeric), 2) as hourly
 from
   poker_sessions
-  inner join poker_variants on poker_variants.id = poker_sessions.poker_variant_id
+  inner join game_types on poker_sessions.game_type_id = game_types.id
+  inner join poker_variants on poker_variants.id = game_types.poker_variant_id
 where
   poker_variants.name = 'Texas Holdem'
 group by 1

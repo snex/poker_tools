@@ -19,7 +19,8 @@ from (
   from
     hand_histories
     inner join poker_sessions on hand_histories.poker_session_id = poker_sessions.id
-    inner join stakes on poker_sessions.stake_id = stakes.id
+    inner join game_types on poker_sessions.game_type_id = game_types.id
+    inner join stakes on game_types.stake_id = stakes.id
   where
     all_in = true
     and showdown = true
@@ -46,7 +47,8 @@ from (
   from
     hand_histories
     inner join poker_sessions on hand_histories.poker_session_id = poker_sessions.id
-    inner join stakes on poker_sessions.stake_id = stakes.id
+    inner join game_types on poker_sessions.game_type_id = game_types.id
+    inner join stakes on game_types.stake_id = stakes.id
   where
     all_in = true
     and flop is null
@@ -74,7 +76,8 @@ from (
   from
     hand_histories
     inner join poker_sessions on hand_histories.poker_session_id = poker_sessions.id
-    inner join stakes on poker_sessions.stake_id = stakes.id
+    inner join game_types on poker_sessions.game_type_id = game_types.id
+    inner join stakes on game_types.stake_id = stakes.id
   where
     all_in = true
     and flop is null
