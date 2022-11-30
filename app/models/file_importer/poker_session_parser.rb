@@ -20,7 +20,7 @@ class FileImporter
 
     def parse_game_type
       game_type = @data.match(/session (.+)/i)[1]
-      gt = GameType.find_by!(game_type: game_type)
+      gt = GameType.find_by!('lower(game_type) = ?', game_type.downcase)
       @ps_attrs[:game_type] = gt
     rescue ActiveRecord::RecordNotFound
       raise GameType::UnknownGameTypeException, "Unknown Game Type: #{game_type}"

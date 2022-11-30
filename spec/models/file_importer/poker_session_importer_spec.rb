@@ -52,5 +52,13 @@ RSpec.describe FileImporter::PokerSessionImporter do
         expect(PokerSession.first.end_time.to_date).to eq(Date.parse('2022-01-02'))
       end
     end
+
+    context 'when the game name is a case-insensitive match' do
+      let(:filename) { 'poker_sessions/import_case_insensitive_game_type.txt' }
+
+      it 'imports a PokerSession' do
+        expect { import }.to change(PokerSession, :count).from(0).to(1)
+      end
+    end
   end
 end
