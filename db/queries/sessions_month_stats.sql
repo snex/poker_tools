@@ -21,7 +21,7 @@ select
     when date_part('month', start_time) = 11 then '11 - November'
     when date_part('month', start_time) = 12 then '12 - December'
     else ''
-  end,
+  end as month,
   sum(cashout - buyin) as result,
   lpad(cast(sum(end_time - start_time) as varchar), 11)  as hours,
   round(cast(sum(cashout - buyin) / extract(epoch from sum(end_time - start_time)/ 3600) as numeric), 2) as hourly

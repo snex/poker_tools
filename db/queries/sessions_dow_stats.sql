@@ -16,7 +16,7 @@ select
     when date_part('dow', start_time) = 5 then '6 - Friday'
     when date_part('dow', start_time) = 6 then '7 - Saturday'
     else ''
-  end,
+  end as day_of_week,
   sum(cashout - buyin) as result,
   lpad(cast(sum(end_time - start_time) as varchar), 11)  as hours,
   round(cast(sum(cashout - buyin) / extract(epoch from sum(end_time - start_time)/ 3600) as numeric), 2) as hourly
