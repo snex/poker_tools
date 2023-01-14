@@ -137,7 +137,7 @@ $(document).ready(function() {
     fileDialog.accept = '.txt,text/plain';
     fileDialog.addEventListener('change', function(e) {
       var formData = new FormData();
-      formData.append('file', e.path[0].files[0]);
+      formData.append('file', e.composedPath()[0].files[0]);
       $.post({
         url:         'poker_sessions/upload',
         data:        formData,
