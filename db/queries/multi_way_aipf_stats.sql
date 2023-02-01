@@ -39,7 +39,7 @@ select
   ,round(won_per_hand, 2) as won_per_hand
 from (
   select
-    extract(year from poker_sessions.start_time) as date
+    extract(year from poker_sessions.start_time at time zone 'utc' at time zone 'pst') as date
     ,count(hand_histories.id) as num_hands
     ,sum(case when (result / stakes.stakes_array[1] >= 0) then 1 else 0 end) as pos
     ,sum(case when (result / stakes.stakes_array[1] < 0) then 1 else 0 end) as neg
@@ -68,7 +68,7 @@ select
   ,round(won_per_hand, 2) as won_per_hand
 from (
   select
-    extract(year from poker_sessions.start_time) || '-' || lpad(extract(month from poker_sessions.start_time)::varchar, 2, '0') as date
+    extract(year from poker_sessions.start_time at time zone 'utc' at time zone 'pst') || '-' || lpad(extract(month from poker_sessions.start_time at time zone 'utc' at time zone 'pst')::varchar, 2, '0') as date
     ,count(hand_histories.id) as num_hands
     ,sum(case when (result / stakes.stakes_array[1] >= 0) then 1 else 0 end) as pos
     ,sum(case when (result / stakes.stakes_array[1] < 0) then 1 else 0 end) as neg

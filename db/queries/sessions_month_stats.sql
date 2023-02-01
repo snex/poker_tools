@@ -8,18 +8,18 @@
 
 select
   case
-    when date_part('month', start_time) = 1 then '01 - January'
-    when date_part('month', start_time) = 2 then '02 - February'
-    when date_part('month', start_time) = 3 then '03 - March'
-    when date_part('month', start_time) = 4 then '04 - April'
-    when date_part('month', start_time) = 5 then '05 - May'
-    when date_part('month', start_time) = 6 then '06 - June'
-    when date_part('month', start_time) = 7 then '07 - July'
-    when date_part('month', start_time) = 8 then '08 - August'
-    when date_part('month', start_time) = 9 then '09 - September'
-    when date_part('month', start_time) = 10 then '10 - October'
-    when date_part('month', start_time) = 11 then '11 - November'
-    when date_part('month', start_time) = 12 then '12 - December'
+    when date_part('month', start_time at time zone 'utc' at time zone 'pst') = 1 then '01 - January'
+    when date_part('month', start_time at time zone 'utc' at time zone 'pst') = 2 then '02 - February'
+    when date_part('month', start_time at time zone 'utc' at time zone 'pst') = 3 then '03 - March'
+    when date_part('month', start_time at time zone 'utc' at time zone 'pst') = 4 then '04 - April'
+    when date_part('month', start_time at time zone 'utc' at time zone 'pst') = 5 then '05 - May'
+    when date_part('month', start_time at time zone 'utc' at time zone 'pst') = 6 then '06 - June'
+    when date_part('month', start_time at time zone 'utc' at time zone 'pst') = 7 then '07 - July'
+    when date_part('month', start_time at time zone 'utc' at time zone 'pst') = 8 then '08 - August'
+    when date_part('month', start_time at time zone 'utc' at time zone 'pst') = 9 then '09 - September'
+    when date_part('month', start_time at time zone 'utc' at time zone 'pst') = 10 then '10 - October'
+    when date_part('month', start_time at time zone 'utc' at time zone 'pst') = 11 then '11 - November'
+    when date_part('month', start_time at time zone 'utc' at time zone 'pst') = 12 then '12 - December'
     else ''
   end as month,
   sum(cashout - buyin) as result,

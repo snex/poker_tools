@@ -8,13 +8,13 @@
 
 select
   case
-    when date_part('dow', start_time) = 0 then '1 - Sunday'
-    when date_part('dow', start_time) = 1 then '2 - Monday'
-    when date_part('dow', start_time) = 2 then '3 - Tuesday'
-    when date_part('dow', start_time) = 3 then '4 - Wednesday'
-    when date_part('dow', start_time) = 4 then '5 - Thursday'
-    when date_part('dow', start_time) = 5 then '6 - Friday'
-    when date_part('dow', start_time) = 6 then '7 - Saturday'
+    when date_part('dow', start_time at time zone 'utc' at time zone 'pst') = 0 then '1 - Sunday'
+    when date_part('dow', start_time at time zone 'utc' at time zone 'pst') = 1 then '2 - Monday'
+    when date_part('dow', start_time at time zone 'utc' at time zone 'pst') = 2 then '3 - Tuesday'
+    when date_part('dow', start_time at time zone 'utc' at time zone 'pst') = 3 then '4 - Wednesday'
+    when date_part('dow', start_time at time zone 'utc' at time zone 'pst') = 4 then '5 - Thursday'
+    when date_part('dow', start_time at time zone 'utc' at time zone 'pst') = 5 then '6 - Friday'
+    when date_part('dow', start_time at time zone 'utc' at time zone 'pst') = 6 then '7 - Saturday'
     else ''
   end as day_of_week,
   sum(cashout - buyin) as result,
