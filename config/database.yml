@@ -80,6 +80,7 @@ test:
 #
 production:
   <<: *default
-  database: stats_production
-  username: stats
-  password: <%= ENV['STATS_DATABASE_PASSWORD'] %>
+  host: <%= Rails.application.credentials.dig(:production, :postgres_host) %>
+  database: <%= Rails.application.credentials.dig(:production, :postgres_dbname) %>
+  username: <%= Rails.application.credentials.dig(:production, :postgres_username) %>
+  password: <%= Rails.application.credentials.dig(:production, :postgres_password) %>
