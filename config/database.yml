@@ -82,3 +82,5 @@ production:
   <<: *default
   database: poker
   port: 6432
+  prepared_statements: false
+  advisory_locks: false
