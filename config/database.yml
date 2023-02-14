@@ -80,7 +80,5 @@ test:
 #
 production:
   <<: *default
-  host: <%= Rails.application.credentials.dig(:production, :postgres_host) %>
-  database: <%= Rails.application.credentials.dig(:production, :postgres_dbname) %>
-  username: <%= Rails.application.credentials.dig(:production, :postgres_username) %>
-  password: <%= Rails.application.credentials.dig(:production, :postgres_password) %>
+  database: poker
+  port: 6432
