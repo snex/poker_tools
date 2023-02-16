@@ -1,4 +1,5 @@
 -- Session results by day of week
+SET intervalstyle = 'sql_standard';
 
 \! echo ""
 \! echo "========================================================================"
