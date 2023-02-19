@@ -12,7 +12,7 @@ require 'mina/whenever'
 #   branch       - Branch name to deploy. (needed by mina/git)
 
 set :application_name, 'poker'
-set :domain, '127.0.0.1'
+set :domain, 'httpd.local'
 set :deploy_to, '/var/www/poker'
 set :repository, 'https://github.com/snex/poker_tools.git'
 set :branch, 'master'
@@ -41,7 +41,7 @@ task :remote_environment do
   # invoke :'rbenv:load'
 
   # For those using RVM, use this to load an RVM version@gemset.
-  invoke :'rvm:use', 'ruby-3.0.4@poker'
+  invoke :'rvm:use', 'ruby-3.2.1@poker'
 end
 
 # Put any custom commands you need to run at setup
