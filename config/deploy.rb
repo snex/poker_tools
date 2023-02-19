@@ -64,13 +64,12 @@ task deploy: :remote_environment do
     invoke :'bundle:install'
     invoke :'rails:db_migrate'
     command "#{fetch(:rake)} db:seed"
+    invoke :'whenever:update'
     command 'yarn install'
     invoke :'rails:assets_precompile'
     invoke :'deploy:cleanup'
 
     on :launch do
-      invoke :'whenever:update'
-
       in_path(fetch(:current_path)) do
         command %(mkdir -p tmp/)
         command %(touch tmp/restart.txt)
