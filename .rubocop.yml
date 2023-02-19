@@ -9,6 +9,9 @@ Layout/HashAlignment:
 Style/Documentation:
   Enabled: false
 
+Style/HashSyntax:
+  EnforcedShorthandSyntax: never
+
 Metrics/AbcSize:
   Exclude:
     - 'app/datatables/*'
